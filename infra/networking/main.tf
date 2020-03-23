@@ -64,17 +64,7 @@ resource "aws_security_group" "warehouse_public_sg" {
   description = "Used for access to the public instances"
   vpc_id      = aws_vpc.warehouse_vpc.id
 
-  #SSH
-
-  ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = [var.accessip]
-  }
-
   #HTTP
-
   ingress {
     from_port   = 80
     to_port     = 80
@@ -82,13 +72,6 @@ resource "aws_security_group" "warehouse_public_sg" {
     cidr_blocks = [var.accessip]
   }
 
-  # Configuration port for geoserver
-  ingress {
-    from_port   = 8080
-    to_port     = 8080
-    protocol    = "tcp"
-    cidr_blocks = [var.accessip]
-  }
   egress {
     from_port   = 0
     to_port     = 0
