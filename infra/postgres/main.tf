@@ -13,7 +13,7 @@ resource "aws_db_instance" "asbwarehouse" {
   password             = var.postgres_admin_password
   //parameter_group_name = "default.mysql5.7"
   port = 5432 
-  vpc_security_group_ids = [var.public_sg]
+  vpc_security_group_ids = [var.rds_security_group]
   db_subnet_group_name=var.public_subnet_grp
   skip_final_snapshot = true // XXX So that we can easily destroy the database in terraform while we are developing
 }

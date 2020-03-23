@@ -8,6 +8,10 @@ output "public_sg" {
   value = aws_security_group.warehouse_public_sg.id
 }
 
+output "rds_security_group" {
+  value = aws_security_group.rds_security_group.id
+}
+
 output "subnet_ips" {
   value = aws_subnet.warehouse_public_subnet.*.cidr_block
 }

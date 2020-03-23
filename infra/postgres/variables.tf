@@ -8,7 +8,7 @@ variable "aws_region"{}
 
 variable "public_subnets"{}
 
-variable "public_sg" {}
+variable "rds_security_group" {}
 
 variable "public_subnet_grp"{}
 

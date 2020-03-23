@@ -44,7 +44,7 @@ module "postgres" {
   postgres_admin_password = var.postgres_admin_password 
   postgres_server_spec = var.postgres_server_spec
   public_subnets = module.networking.public_subnets
-  public_sg = module.networking.public_sg 
+  rds_security_group = module.networking.rds_security_group 
   public_subnet_grp = module.networking.public_subnet_grp
 }
 

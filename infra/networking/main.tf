@@ -59,6 +59,30 @@ resource "aws_route_table_association" "warehouse_public_assoc" {
   route_table_id = aws_route_table.warehouse_public_rt.id
 }
 
+
+resource "aws_security_group" "rds_security_group" {
+  name        = "rds_security_group"
+  description = "Used for access to the postgres database"
+  vpc_id      = aws_vpc.warehouse_vpc.id
+  
+  #HTTP
+  ingress {
+    from_port   = 5432
+    to_port     = 5432
+    protocol    = "tcp"
+    #cidr_blocks = [var.accessip]
+    cidr_blocks = ["52.62.76.203/32"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+
 resource "aws_security_group" "warehouse_public_sg" {
   name        = "warehouse_public_sg"
   description = "Used for access to the public instances"
@@ -79,6 +103,7 @@ resource "aws_security_group" "warehouse_public_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
+
 resource "aws_db_subnet_group" "public_grp" {
   name="public_grp"
   subnet_ids = aws_subnet.warehouse_public_subnet.*.id
