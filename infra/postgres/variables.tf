@@ -10,5 +10,5 @@ variable "public_subnets"{}
 
 variable "public_sg" {}
 
-
+variable "public_subnet_grp"{}
 

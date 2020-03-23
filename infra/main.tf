@@ -45,6 +45,7 @@ module "postgres" {
   postgres_server_spec = var.postgres_server_spec
   public_subnets = module.networking.public_subnets
   public_sg = module.networking.public_sg 
+  public_subnet_grp = module.networking.public_subnet_grp
 }
 
 #module "mapserver" {

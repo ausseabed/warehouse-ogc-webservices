@@ -42,7 +42,7 @@ resource "aws_default_route_table" "warehouse_private_rt" {
 }
 
 resource "aws_subnet" "warehouse_public_subnet" {
-  count                   = 1
+  count                   = 2
   vpc_id                  = aws_vpc.warehouse_vpc.id
   cidr_block              = var.public_cidrs[count.index]
   map_public_ip_on_launch = true
@@ -70,7 +70,7 @@ resource "aws_security_group" "warehouse_public_sg" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["${var.accessip}"]
+    cidr_blocks = [var.accessip]
   }
 
   #HTTP
@@ -79,7 +79,7 @@ resource "aws_security_group" "warehouse_public_sg" {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-    cidr_blocks = ["${var.accessip}"]
+    cidr_blocks = [var.accessip]
   }
 
   # Configuration port for geoserver
@@ -87,7 +87,7 @@ resource "aws_security_group" "warehouse_public_sg" {
     from_port   = 8080
     to_port     = 8080
     protocol    = "tcp"
-    cidr_blocks = ["${var.accessip}"]
+    cidr_blocks = [var.accessip]
   }
   egress {
     from_port   = 0
@@ -96,7 +96,14 @@ resource "aws_security_group" "warehouse_public_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
+resource "aws_db_subnet_group" "public_grp" {
+  name="public_grp"
+  subnet_ids = aws_subnet.warehouse_public_subnet.*.id
 
+  tags = {
+    Name = "My DB subnet group"
+  }
+}
 
 resource "aws_eip" "geoserver_eip" {
   count = 1

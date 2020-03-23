@@ -15,3 +15,7 @@ output "subnet_ips" {
 output "aws_ecs_lb_target_group_geoserver_arn"{
   value = aws_lb_target_group.geoserver_outside.arn
 }
+
+output "public_subnet_grp"{
+  value= aws_db_subnet_group.public_grp.name
+}
