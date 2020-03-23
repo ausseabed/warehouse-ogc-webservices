@@ -5,20 +5,6 @@ orbs:
   
 
 jobs:
-  build_and_push_caris_caller_image:
-    machine:
-      image: ubuntu-1604:201903-01
-    steps:
-      - aws-ecr/build-and-push-image:
-          account-url: AWS_ECR_ACCOUNT_URL_ENV_VAR_NAME
-          aws-access-key-id: ACCESS_KEY_ID_ENV_VAR_NAME
-          aws-secret-access-key: SECRET_ACCESS_KEY_ENV_VAR_NAME
-          create-repo: false
-          dockerfile: ./carisbatch/Dockerfile
-          path: ./carisbatch/
-          region: AWS_REGION_ENV_VAR_NAME
-          repo: callcarisbatch
-          tag: 'caris_caller_image-latest'
   build_tomcat_push_jar:
     working_directory: ~/ausseabed-processing-pipeline
     docker:
@@ -67,76 +53,6 @@ jobs:
           repo: ausseabed-geoserver
           extra-build-args: '--build-arg COMMUNITY_EXTENSIONS=gwc-s3-plugin --build-arg GS_VERSION=2.16.2'
           #tag: 'ausseabed-geoserver-2.16.2' 
-  build_and_push_startstopec2_image:
-    machine:
-      image: ubuntu-1604:201903-01
-    steps:
-      - aws-ecr/build-and-push-image:
-          account-url: AWS_ECR_ACCOUNT_URL_ENV_VAR_NAME
-          aws-access-key-id: ACCESS_KEY_ID_ENV_VAR_NAME
-          aws-secret-access-key: SECRET_ACCESS_KEY_ENV_VAR_NAME
-          create-repo: false
-          dockerfile: ./startstopec2/Dockerfile
-          path: ./startstopec2/
-          region: AWS_REGION_ENV_VAR_NAME
-          repo: callcarisbatch
-          tag: 'startstopec2_image-latest'
-      - aws-ecr/build-and-push-image:
-          account-url: AWS_ECR_ACCOUNT_URL_ENV_VAR_NAME
-          aws-access-key-id: ACCESS_KEY_ID_ENV_VAR_NAME
-          aws-secret-access-key: SECRET_ACCESS_KEY_ENV_VAR_NAME
-          create-repo: false
-          dockerfile: ./gdal/Dockerfile
-          path: ./gdal/
-          region: AWS_REGION_ENV_VAR_NAME
-          repo: 'ausseabed-gdal'
-          tag: 'latest'
-      - aws-ecr/build-and-push-image:
-          account-url: AWS_ECR_ACCOUNT_URL_ENV_VAR_NAME
-          aws-access-key-id: ACCESS_KEY_ID_ENV_VAR_NAME
-          aws-secret-access-key: SECRET_ACCESS_KEY_ENV_VAR_NAME
-          create-repo: false
-          dockerfile: ./mbsystem/Dockerfile
-          path: ./mbsystem/
-          region: AWS_REGION_ENV_VAR_NAME
-          repo: 'ausseabed-mbsystem'
-          tag: 'latest'
-      - aws-ecr/build-and-push-image:
-          account-url: AWS_ECR_ACCOUNT_URL_ENV_VAR_NAME
-          aws-access-key-id: ACCESS_KEY_ID_ENV_VAR_NAME
-          aws-secret-access-key: SECRET_ACCESS_KEY_ENV_VAR_NAME
-          create-repo: false
-          dockerfile: ./pdal/Dockerfile
-          path: ./pdal/
-          region: AWS_REGION_ENV_VAR_NAME
-          repo: 'ausseabed-pdal'
-          tag: 'latest'                    
-  deploy_pipeline:
-    docker:
-      - image: circleci/python:3.7-stretch
-    steps:
-      - run:
-          name: Install awscli
-          command: sudo pip install awscli
-      - run:
-          name: check s3
-          command: aws sts get-caller-identity
-      - checkout
-      - run:
-          name: Install terraform
-          command: wget https://releases.hashicorp.com/terraform/0.12.23/terraform_0.12.23_linux_amd64.zip && unzip terraform_0.12.23_linux_amd64.zip && chmod +x terraform && sudo mv terraform /usr/bin/
-      - run:
-          name: terraform init
-          working_directory: ./infra
-          command: pwd && echo $CIRCLE_WORKING_DIRECTORY && terraform init
-      - run:
-          name: terraform plan
-          working_directory: ./infra
-          command: terraform plan 
-      - run:
-          name: terraform apply 
-          working_directory: ./infra
-          command: terraform apply --auto-approve
   deploy_geoserver:
     docker:
       - image: circleci/python:3.7-stretch
