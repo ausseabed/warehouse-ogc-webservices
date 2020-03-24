@@ -2,7 +2,7 @@
   "name": "ingestion",
   "version": "1.0.0",
   "description": "Simple ingestion tool for ausseabed geoserver product registration",
-  "main": "index.js",
+  "main": "app.ts",
   "author": "DaveP",
   "license": "CC-BY-4.0",
   "dependencies": {

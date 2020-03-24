@@ -4,6 +4,8 @@ import { addExampleObject } from "./addExampleObject";
 var logger = require('morgan');
 import { ProductEntry } from './entity/product-entry';
 
+import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
+
 function saveRecord(productEntry : ProductEntry)
 {
 
@@ -12,7 +14,7 @@ function saveRecord(productEntry : ProductEntry)
 
 
 createConnection().then(connection => {
-    let connOpts = connection.options;
+    let connOpts = connection.options as PostgresConnectionOptions;
     console.log(`Connected to database ${connOpts.host}:${connOpts.port} ` +
       `(${connOpts.type})`);
   

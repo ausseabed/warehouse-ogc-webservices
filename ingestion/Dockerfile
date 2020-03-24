@@ -5,3 +5,6 @@ WORKDIR $APPDIR
 
 RUN yarn global add mocha typeorm @babel/core reflect-metadata @babel/cli @babel/register pg
 
+RUN yarn install && yarn run build
+
+CMD bash -c "typeorm migration:run && yarn run start"
