@@ -1,5 +1,5 @@
 {
-  "name": "ingestion",
+  "name": "product-catalogue",
   "version": "1.0.0",
   "description": "Simple ingestion tool for ausseabed geoserver product registration",
   "main": "app.ts",
