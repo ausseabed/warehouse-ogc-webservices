@@ -42,7 +42,10 @@ module.exports = function (ctx) {
       //            (not treeshaking Quasar; biggest bundle size; convenient)
       all: 'auto',
 
-      components: [],
+      components: ['QTable',
+        'QTh',
+        'QTr',
+        'QTd'],
       directives: [],
 
       // Quasar plugins
@@ -76,14 +79,15 @@ module.exports = function (ctx) {
             formatter: require('eslint').CLIEngine.getFormatter('stylish')
           }
         })
-      }
+      },
+      devtool: 'source-map'
     },
 
     // Full list of options: https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-devServer
     devServer: {
       https: false,
-      port: 8080,
-      open: true // opens browser window automatically
+      port: 80,
+      open: false // opens browser window automatically
     },
 
     // animations: 'all', // --- includes all animations
