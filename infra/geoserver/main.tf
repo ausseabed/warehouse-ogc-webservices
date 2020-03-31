@@ -81,7 +81,7 @@ resource "aws_ecs_service" "geoserver_service" {
   }
 
   network_configuration {
-    subnets=var.public_subnets
+    subnets=[var.public_subnets[0]]
     security_groups= ["${var.public_sg}"]
     assign_public_ip=true
   }
