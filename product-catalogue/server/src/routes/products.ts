@@ -15,11 +15,13 @@ router.get('/',
       console.log(`Connected to database ${connOpts.host}:${connOpts.port} ` +
         `(${connOpts.type})`);
 
-      let productEntries = connection.manager.find(ProductEntry);
+      let productEntries = await connection.manager.find(ProductEntry);
       await connection.close();
 
-      res.send(productEntries);
-    })
+      return res.json(productEntries);
+    }).catch(error => {
+      console.log(error)
+    });
   }
 );
 
