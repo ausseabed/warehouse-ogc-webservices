@@ -9,13 +9,13 @@ const devConfig = {
    "synchronize": true,
    "logging": false,
    "entities": [
-      "lib/entity/**/*.ts"
+      "src/lib/entity/**/*.ts"
    ],
    "migrations": [
-      "lib/migration/**/*.ts"
+      "src/lib/migration/**/*.ts"
    ],
    "subscribers": [
-      "lib/subscriber/**/*.ts"
+      "src/lib/subscriber/**/*.ts"
    ]
 }
 

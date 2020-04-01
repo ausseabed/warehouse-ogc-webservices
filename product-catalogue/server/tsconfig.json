@@ -2,11 +2,9 @@
   "compilerOptions": {
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "moduleResolution": "node",
-    "isolatedModules": true,
     "allowJs": true,
     "checkJs": true,
-    "outDir": "./build"
+    "outDir": "./dist"
   },
   "exclude": [
     "node_modules",
