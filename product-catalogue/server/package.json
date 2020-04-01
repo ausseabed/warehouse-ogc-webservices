@@ -5,17 +5,40 @@
   "main": "app.ts",
   "author": "DaveP",
   "license": "CC-BY-4.0",
+  "private": true,
+  "scripts": {
+    "start": "nodemon --exec babel-node --presets @babel/env,@babel/typescript --extensions '.js,.jsx,.ts,.tsx' bin/www.ts",
+    "build": "babel src -d dist --copy-files",
+    "serve": "node dist/www",
+    "test": "mocha"
+  },
   "dependencies": {
-    "@babel/cli": "^7.8.4",
-    "@babel/core": "^7.8.7",
-    "@babel/register": "^7.8.6",
+    "@babel/runtime": "^7.2.0",
     "@types/mocha": "^7.0.2",
     "@types/node": "^13.9.2",
+    "cookie-parser": "^1.4.5",
+    "debug": "~2.6.9",
+    "express": "~4.16.1",
+    "http-errors": "~1.6.3",
     "mocha": "^7.1.1",
+    "morgan": "~1.9.1",
+    "nodemon": "^2.0.2",
     "pg": "^7.18.2",
+    "pug": "2.0.0-beta11",
     "reflect-metadata": "^0.1.13",
     "ts-node": "^8.7.0",
     "typeorm": "^0.2.24",
     "typescript": "^3.8.3"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.2.2",
+    "@babel/node": "^7.2.2",
+    "@babel/plugin-proposal-class-properties": "^7.2.3",
+    "@babel/plugin-proposal-decorators": "^7.2.3",
+    "@babel/plugin-transform-runtime": "^7.2.0",
+    "@babel/plugin-transform-typescript": "^7.2.0",
+    "@babel/polyfill": "^7.2.5",
+    "@babel/preset-env": "^7.2.3",
+    "@babel/preset-typescript": "^7.1.0"
   }
 }

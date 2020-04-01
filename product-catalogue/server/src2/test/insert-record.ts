@@ -1,8 +1,8 @@
-import { ProductEntry } from '../src/entity/product-entry';
+import { ProductEntry } from '../lib/entity/product-entry';
 
-import { addExampleObject } from "../src/addExampleObject";
+import { addExampleObject } from "../lib/addExampleObject";
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
-import {createConnection} from "typeorm";
+import { createConnection } from "typeorm";
 import { doesNotMatch } from 'assert';
 
 //import {ConnectionOptions} from "connection";
@@ -20,37 +20,37 @@ describe('Array', function () {
 describe('TypeORM', function () {
   describe('Connection()', function () {
     it('Should run without an error', function (done) {
-      createConnection().then( async connection => {
+      createConnection().then(async connection => {
         let connOpts = connection.options as PostgresConnectionOptions;
         console.log(`Connected to database ${connOpts.host}:${connOpts.port} ` +
-          `(${connOpts.type})`);    
+          `(${connOpts.type})`);
         await connection.close();
         done();
-        
-      }).catch(error => {console.log(error); done();});
-    }    
+
+      }).catch(error => { console.log(error); done(); });
+    }
     );
   }
   );
 
   describe('CreateAnObject()', function () {
     it('Should run without an error', function (done) {
-      createConnection().then( async connection => {
+      createConnection().then(async connection => {
         let connOpts = connection.options as PostgresConnectionOptions;
         console.log(`Connected to database ${connOpts.host}:${connOpts.port} ` +
-          `(${connOpts.type})`);    
-        
-        var productEntry = addExampleObject();  
-        
+          `(${connOpts.type})`);
+
+        var productEntry = addExampleObject();
+
         await connection.manager.save(productEntry);
         await connection.close();
         done();
-        
-      }).catch(error => {console.log(error); done();});
-    }    
+
+      }).catch(error => { console.log(error); done(); });
+    }
     );
   }
-  ); 
+  );
 });
 
 
