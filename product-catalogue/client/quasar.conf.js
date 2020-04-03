@@ -87,7 +87,16 @@ module.exports = function (ctx) {
     devServer: {
       https: false,
       port: 80,
-      open: false // opens browser window automatically
+      open: false, // opens browser window automatically
+      proxy: {
+        // proxy all requests starting with /api to nodejs server
+        '/api': {
+          target: 'http://ec2-52-62-76-203.ap-southeast-2.compute.amazonaws.com:3000',
+          pathRewrite: {
+            '^/api': ''
+          }
+        }
+      }
     },
 
     // animations: 'all', // --- includes all animations
