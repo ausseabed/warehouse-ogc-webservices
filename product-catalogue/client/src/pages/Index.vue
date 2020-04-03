@@ -28,12 +28,40 @@ async function getProducts () {
     console.error(error);
     return [];
   }
-
 }
+import '../store/products'
 
 export default {
+  computed:
+  {
+    data: {
+      get () {
+        console.log(this.$store.state.products.data);
+        return this.$store.state.products.data
+      },
+      set (val) {
+        console.log('do nothing')
+      }
+    }
+  },
   data () {
-    return store.state.products
+    return {
+      columns: [
+        {
+          name: 'id',
+          required: true,
+          label: 'UUID',
+          align: 'left',
+          field: row => row.id,
+          format: val => `${val}`,
+          sortable: true
+        },
+        { name: 'gazeteerName', align: 'center', label: 'Gazeteer', field: 'gazeteerName', sortable: true },
+        // { name: 'year', label: 'Year', field: 'year', sortable: true },
+        { name: 'resolution', label: 'Resolution', field: 'resolution' },
+        { name: 'srs', label: 'SRS', field: 'srs' }
+      ]
+    }
   }
 }
 </script>
