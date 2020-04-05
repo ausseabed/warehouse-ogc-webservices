@@ -20,10 +20,16 @@ export class ProductEntry {
     year: string; // Year of product for display purposes 
 
     @Column()
+    resolution: string; // Resolution of product for display purposes 
+
+    @Column()
     UUID: string; // Product Universally Unique Identifier
 
     @Column()
     srs: string; // Spatial Reference of product
+
+    @Column()
+    metadataPersistentId: string; // Persistent Id of final product 
 
     @Column()
     l3ProductTifLocation: string; // Location of final product 

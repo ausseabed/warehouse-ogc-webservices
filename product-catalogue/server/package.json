@@ -8,7 +8,7 @@
   "private": true,
   "scripts": {
     "dev": "ts-node src/bin/www.ts",
-    "test": "mocha"
+    "test": "mocha 'src/test/**/*.ts'"
   },
   "dependencies": {
     "@types/mocha": "^7.0.2",

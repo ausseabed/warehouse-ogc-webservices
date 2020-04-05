@@ -13,6 +13,6 @@ module.exports = {
   timeout: 2000,
   require: '@babel/register',
   require: 'ts-node/register',
-  'watch-files': ['lib/**/*.js', 'test//*.ts'],
+  'watch-files': ['src/lib/**/*.js', 'src/test//*.ts'],
   'watch-ignore': ['lib/vendor']
 };

@@ -52,14 +52,3 @@ describe('TypeORM', function () {
   }
   );
 });
-
-
-//assert.doesNotThrow(addExampleObject())
-//var productEntry = addExampleObject();
-//saveRecord(productEntry);
-
-// const allUsers = await repository.find();
-// const firstUser = await repository.findOne(1); // find by id
-// const timber = await repository.findOne({ firstName: "Timber", lastName: "Saw" });
-
-// await repository.remove(timber);
