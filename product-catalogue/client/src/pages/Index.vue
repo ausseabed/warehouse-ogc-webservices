@@ -30,20 +30,24 @@ async function getProducts () {
   }
 }
 import '../store/products'
+import { mapState } from 'vuex'
 
 export default {
-  computed:
-  {
-    data: {
-      get () {
-        console.log(this.$store.state.products.data);
-        return this.$store.state.products.data
-      },
-      set (val) {
-        console.log('do nothing')
-      }
-    }
-  },
+  computed: mapState({
+    data: state => state.products.data,
+    countAlias: 'data'
+  }),
+  // {
+  //   data: {
+  //     get () {
+  //       console.log(this.$store.state.products.data);
+  //       return this.$store.state.products.data
+  //     },
+  //     set (val) {
+  //       console.log('do nothing')
+  //     }
+  //   }
+  // },
   data () {
     return {
       columns: [
@@ -62,6 +66,9 @@ export default {
         { name: 'srs', label: 'SRS', field: 'srs' }
       ]
     }
+  },
+  async created () {
+    this.$store.state.products.data = await getProducts();
   }
 }
 </script>
