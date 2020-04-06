@@ -7,10 +7,21 @@
           title="Datasets"
           :data="data"
           :columns="columns"
-          row-key="name"
+          row-key="id"
+          selection="single"
+          :selected.sync="selected"
         />
       </div>
-      <div class="q-pa-md">
+      <div
+        class="q-mt-md"
+        v-if="selected.length==0"
+      >
+        <h6>Select an item for specifics</h6>
+      </div>
+      <div
+        class="q-pa-md"
+        v-if="selected.length>0"
+      >
         <h5>Dataset Detail</h5>
         <q-markup-table>
           <tbody>
@@ -19,7 +30,7 @@
                 <q-item-label>UUID</q-item-label>
               </td>
               <td>
-                <q-item-label>{{ data[0].UUID }}</q-item-label>
+                <q-item-label>{{ selected[0].UUID}}</q-item-label>
               </td>
             </tr>
             <tr>
@@ -27,7 +38,7 @@
                 <q-item-label>Gazeteer</q-item-label>
               </td>
               <td>
-                <q-item-label>{{ data[0].gazeteerName }}</q-item-label>
+                <q-item-label>{{ selected[0].gazeteerName }}</q-item-label>
               </td>
             </tr>
             <tr>
@@ -35,7 +46,7 @@
                 <q-item-label>Year</q-item-label>
               </td>
               <td>
-                <q-item-label>{{ data[0].year }}</q-item-label>
+                <q-item-label>{{ selected[0].year }}</q-item-label>
               </td>
             </tr>
             <tr>
@@ -43,7 +54,7 @@
                 <q-item-label>Resolution</q-item-label>
               </td>
               <td>
-                <q-item-label>{{ data[0].resolution }}</q-item-label>
+                <q-item-label>{{ selected[0].resolution }}</q-item-label>
               </td>
             </tr>
             <tr>
@@ -51,7 +62,7 @@
                 <q-item-label>SRS</q-item-label>
               </td>
               <td>
-                <q-item-label>{{ data[0].srs }}</q-item-label>
+                <q-item-label>{{ selected[0].srs }}</q-item-label>
               </td>
             </tr>
             <tr>
@@ -59,7 +70,7 @@
                 <q-item-label>Metadata Persistent Id</q-item-label>
               </td>
               <td>
-                <q-item-label>{{ data[0].metadataPersistentId }}</q-item-label>
+                <q-item-label>{{ selected[0].metadataPersistentId }}</q-item-label>
               </td>
             </tr>
             <tr>
@@ -67,23 +78,23 @@
                 <q-item-label>L3 Product Tif Location</q-item-label>
               </td>
               <td>
-                <q-item-label>{{ data[0].l3ProductTifLocation }}</q-item-label>
+                <q-item-label>{{ selected[0].l3ProductTifLocation }}</q-item-label>
               </td>
             </tr>
             <tr>
               <td>
-                <q-item-label>L0 Coveratge Location</q-item-label>
+                <q-item-label>L0 Coverage Location</q-item-label>
               </td>
               <td>
-                <q-item-label>{{ data[0].l0CoverageLocation }}</q-item-label>
+                <q-item-label>{{ selected[0].l0CoverageLocation }}</q-item-label>
               </td>
             </tr>
             <tr>
               <td>
-                <q-item-label>L3 Coveratge Location</q-item-label>
+                <q-item-label>L3 Coverage Location</q-item-label>
               </td>
               <td>
-                <q-item-label>{{ data[0].l3CoverageLocation }}</q-item-label>
+                <q-item-label>{{ selected[0].l3CoverageLocation }}</q-item-label>
               </td>
             </tr>
             <tr>
@@ -91,7 +102,7 @@
                 <q-item-label>L3 Hillshade Tif Location</q-item-label>
               </td>
               <td>
-                <q-item-label>{{ data[0].hillshadeLocation }}</q-item-label>
+                <q-item-label>{{ selected[0].hillshadeLocation }}</q-item-label>
               </td>
             </tr>
           </tbody>
@@ -111,21 +122,16 @@ export default {
 }
 </script>
 <script>
-const axios = require('axios').default;
-async function getProducts () {
-  try {
-    const response = await axios.get('/api/products');
-    console.log(response);
-    return response['data'];
-  } catch (error) {
-    console.error(error);
-    return [];
-  }
-}
+
 import '../store/products'
-import { mapState } from 'vuex'
+import { mapActions, mapState } from 'vuex'
 
 export default {
+  methods: {
+    ...mapActions('products', [
+      'fetchData'
+    ])
+  },
   computed: mapState({
     data: state => state.products.data,
     countAlias: 'data'
@@ -143,6 +149,7 @@ export default {
   // },
   data () {
     return {
+      selected: [],
       columns: [
         {
           name: 'UUID',
@@ -161,7 +168,7 @@ export default {
     }
   },
   async created () {
-    this.$store.state.products.data = await getProducts();
+    this.$store.dispatch('products/fetchData')
   }
 }
 </script>
