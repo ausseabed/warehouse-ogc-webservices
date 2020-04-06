@@ -45,7 +45,7 @@ module.exports = function (ctx) {
       components: ['QTable',
         'QTh',
         'QTr',
-        'QTd'],
+        'QTd', 'QMarkupTable'],
       directives: [],
 
       // Quasar plugins

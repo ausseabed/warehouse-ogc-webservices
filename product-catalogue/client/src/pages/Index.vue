@@ -1,6 +1,5 @@
 <template>
-  <q-page class="flex flex-center">
-
+  <q-page class="flex">
     <div class="col">
       <div class="q-pa-md">
         <q-table
@@ -13,17 +12,23 @@
         />
       </div>
       <div
-        class="q-mt-md"
+        class="q-mt-sm"
         v-if="selected.length==0"
       >
-        <h6>Select an item for specifics</h6>
+        <div class="text-h6 q-ml-md text-center">Select an item for specifics</div>
       </div>
       <div
         class="q-pa-md"
         v-if="selected.length>0"
       >
-        <h5>Dataset Detail</h5>
         <q-markup-table>
+          <thead>
+            <tr>
+              <th colspan="2">
+                <div class="text-h6 q-ml-md">Dataset Detail</div>
+              </th>
+            </tr>
+          </thead>
           <tbody>
             <tr>
               <td>
@@ -160,10 +165,10 @@ export default {
           format: val => `${val}`,
           sortable: true
         },
-        { name: 'gazeteerName', align: 'center', label: 'Gazeteer', field: 'gazeteerName', sortable: true },
-        { name: 'year', label: 'Year', field: 'year', sortable: true },
-        { name: 'resolution', label: 'Resolution', field: 'resolution' },
-        { name: 'srs', label: 'SRS', field: 'srs' }
+        { name: 'gazeteerName', label: 'Gazeteer', field: 'gazeteerName', align: 'left', sortable: true },
+        { name: 'year', label: 'Year', field: 'year', align: 'left', sortable: true },
+        { name: 'resolution', label: 'Resolution', align: 'left', field: 'resolution' },
+        { name: 'srs', label: 'SRS', align: 'left', field: 'srs' }
       ]
     }
   },
