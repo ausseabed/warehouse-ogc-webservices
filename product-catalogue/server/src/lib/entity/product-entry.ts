@@ -10,37 +10,37 @@ import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
 @Entity()
 export class ProductEntry {
 
-    @PrimaryGeneratedColumn()
-    id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column()
-    gazeteerName: string; // Name of product for display purposes 
+  @Column()
+  gazeteerName: string; // Name of product for display purposes 
 
-    @Column()
-    year: string; // Year of product for display purposes 
+  @Column()
+  year: string; // Year of product for display purposes 
 
-    @Column()
-    resolution: string; // Resolution of product for display purposes 
+  @Column()
+  resolution: string; // Resolution of product for display purposes 
 
-    @Column()
-    UUID: string; // Product Universally Unique Identifier
+  @Column()
+  UUID: string; // Product Universally Unique Identifier
 
-    @Column()
-    srs: string; // Spatial Reference of product
+  @Column()
+  srs: string; // Spatial Reference of product
 
-    @Column()
-    metadataPersistentId: string; // Persistent Id of final product 
+  @Column()
+  metadataPersistentId: string; // Persistent Id of final product 
 
-    @Column()
-    l3ProductTifLocation: string; // Location of final product 
+  @Column()
+  l3ProductTifLocation: string; // Location of final product 
 
-    @Column()
-    l0CoverageLocation: string; // Location of shapefile 
+  @Column()
+  l0CoverageLocation: string; // Location of shapefile 
 
-    @Column()
-    l3CoverageLocation: string; // Location of shapefile 
+  @Column()
+  l3CoverageLocation: string; // Location of shapefile 
 
-    @Column()
-    hillshadeLocation: string; // S3 location
+  @Column()
+  hillshadeLocation: string; // S3 location
 
 }

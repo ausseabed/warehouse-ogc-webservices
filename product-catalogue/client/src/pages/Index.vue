@@ -103,12 +103,14 @@
             label="Submit"
             type="submit"
             color="primary"
+            @click="_ => submitProduct(selectedProduct.id)"
           />
           <q-btn
             class="q-ml-md"
             label="Reset"
             type="reset"
             color="primary"
+            @click="_ => resetProduct(selectedProduct.id)"
             flat
           />
         </q-form>
@@ -134,10 +136,21 @@ export default {
       'fetchData'
     ], 'product', ['fetchData', 'updateProduct']),
     filterBySelection: function (details) {
-      this.$store.dispatch('product/fetchData', details)
+      if (details === undefined || details.rows.length == 0) {
+        return
+      }
+      var recordId = details.rows[0].id
+      this.$store.dispatch('product/fetchData', recordId)
     },
     updateProduct (element, value) {
       this.$store.commit('product/updateProduct', { 'element': element, 'value': value })
+    },
+    resetProduct (id) {
+      this.$store.dispatch('product/fetchData', id)
+    },
+    submitProduct (id) {
+      this.$store.dispatch('product/saveData', this.selectedProduct)
+      this.$store.dispatch('products/fetchData')
     }
   },
   computed:
