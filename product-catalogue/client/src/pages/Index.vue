@@ -21,101 +21,74 @@
         class="q-pa-md"
         v-if="selected.length>0"
       >
-        <q-markup-table>
-          <thead>
-            <tr>
-              <th colspan="2">
-                <div class="text-h6 q-ml-md">Dataset Detail</div>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>
-                <q-item-label>UUID</q-item-label>
-              </td>
-              <td>
-                <q-item-label>{{ selected[0].UUID}}</q-item-label>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <q-item-label>Gazeteer</q-item-label>
-              </td>
-              <td>
-                <q-item-label>{{ selected[0].gazeteerName }}</q-item-label>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <q-item-label>Year</q-item-label>
-              </td>
-              <td>
-                <q-item-label>{{ selected[0].year }}</q-item-label>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <q-item-label>Resolution</q-item-label>
-              </td>
-              <td>
-                <q-item-label>{{ selected[0].resolution }}</q-item-label>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <q-item-label>SRS</q-item-label>
-              </td>
-              <td>
-                <q-item-label>{{ selected[0].srs }}</q-item-label>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <q-item-label>Metadata Persistent Id</q-item-label>
-              </td>
-              <td>
-                <q-item-label>{{ selected[0].metadataPersistentId }}</q-item-label>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <q-item-label>L3 Product Tif Location</q-item-label>
-              </td>
-              <td>
-                <q-item-label>{{ selected[0].l3ProductTifLocation }}</q-item-label>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <q-item-label>L0 Coverage Location</q-item-label>
-              </td>
-              <td>
-                <q-item-label>{{ selected[0].l0CoverageLocation }}</q-item-label>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <q-item-label>L3 Coverage Location</q-item-label>
-              </td>
-              <td>
-                <q-item-label>{{ selected[0].l3CoverageLocation }}</q-item-label>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <q-item-label>L3 Hillshade Tif Location</q-item-label>
-              </td>
-              <td>
-                <q-item-label>{{ selected[0].hillshadeLocation }}</q-item-label>
-              </td>
-            </tr>
-          </tbody>
-        </q-markup-table>
-        <!--<q-input
-          v-model="text"
-          label="Standard"
-        />-->
+        <!--<q-markup-table class="q-gutter-y-md column">-->
+        <q-form ref="myForm">
+          <div class="text-h6 q-ml-md">Dataset Detail</div>
+          <q-input
+            class="q-ml-md"
+            v-model.lazy="selected[0].UUID"
+            label="UUID"
+          />
+          <q-input
+            class="q-ml-md"
+            v-model="selected[0].gazeteerName"
+            label="Gazeteer"
+          />
+          <q-input
+            class="q-ml-md"
+            v-model="selected[0].year"
+            label="Year"
+          />
+          <q-input
+            class="q-ml-md"
+            v-model="selected[0].resolution"
+            label="Resolution"
+          />
+          <q-input
+            class="q-ml-md"
+            v-model="selected[0].srs"
+            label="SRS"
+          />
+          <q-input
+            class="q-ml-md"
+            v-model="selected[0].metadataPersistentId"
+            label="Metadata Persistent Id"
+          />
+          <q-input
+            class="q-ml-md"
+            v-model="selected[0].l3ProductTifLocation"
+            label="L3 Product Tif Location"
+          />
+          <q-input
+            class="q-ml-md"
+            v-model="selected[0].l0CoverageLocation"
+            label="L0 Coverage Location"
+          />
+          <q-input
+            class="q-ml-md"
+            v-model="selected[0].l3CoverageLocation"
+            label="L3 Coverage Location"
+          />
+          <q-input
+            class="q-ml-md"
+            v-model="selected[0].hillshadeLocation"
+            label="L3 Hillshade Tif Location"
+          />
+          <q-btn
+            class="q-ml-md"
+            label="Submit"
+            type="submit"
+            color="primary"
+          />
+          <q-btn
+            class="q-ml-md"
+            label="Reset"
+            type="reset"
+            color="primary"
+            flat
+          />
+        </q-form>
+        <!--</q-markup-table>-->
       </div>
     </div>
   </q-page>
