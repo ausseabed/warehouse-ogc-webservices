@@ -1,7 +1,20 @@
 <template>
   <q-page class="flex">
     <div class="col">
-      <div class="q-pa-md">
+      <div
+        class="q-pa-md"
+        v-if="data.length==0"
+      >
+        <q-spinner
+          color="primary"
+          size="3em"
+          :thickness="10"
+        />
+      </div>
+      <div
+        class="q-pa-md"
+        v-if="data.length>0"
+      >
         <q-table
           title="Datasets"
           :data="data"
@@ -9,6 +22,7 @@
           row-key="id"
           selection="single"
           :selected.sync="selected"
+          @selection="filterBySelection"
         />
       </div>
       <div
@@ -26,52 +40,62 @@
           <div class="text-h6 q-ml-md">Dataset Detail</div>
           <q-input
             class="q-ml-md"
-            v-model.lazy="selected[0].UUID"
+            :value="selectedProduct.UUID"
+            @input="value=>updateProduct('UUID',value)"
             label="UUID"
           />
           <q-input
             class="q-ml-md"
-            v-model="selected[0].gazeteerName"
+            :value="selectedProduct.gazeteerName"
+            @input="value=>updateProduct('gazeteerName',value)"
             label="Gazeteer"
           />
           <q-input
             class="q-ml-md"
-            v-model="selected[0].year"
+            :value="selectedProduct.year"
+            @input="value=>updateProduct('year',value)"
             label="Year"
           />
           <q-input
             class="q-ml-md"
-            v-model="selected[0].resolution"
+            :value="selectedProduct.resolution"
+            @input="value=>updateProduct('resolution',value)"
             label="Resolution"
           />
           <q-input
             class="q-ml-md"
-            v-model="selected[0].srs"
+            :value="selectedProduct.srs"
+            @input="value=>updateProduct('srs',value)"
             label="SRS"
           />
           <q-input
             class="q-ml-md"
-            v-model="selected[0].metadataPersistentId"
+            :value="selectedProduct.metadataPersistentId"
+            @input="value=>updateProduct('metadataPersistentId',value)"
             label="Metadata Persistent Id"
           />
           <q-input
             class="q-ml-md"
-            v-model="selected[0].l3ProductTifLocation"
+            :value="selectedProduct.l3ProductTifLocation"
+            @input="value=>updateProduct('l3ProductTifLocation',value)"
             label="L3 Product Tif Location"
           />
           <q-input
             class="q-ml-md"
-            v-model="selected[0].l0CoverageLocation"
+            :value="selectedProduct.l0CoverageLocation"
+            @input="value=>updateProduct('l0CoverageLocation',value)"
             label="L0 Coverage Location"
           />
           <q-input
             class="q-ml-md"
-            v-model="selected[0].l3CoverageLocation"
+            :value="selectedProduct.l3CoverageLocation"
+            @input="value=>updateProduct('l3CoverageLocation',value)"
             label="L3 Coverage Location"
           />
           <q-input
             class="q-ml-md"
-            v-model="selected[0].hillshadeLocation"
+            :value="selectedProduct.hillshadeLocation"
+            @input="value=>updateProduct('hillshadeLocation',value)"
             label="L3 Hillshade Tif Location"
           />
           <q-btn
@@ -108,23 +132,20 @@ export default {
   methods: {
     ...mapActions('products', [
       'fetchData'
-    ])
+    ], 'product', ['fetchData', 'updateProduct']),
+    filterBySelection: function (details) {
+      this.$store.dispatch('product/fetchData', details)
+    },
+    updateProduct (element, value) {
+      this.$store.commit('product/updateProduct', { 'element': element, 'value': value })
+    }
   },
-  computed: mapState({
-    data: state => state.products.data,
-    countAlias: 'data'
-  }),
-  // {
-  //   data: {
-  //     get () {
-  //       console.log(this.$store.state.products.data);
-  //       return this.$store.state.products.data
-  //     },
-  //     set (val) {
-  //       console.log('do nothing')
-  //     }
-  //   }
-  // },
+  computed:
+    mapState({
+      data: state => state.products.data,
+      selectedProduct: state => state.product.selectedProduct,
+      countAlias: ['data', 'selectedProduct']
+    }),
   data () {
     return {
       selected: [],
@@ -145,7 +166,7 @@ export default {
       ]
     }
   },
-  async created () {
+  created () {
     this.$store.dispatch('products/fetchData')
   }
 }

@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 
 // import example from './module-example'
 import products from './products'
+import product from './product'
 
 Vue.use(Vuex)
 
@@ -17,6 +18,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   modules: {
+    product,
     products
   },
 

@@ -43,7 +43,7 @@ module.exports = function (ctx) {
       all: 'auto',
 
       components: ['QTable',
-        'QTh', 'QInput', 'QForm',
+        'QTh', 'QInput', 'QForm', 'QSpinner',
         'QTr', 'QBtn',
         'QTd', 'QMarkupTable'],
       directives: [],
