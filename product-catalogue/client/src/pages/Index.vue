@@ -150,7 +150,6 @@ export default {
     },
     submitProduct (id) {
       this.$store.dispatch('product/saveData', this.selectedProduct)
-      this.$store.dispatch('products/fetchData')
     }
   },
   computed:

@@ -14,14 +14,11 @@ router.get('/:productId',
 
 import { plainToClass } from "class-transformer";
 
-router.put('/:productId',
+router.post('/:productId',
   async function (req, res, next) {
     let productEntry = plainToClass(ProductEntry, req.body);
-    console.log(productEntry);
     await getRepository(ProductEntry).save(productEntry);
-    // Save to database
-    // let productEntries = await getRepository(ProductEntry).findOne(req.params.productId);
-    return 'Nothing';
+    res.send('OK');
   }
 );
 module.exports = router;
