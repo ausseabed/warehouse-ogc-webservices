@@ -2,7 +2,6 @@ version: 2.1
 
 orbs:
   aws-ecr: circleci/aws-ecr@6.5.0
-  
 
 jobs:
   build_tomcat_push_jar:
@@ -14,22 +13,22 @@ jobs:
       - restore_cache: # restore the saved cache after the first run or if `pom.xml` has changed
           # Read about caching dependencies: https://circleci.com/docs/2.0/caching/
           key: circleci-tomcat-push-{{ checksum "./geoserver/ausseabed.pipeline/pom.xml" }}
-      - run: 
+      - run:
           working_directory: ./geoserver/ausseabed.pipeline/
           command: mvn dependency:go-offline # gets the project dependencies
       - save_cache: # saves the project dependencies
           paths:
             - ~/.m2
           key: circleci-tomcat-push-{{ checksum "./geoserver/ausseabed.pipeline/pom.xml" }}
-      - run: 
+      - run:
           working_directory: ./geoserver/ausseabed.pipeline/
-          command: mvn package 
-      - store_artifacts: 
+          command: mvn package
+      - store_artifacts:
           path: ./geoserver/ausseabed.pipeline/target/ausseabed.pipeline-1.0-SNAPSHOT.jar
       - persist_to_workspace:
           root: ./geoserver/ausseabed.pipeline/target
-          paths: 
-              - ausseabed.pipeline-1.0-SNAPSHOT.jar
+          paths:
+            - ausseabed.pipeline-1.0-SNAPSHOT.jar
 
   build_and_push_geoserver_image:
     machine:
@@ -40,19 +39,19 @@ jobs:
           at: ./geoserver/ausseabed.pipeline/target/
       - run:
           name: Check Scripts
-          command: find . 
+          command: find .
       - aws-ecr/build-and-push-image:
           account-url: AWS_ECR_ACCOUNT_URL_ENV_VAR_NAME
- #         aws-access-key-id: ACCESS_KEY_ID_ENV_VAR_NAME
- #         aws-secret-access-key: SECRET_ACCESS_KEY_ENV_VAR_NAME
+          #         aws-access-key-id: ACCESS_KEY_ID_ENV_VAR_NAME
+          #         aws-secret-access-key: SECRET_ACCESS_KEY_ENV_VAR_NAME
           create-repo: false
           dockerfile: ./geoserver/Dockerfile
           path: ./geoserver/
           checkout: false
           region: AWS_REGION_ENV_VAR_NAME
           repo: ausseabed-geoserver
-          extra-build-args: '--build-arg COMMUNITY_EXTENSIONS=gwc-s3-plugin --build-arg GS_VERSION=2.16.2'
-          #tag: 'ausseabed-geoserver-2.16.2' 
+          extra-build-args: "--build-arg COMMUNITY_EXTENSIONS=gwc-s3-plugin --build-arg GS_VERSION=2.16.2"
+          #tag: 'ausseabed-geoserver-2.16.2'
   deploy_geoserver:
     docker:
       - image: circleci/python:3.7-stretch
@@ -74,12 +73,11 @@ jobs:
       - run:
           name: terraform plan
           working_directory: ./infra
-          command: terraform plan 
+          command: terraform plan
       - run:
-          name: terraform apply 
+          name: terraform apply
           working_directory: ./infra
-          command: terraform apply --auto-approve      
-    
+          command: terraform apply --auto-approve
 
 workflows:
   update_infra_and_application:
@@ -88,19 +86,11 @@ workflows:
           filters:
             branches:
               only:
-               - master
+                - master
       - build_and_push_geoserver_image:
           filters:
             branches:
               only:
-               - master
+                - master
           requires:
             - build_tomcat_push_jar
-      - deploy_geoserver:
-          filters:
-            branches:
-              only:
-               - master
-          requires:
-             - build_and_push_geoserver_image
-  
