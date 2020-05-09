@@ -1,1 +1,4 @@
 geoserver-restconfig
+git+https://github.com/ausseabed/geoserver-rest-client.git#subdirectory=modules/workspaces
+git+https://github.com/ausseabed/geoserver-rest-client.git#subdirectory=modules/styles
+git+https://github.com/ausseabed/geoserver-rest-client.git#subdirectory=modules/datastores
