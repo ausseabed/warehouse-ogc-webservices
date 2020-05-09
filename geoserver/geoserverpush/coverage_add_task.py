@@ -1,7 +1,5 @@
 import gs_rest_api_datastores
 from gs_rest_api_datastores.rest import ApiException
-from pprint import pprint
-import geoserver.util
 import uuid
 import re
 from shlex import quote
@@ -17,7 +15,6 @@ import six
 from six.moves import http_client as httplib
 from product_record import ProductRecord
 from typing import List
-from geoserver.support import prepare_upload_bundle, build_url
 
 
 class CoverageAddTask(object):
@@ -33,34 +30,39 @@ class CoverageAddTask(object):
 
         cmd = ["/usr/bin/ogr2ogr", "-f",
                "ESRI Shapefile", polygon_dest, polygon_src]
-        print(" ".join(cmd))
+        logging.info(" ".join(cmd))
         try:
             subprocess.check_output(cmd, stderr=subprocess.STDOUT)
         except subprocess.CalledProcessError as exc:
-            print("Status : FAIL", exc.returncode, exc.output, flush=True)
+            logging.error("Status : FAIL {}, {}".format(exc.returncode,
+                                                        exc.output))
             exit(exc.returncode)
 
     def copy_s3_file_local(self, remote_file_name, local_file_name):
-        print("copy")
         cmd = ["aws", "s3", "cp", remote_file_name, local_file_name]
-        print(" ".join(cmd))
+        logging.info(" ".join(cmd))
         try:
             subprocess.check_output(cmd, stderr=subprocess.STDOUT)
         except subprocess.CalledProcessError as exc:
-            print("Status : FAIL", exc.returncode, exc.output, flush=True)
+            logging.error("Status : FAIL {}, {}".format(exc.returncode,
+                                                        exc.output))
             exit(exc.returncode)
 
     def create_temp_dir(self):
         cwd = tempfile.gettempdir()
-        print("Using current dictory as base: {}".format(cwd))
+        logging.info("Using current dictory as base: {}".format(cwd))
         new_dir = cwd + "/" + str(uuid.uuid4())
         try:
             os.mkdir(new_dir)
         except OSError:
-            print("Creation of the directory %s failed" % new_dir)
+            logging.error("Creation of the directory %s failed" % new_dir)
         else:
-            print("Successfully created the directory %s " % new_dir)
+            logging.info("Successfully created the directory %s " % new_dir)
         return(new_dir)
+
+    # https://pypi.org/project/geoserver-restconfig/
+    def shapefile_plus_sidecars(self, path):
+        return {ext: path + "." + ext for ext in ['shx', 'shp', 'dbf', 'prj']}
 
     def create_shapefile_zip(self, shapefile_url, shapefile_display_name):
         # 1. create a temp directory
@@ -68,13 +70,12 @@ class CoverageAddTask(object):
         shapefile_name = re.sub(".*/", "", shapefile_url)
         polygon_dest = base_dir + "/" + shapefile_name
 
-        # https://pypi.org/project/geoserver-restconfig/
-        source_shapefile_plus_sidecars = geoserver.util.shapefile_and_friends(
+        source_shapefile_plus_sidecars = self.shapefile_plus_sidecars(
             shapefile_url.replace(".shp", ""))
-        shapefile_plus_sidecars = geoserver.util.shapefile_and_friends(
+        shapefile_plus_sidecars = self.shapefile_plus_sidecars(
             polygon_dest.replace(".shp", ""))
 
-        shapefile_name_plus_sidecars = geoserver.util.shapefile_and_friends(
+        shapefile_name_plus_sidecars = self.shapefile_plus_sidecars(
             shapefile_name.replace(".shp", ""))
         # shapefile_and_friends should look on the filesystem to find a shapefile
         # and related files based on the base path passed in
@@ -92,22 +93,15 @@ class CoverageAddTask(object):
         #self.copy_shapefile_local(polygon_dest, shapefile_url)
 
         # 3. register in geoserver as below
-        print(shapefile_plus_sidecars)
-        # self.cat.create_featurestore(
-        #    shapefile_display_name, shapefile_plus_sidecars, self.ws)
-        #(fd, zip_filename) = tempfile.mkstemp(suffix='.zip')
-        # logging.info(zip_filename)
+        logging.info(shapefile_plus_sidecars)
         zip_buffer = io.BytesIO()
         with zipfile.ZipFile(zip_buffer, "a", zipfile.ZIP_DEFLATED, False) as zip_file:
             for (local_file_name, destination_name) in zip(shapefile_plus_sidecars.values(), shapefile_name_plus_sidecars.values()):
-                #zip_file.write(local_file_name, arcname=destination_name)
                 local_file_handle = open(local_file_name, mode='rb')
                 data = local_file_handle.read()
                 local_file_handle.close()
                 zip_file.writestr(destination_name, data)
 
-        # handle.write(zip_buffer.getvalue())
-        # os.close(fd)
         return zip_buffer.getvalue()
 
     def create_coverage(self, product_record: ProductRecord):
@@ -156,7 +150,7 @@ class CoverageAddTask(object):
         try:
             # Get a list of data stores
             api_response = api_instance.get_datastores(self.workspace_name)
-            pprint(api_response)
+            logging.info(api_response)
         except ApiException as e:
             logging.exception(
                 "Exception when calling DefaultApi->get_datastores: %s\n" % e)

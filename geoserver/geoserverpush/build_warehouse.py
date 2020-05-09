@@ -21,6 +21,7 @@ import time
 from workspace_add_task import WorkspaceAddTask
 from style_add_task import StyleAddTask
 from coverage_add_task import CoverageAddTask
+from raster_add_task import RasterAddTask
 import logging
 
 logging.basicConfig(level=logging.INFO)
@@ -50,13 +51,15 @@ class BuildWarehouse():
         CoverageAddTask(configuration, self.workspace_name,
                         product_records).run()
 
+        RasterAddTask(configuration, self.workspace_name,
+                      product_records).run()
+
+        # RasterAddTask()
+        # StyleAddTask()
+        # GroupLayerAddTask()
+
         # Import rasters into geoserver for each entry in database
         # for source_tif_entry in product_records:
-        #     shapefile = source_tif_entry.get_l0_coverage()
-        #     if shapefile != "":
-        #         geoserver_catalog_services.add_shapefile(
-        #             shapefile, source_tif_entry.get_l0_coverage_name())
-
         #     geoserver_bath_raster = source_tif_entry.get_bathymetric_raster()
         #     geoserver_bath_raster_ref = geoserver_catalog_services.add_raster(
         #         geoserver_bath_raster)

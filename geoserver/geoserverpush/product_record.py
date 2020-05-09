@@ -28,6 +28,7 @@ class ProductRecord():
         self.resolution = input_dictionary["resolution"]
         self.UUID = input_dictionary["UUID"]
         self.srs = input_dictionary["srs"]
+        self.metadata = input_dictionary["metadataPersistentId"]
 
     def get_bathymetric_raster(self):
         geoserver_bath_raster = GeoserverRaster()
