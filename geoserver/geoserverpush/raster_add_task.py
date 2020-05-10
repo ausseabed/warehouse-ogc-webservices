@@ -129,13 +129,3 @@ class RasterAddTask(object):
                 self.create_raster(geoserver_hs_raster.native_layer_name,
                                    geoserver_hs_raster.display_name, geoserver_hs_raster.display_name,
                                    geoserver_hs_raster.source_tif, geoserver_hs_raster.srs, geoserver_hs_raster.metadata)
-            #     geoserver_catalog_services.add_style_to_raster(geoserver_bath_raster_ref["name"],
-            #                                                    geoserver_catalog_services.BATH_STYLE_NAME)
-            #         geoserver_catalog_services.add_style_to_raster(geoserver_hs_raster_ref["name"],
-            #                                                        geoserver_catalog_services.BATH_HILLSHADE_STYLE_NAME)
-            #         geoserver_catalog_services.group_layers(
-            #             [geoserver_hs_raster, geoserver_bath_raster],
-            #             [geoserver_catalog_services.BATH_HILLSHADE_STYLE_NAME,
-            #                 geoserver_catalog_services.BATH_STYLE_NAME],
-            #             geoserver_hs_raster_ref["bbox"]
-            #         )

@@ -23,6 +23,7 @@ from style_add_task import StyleAddTask
 from coverage_add_task import CoverageAddTask
 from raster_add_task import RasterAddTask
 from raster_style_attach_task import RasterStyleAttachTask
+from group_layer_task import GroupLayerTask
 import logging
 
 logging.basicConfig(level=logging.INFO)
@@ -58,28 +59,8 @@ class BuildWarehouse():
         RasterStyleAttachTask(configuration, self.workspace_name,
                               product_records).run()
 
-        # GroupLayerAddTask()
-
-        # Import rasters into geoserver for each entry in database
-        # for source_tif_entry in product_records:
-        #     geoserver_bath_raster = source_tif_entry.get_bathymetric_raster()
-        #     geoserver_bath_raster_ref = geoserver_catalog_services.add_raster(
-        #         geoserver_bath_raster)
-        #     geoserver_catalog_services.add_style_to_raster(geoserver_bath_raster_ref["name"],
-        #                                                    geoserver_catalog_services.BATH_STYLE_NAME)
-
-        #     geoserver_hs_raster = source_tif_entry.get_hillshade_raster()
-        #     if geoserver_hs_raster.source_tif != "":
-        #         geoserver_hs_raster_ref = geoserver_catalog_services.add_raster(
-        #             geoserver_hs_raster)
-        #         geoserver_catalog_services.add_style_to_raster(geoserver_hs_raster_ref["name"],
-        #                                                        geoserver_catalog_services.BATH_HILLSHADE_STYLE_NAME)
-        #         geoserver_catalog_services.group_layers(
-        #             [geoserver_hs_raster, geoserver_bath_raster],
-        #             [geoserver_catalog_services.BATH_HILLSHADE_STYLE_NAME,
-        #                 geoserver_catalog_services.BATH_STYLE_NAME],
-        #             geoserver_hs_raster_ref["bbox"]
-        #         )
+        GroupLayerTask(configuration, self.workspace_name,
+                       product_records).run()
 
 
 if __name__ == '__main__':

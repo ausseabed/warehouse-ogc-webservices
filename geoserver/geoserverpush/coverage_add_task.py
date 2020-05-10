@@ -140,6 +140,10 @@ class CoverageAddTask(object):
             logging.exception(
                 "Exception when calling DefaultApi->put_data_store_upload: %s\n" % e)
 
+        # TODO: rename from filename to layername?
+        # coverage_info = gs_rest_api_coverages.CoverageInfo(name=display_name, native_name=native_layer_name, title=display_name, srs=srs, metadata=metadata)
+        # api_instance.post_workspace_coverage_store(body, workspace, store)
+
     def get_existing_datastores(self):
         # create an instance of the API class
         authtoken = self.configuration.get_basic_auth_token()
