@@ -5,6 +5,7 @@ from gs_rest_api_workspaces.configuration import Configuration
 
 import six
 from six.moves import http_client as httplib
+import logging
 
 
 class ConnectionParameters():
@@ -26,15 +27,17 @@ class ConnectionParameters():
         try:
             self.geoserver_url = os.environ['GEOSERVER_URL']
         except KeyError:
-            print("Please set the environment variable GEOSERVER_URL")
+            logging.exception(
+                "Please set the environment variable GEOSERVER_URL")
             sys.exit(1)
 
-        print("GEOSERVER_URL = " + self.geoserver_url)
+        logging.info("GEOSERVER_URL = " + self.geoserver_url)
 
         try:
             self.geoserver_password = os.environ['GEOSERVER_ADMIN_PASSWORD']
         except KeyError:
-            print("Please set the environment variable GEOSERVER_ADMIN_PASSWORD")
+            logging.exception(
+                "Please set the environment variable GEOSERVER_ADMIN_PASSWORD")
             sys.exit(1)
 
     def create_configuration(self):

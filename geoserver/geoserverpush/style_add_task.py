@@ -1,6 +1,5 @@
 import gs_rest_api_styles
 from gs_rest_api_styles.rest import ApiException
-from pprint import pprint
 
 import os
 import sys
@@ -63,7 +62,6 @@ class StyleAddTask(object):
         try:
             # Get a list of styles in a given workspace
             api_response = api_instance.get_workspace_styles(workspace)
-            pprint(api_response)
         except ApiException as e:
             logging.error(
                 "Exception when calling DefaultApi->get_workspace_styles: %s\n" % e)

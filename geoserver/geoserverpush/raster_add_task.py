@@ -7,8 +7,6 @@ from gs_rest_api_coverages.rest import ApiException
 from gs_rest_api_coverages.model.coverage_info import CoverageInfo
 from gs_rest_api_coverages.model.coverage_info_wrapper import CoverageInfoWrapper
 
-from pprint import pprint
-
 import os
 import sys
 import logging
@@ -46,14 +44,15 @@ class RasterAddTask(object):
             coverage_store=coverage_store_info)
 
         # create an instance of the API class
-        api_instance = gs_rest_api_coveragestores.DefaultApi(api_client)
+        cs_api_instance = gs_rest_api_coveragestores.DefaultApi(api_client)
 
         try:
-            api_instance.post_coverage_stores(
+            cs_api_instance.post_coverage_stores(
                 coverage_store_info_wrapper, self.workspace_name)
         except ApiException as e:
-            print(
+            logging.error(
                 "Exception when calling DefaultApi->post_coverage_store_upload: %s\n" % e)
+            return
 
         # create an instance of the API class
         api_instance = gs_rest_api_coverages.DefaultApi(
@@ -70,8 +69,13 @@ class RasterAddTask(object):
         try:
             api_instance.post_workspace_coverage_store(body, workspace, store)
         except ApiException as e:
-            print(
+            logging.error(
                 "Exception when calling DefaultApi->post_workspace_coverage_store: %s\n" % e)
+            logging.error(
+                "Please manually remove coverage store {} before next attempt to submit".format(display_name))
+            logging.error(
+                "The input params were native_layer_name: {} display_name: {} display_description: {} url_location: {} srs: {} metadata: {}".format(
+                    native_layer_name, display_name, display_description, url_location, srs, metadata))
 
     def get_coverages(self):
         # create an instance of the API class
@@ -105,29 +109,28 @@ class RasterAddTask(object):
         # First worry about bathymetry, then hillshade
         for product_record in self.product_records:
             geoserver_bath_raster = product_record.get_bathymetric_raster()
-            self.create_raster(geoserver_bath_raster.native_layer_name,
-                               geoserver_bath_raster.display_name, geoserver_bath_raster.display_name,
-                               geoserver_bath_raster.source_tif, geoserver_bath_raster.srs, geoserver_bath_raster.metadata)
+            # Add bathymetry Raster
+            if geoserver_bath_raster.display_name in existing_rasters:
+                logging.info("Already have raster coveragestore: {}".format(
+                    geoserver_bath_raster.display_name))
+            else:
+                self.create_raster(geoserver_bath_raster.native_layer_name,
+                                   geoserver_bath_raster.display_name, geoserver_bath_raster.display_name,
+                                   geoserver_bath_raster.source_tif, geoserver_bath_raster.srs, geoserver_bath_raster.metadata)
 
-            # coverage_name = product_record.get_l0_coverage_name()
-            # shapefile = product_record.get_l0_coverage()
-            # if shapefile == '':
-            #     logging.info(
-            #         "Skipping coverage because there is no file: {}".format(coverage_name))
-            # elif coverage_name in existing_datastores:
-            #     logging.info("Already have coverage: {}".format(coverage_name))
-            # else:
-            #     self.create_coverage(product_record
-            #     geoserver_bath_raster = source_tif_entry.get_bathymetric_raster()
-            #     geoserver_bath_raster_ref = geoserver_catalog_services.add_raster(
-            #         geoserver_bath_raster)
+            geoserver_hs_raster = product_record.get_hillshade_raster()
+            if geoserver_hs_raster.source_tif == "":
+                logging.info("No hillshade raster defined for: {}".format(
+                    geoserver_bath_raster.display_name))
+            elif geoserver_hs_raster.display_name in existing_rasters:
+                logging.info("Already have raster coveragestore: {}".format(
+                    geoserver_hs_raster.display_name))
+            else:
+                self.create_raster(geoserver_hs_raster.native_layer_name,
+                                   geoserver_hs_raster.display_name, geoserver_hs_raster.display_name,
+                                   geoserver_hs_raster.source_tif, geoserver_hs_raster.srs, geoserver_hs_raster.metadata)
             #     geoserver_catalog_services.add_style_to_raster(geoserver_bath_raster_ref["name"],
             #                                                    geoserver_catalog_services.BATH_STYLE_NAME)
-
-            #     geoserver_hs_raster = source_tif_entry.get_hillshade_raster()
-            #     if geoserver_hs_raster.source_tif != "":
-            #         geoserver_hs_raster_ref = geoserver_catalog_services.add_raster(
-            #             geoserver_hs_raster)
             #         geoserver_catalog_services.add_style_to_raster(geoserver_hs_raster_ref["name"],
             #                                                        geoserver_catalog_services.BATH_HILLSHADE_STYLE_NAME)
             #         geoserver_catalog_services.group_layers(

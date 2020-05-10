@@ -22,6 +22,7 @@ from workspace_add_task import WorkspaceAddTask
 from style_add_task import StyleAddTask
 from coverage_add_task import CoverageAddTask
 from raster_add_task import RasterAddTask
+from raster_style_attach_task import RasterStyleAttachTask
 import logging
 
 logging.basicConfig(level=logging.INFO)
@@ -54,8 +55,9 @@ class BuildWarehouse():
         RasterAddTask(configuration, self.workspace_name,
                       product_records).run()
 
-        # RasterAddTask()
-        # StyleAddTask()
+        RasterStyleAttachTask(configuration, self.workspace_name,
+                              product_records).run()
+
         # GroupLayerAddTask()
 
         # Import rasters into geoserver for each entry in database

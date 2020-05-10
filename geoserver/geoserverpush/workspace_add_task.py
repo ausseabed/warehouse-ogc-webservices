@@ -3,7 +3,6 @@ import gs_rest_api_workspaces
 from gs_rest_api_workspaces.rest import ApiException
 
 from gs_rest_api_workspaces.model import Workspace
-from pprint import pprint
 import logging
 
 
@@ -24,9 +23,9 @@ class WorkspaceAddTask(object):
         try:
             # Get a list of workspaces
             api_response = api_instance.get_workspaces()
-            pprint(api_response)
         except ApiException as e:
-            print("Exception when calling DefaultApi->get_workspaces: %s\n" % e)
+            logging.error(
+                "Exception when calling DefaultApi->get_workspaces: %s\n" % e)
 
         workspace_names = [workspace['name']
                            for workspace in api_response.workspaces['workspace']]
@@ -45,6 +44,6 @@ class WorkspaceAddTask(object):
                 # add a new workspace to GeoServer
                 api_response = api_instance.post_workspaces(
                     body, default=default)
-                pprint(api_response)
             except ApiException as e:
-                print("Exception when calling DefaultApi->post_workspaces: %s\n" % e)
+                logging.error(
+                    "Exception when calling DefaultApi->post_workspaces: %s\n" % e)
