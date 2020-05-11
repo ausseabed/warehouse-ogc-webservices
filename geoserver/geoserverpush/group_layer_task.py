@@ -150,6 +150,9 @@ class GroupLayerTask(object):
             if geoserver_hs_raster.source_tif == "":
                 logging.warn("No hillshade for {}".format(
                     geoserver_hs_raster.display_name))
+            elif geoserver_bath_raster.base_name in existing_layer_groups:
+                logging.info("Already have group layer for {}".format(
+                    geoserver_bath_raster.base_name))
             else:
                 bbox = self.get_bounding_box(
                     geoserver_bath_raster.display_name)

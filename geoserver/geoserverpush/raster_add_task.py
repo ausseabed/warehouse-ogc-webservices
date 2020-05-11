@@ -6,6 +6,7 @@ import gs_rest_api_coverages
 from gs_rest_api_coverages.rest import ApiException
 from gs_rest_api_coverages.model.coverage_info import CoverageInfo
 from gs_rest_api_coverages.model.coverage_info_wrapper import CoverageInfoWrapper
+from gs_rest_api_coverages import MetadataEntry
 
 import os
 import sys
@@ -25,6 +26,8 @@ class RasterAddTask(object):
 
         logging.info(
             "Creating coveragestore for raster {}".format(display_name))
+
+        logging.info("Metadata link: {}".format(metadata))
         # create an instance of the API class
         authtoken = self.configuration.get_basic_auth_token()
         # create an instance of the API class
@@ -54,12 +57,17 @@ class RasterAddTask(object):
                 "Exception when calling DefaultApi->post_coverage_store_upload: %s\n" % e)
             return
 
+        if (metadata == ""):
+            metadata_link_entry = None
+        else:
+            metadata_link_entry = {'metadataLink': [
+                {'type': 'text/html', 'metadataType': 'ISO19115:2003', 'content': metadata}]}
         # create an instance of the API class
         api_instance = gs_rest_api_coverages.DefaultApi(
             gs_rest_api_coverages.ApiClient(self.configuration, header_name='Authorization', header_value=authtoken))
         # CoverageInfo | The body of the coverage to POST
         coverage_info = gs_rest_api_coverages.CoverageInfo(
-            name=display_name, native_name=native_layer_name, title=display_name, srs=srs, metadata=metadata)
+            name=display_name, native_name=native_layer_name, title=display_name, srs=srs, metadata_links=metadata_link_entry)
         # data = "<coverage><name>{}</name><title>{}</title><nativeName>{}</nativeName><srs>{}</srs></coverage>".format(
         #    display_name, display_name, native_layer_name, srs)
         workspace = self.workspace_name  # str | The name of the workspace

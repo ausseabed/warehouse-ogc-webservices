@@ -8,8 +8,10 @@ import logging
 
 class StyleAddTask(object):
 
-    LOCAL_STYLE_FILENAME = "/usr/local/pulldata/bathymetry_transparent.sld"
-    BATH_HILLSHADE_STYLE_FILENAME = "/usr/local/pulldata/bathymetry_hillshade.sld"
+    LOCAL_STYLE_FILENAME = os.environ['LOCAL_DATA_PATH'] + \
+        "bathymetry_transparent.sld"
+    BATH_HILLSHADE_STYLE_FILENAME = os.environ['LOCAL_DATA_PATH'] + \
+        "bathymetry_hillshade.sld"
     # LOCAL_STYLE_FILENAME = "bathymetry_transparent.sld"
     # BATH_HILLSHADE_STYLE_FILENAME = "bathymetry_hillshade.sld"
     BATH_STYLE_NAME = "Bathymetry"

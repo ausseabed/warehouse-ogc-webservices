@@ -53,6 +53,7 @@ ENV \
     S3_PASSWORD='' \
     GEOSERVER_URL='http://localhost:8080/geoserver' \
     TOMCAT_POST_INIT_SCRIPT='/usr/local/pulldata/push_geoserver_settings.py'
+    LOCAL_DATA_PATH='/usr/local/pulldata/'
 
 
 CMD ["/scripts/entrypoint.sh"]

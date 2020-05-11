@@ -69,7 +69,7 @@ class RasterStyleAttachTask(object):
             api_instance.layers_name_workspace_put(
                 layer_wrapper, self.workspace_name, display_name)
         except ApiException as e:
-            print(
+            logging.error(
                 "Exception when calling DefaultApi->layers_name_workspace_put: %s\n" % e)
 
     def get_layers(self):

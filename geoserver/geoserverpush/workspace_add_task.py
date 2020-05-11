@@ -27,8 +27,11 @@ class WorkspaceAddTask(object):
             logging.error(
                 "Exception when calling DefaultApi->get_workspaces: %s\n" % e)
 
-        workspace_names = [workspace['name']
-                           for workspace in api_response.workspaces['workspace']]
+        if api_response.workspaces == '':
+            workspace_names = []
+        else:
+            workspace_names = [workspace['name']
+                               for workspace in api_response.workspaces['workspace']]
 
         logging.info("Found workspaces {}".format(workspace_names))
 
