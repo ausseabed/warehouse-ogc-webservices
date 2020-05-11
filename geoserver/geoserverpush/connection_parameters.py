@@ -40,13 +40,6 @@ class ConnectionParameters():
                 "Please set the environment variable GEOSERVER_ADMIN_PASSWORD")
             sys.exit(1)
 
-        try:
-            self.local_data_path = os.environ['LOCAL_DATA_PATH']
-        except KeyError:
-            logging.exception(
-                "Please set the environment variable LOCAL_DATA_PATH")
-            sys.exit(1)
-
     def create_configuration(self):
         configuration = Configuration()
         configuration.host = self.geoserver_url + "/rest"
