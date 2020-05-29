@@ -111,7 +111,6 @@ class RasterStyleAttachTask(object):
             "Found existing layer definitions {}".format(existing_layers))
 
         # First worry about bathymetry, then hillshade
-        product_record: ProductL3Dist
         for product_record in self.product_database.l3_products:
 
             bath_display_name = self.product_database.get_name_for_product(

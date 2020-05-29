@@ -131,7 +131,6 @@ class RasterAddTask(object):
         logging.info("Found existing rasters {}".format(existing_rasters))
 
         # First worry about bathymetry, then hillshade
-        product_record: ProductL3Dist
         for product_record in self.product_database.l3_products:
             bath_display_name = self.product_database.get_name_for_product(
                 product_record, self.raster_presentation_string)

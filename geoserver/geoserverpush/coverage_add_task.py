@@ -179,7 +179,6 @@ class CoverageAddTask(object):
         logging.info("Found existing datastores {}".format(
             existing_datastores))
 
-        product_record: ProductL3Dist
         for product_record in self.product_database.l3_products:
             coverage_name = self.get_coverage_name(product_record)
             if product_record.l3_coverage_location == '':

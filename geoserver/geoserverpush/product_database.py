@@ -22,9 +22,9 @@ class ProductDatabase():
   "resolution":"1m",
   "UUID":"68f44afd-78d0-412f-bf9c-9c9fdbe43968"}, "metadataPersistentId":"",...
     """
-    l3_products: List[ProductL3Dist]
-    survey_l3_relations: List[RelationSummaryDto]
-    surveys: List[Survey]
+    # l3_products : List[ProductL3Dist]
+    # survey_l3_relations   : List[RelationSummaryDto]
+    # surveys   : List[Survey]
 
     def __init__(self, bearer_id):
         self.bearer_id = bearer_id

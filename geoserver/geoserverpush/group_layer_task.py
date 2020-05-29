@@ -149,7 +149,6 @@ class GroupLayerTask(object):
         logging.info("Found existing layer groups {}".format(
             existing_layer_groups))
 
-        product_record: ProductL3Dist
         for product_record in self.product_database.l3_products:
             gl_display_name = self.product_database.get_name_for_product(
                 product_record, self.group_layer_presentation_string)
