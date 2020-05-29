@@ -13,17 +13,23 @@ import sys
 import logging
 from product_record import ProductRecord
 from typing import List
+from product_database import ProductDatabase
+
+from product_catalogue_py_rest_client.models import ProductL3Dist, ProductL3Src, SurveyL3Relation, Survey
+import re
 
 
 class RasterAddTask(object):
 
-    def __init__(self, configuration, workspace_name, product_records: List[ProductRecord]):
+    def __init__(self, configuration, workspace_name, product_database: ProductDatabase):
         self.configuration = configuration
         self.workspace_name = workspace_name
-        self.product_records = product_records
+        self.product_database = product_database
 
-    def create_raster(self, native_layer_name, display_name, display_description, url_location, srs, metadata):
+    def create_raster(self, display_name, display_description, url_location, srs, metadata):
 
+        native_layer_name = re.sub(
+            ".tif", "", re.sub(".*/", "", url_location))
         logging.info(
             "Creating coveragestore for raster {}".format(display_name))
 
@@ -109,31 +115,48 @@ class RasterAddTask(object):
                             for raster_record in api_response['coverageStores']['coverageStore']]
         return raster_names
 
+    raster_presentation_string = "{0} OV"
+    hillshade_presentation_string = "{0} HS"
+
+    def get_coverage_name(self, product_l3_dist: ProductL3Dist):
+        # match on prod_id
+        self.product_database.get_name_for_product(
+            product_l3_dist, self.raster_presentation_string)
+        self.product_database.get_name_for_product(
+            product_l3_dist, self.hillshade_presentation_string)
+
     def run(self):
 
         existing_rasters = self.get_coverages()
         logging.info("Found existing rasters {}".format(existing_rasters))
 
         # First worry about bathymetry, then hillshade
-        for product_record in self.product_records:
-            geoserver_bath_raster = product_record.get_bathymetric_raster()
-            # Add bathymetry Raster
-            if geoserver_bath_raster.display_name in existing_rasters:
-                logging.info("Already have raster coveragestore: {}".format(
-                    geoserver_bath_raster.display_name))
-            else:
-                self.create_raster(geoserver_bath_raster.native_layer_name,
-                                   geoserver_bath_raster.display_name, geoserver_bath_raster.display_name,
-                                   geoserver_bath_raster.source_tif, geoserver_bath_raster.srs, geoserver_bath_raster.metadata)
+        product_record: ProductL3Dist
+        for product_record in self.product_database.l3_products:
+            bath_display_name = self.product_database.get_name_for_product(
+                product_record, self.raster_presentation_string)
 
-            geoserver_hs_raster = product_record.get_hillshade_raster()
-            if geoserver_hs_raster.source_tif == "":
-                logging.info("No hillshade raster defined for: {}".format(
-                    geoserver_bath_raster.display_name))
-            elif geoserver_hs_raster.display_name in existing_rasters:
+            # Add bathymetry Raster
+            if bath_display_name in existing_rasters:
                 logging.info("Already have raster coveragestore: {}".format(
-                    geoserver_hs_raster.display_name))
+                    bath_display_name))
             else:
-                self.create_raster(geoserver_hs_raster.native_layer_name,
-                                   geoserver_hs_raster.display_name, geoserver_hs_raster.display_name,
-                                   geoserver_hs_raster.source_tif, geoserver_hs_raster.srs, geoserver_hs_raster.metadata)
+                self.create_raster(
+                    bath_display_name, bath_display_name,
+                    product_record.bathymetry_location, product_record.source_product.srs,
+                    product_record.source_product.metadata_persistent_id)
+
+            hs_display_name = self.product_database.get_name_for_product(
+                product_record, self.hillshade_presentation_string)
+
+            if product_record.hillshade_location == "":
+                logging.info("No hillshade raster defined for: {}".format(
+                    hs_display_name))
+            elif hs_display_name in existing_rasters:
+                logging.info("Already have raster coveragestore: {}".format(
+                    hs_display_name))
+            else:
+                self.create_raster(
+                    hs_display_name, hs_display_name,
+                    product_record.hillshade_location, product_record.source_product.srs,
+                    product_record.source_product.metadata_persistent_id)

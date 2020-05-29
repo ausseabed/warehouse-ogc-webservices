@@ -13,13 +13,21 @@ from typing import List
 from style_add_task import StyleAddTask
 from urllib.parse import quote_plus
 
+from product_record import ProductRecord
+from typing import List
+from product_database import ProductDatabase
+
+from raster_add_task import RasterAddTask
+
+from product_catalogue_py_rest_client.models import ProductL3Dist, ProductL3Src, SurveyL3Relation, Survey
+
 
 class RasterStyleAttachTask(object):
 
-    def __init__(self, configuration, workspace_name, product_records: List[ProductRecord]):
+    def __init__(self, configuration, workspace_name, product_database: ProductDatabase):
         self.configuration = configuration
         self.workspace_name = workspace_name
-        self.product_records = product_records
+        self.product_database = product_database
         self.server_url = configuration.host
 
     def get_layer(self, layer_name) -> LayerWrapper:
@@ -103,31 +111,25 @@ class RasterStyleAttachTask(object):
             "Found existing layer definitions {}".format(existing_layers))
 
         # First worry about bathymetry, then hillshade
-        for product_record in self.product_records:
-            geoserver_bath_raster = product_record.get_bathymetric_raster()
+        product_record: ProductL3Dist
+        for product_record in self.product_database.l3_products:
+
+            bath_display_name = self.product_database.get_name_for_product(
+                product_record, RasterAddTask.raster_presentation_string)
+
             # Add bathymetry Raster
-            if geoserver_bath_raster.display_name in existing_layers:
+            if bath_display_name in existing_layers:
                 self.attach_style(
-                    geoserver_bath_raster.display_name, StyleAddTask.BATH_STYLE_NAME)
+                    bath_display_name, StyleAddTask.BATH_STYLE_NAME)
             else:
                 logging.warn("Cannot find layer for raster: {}".format(
-                    geoserver_bath_raster.display_name))
+                    bath_display_name))
 
-            geoserver_hs_raster = product_record.get_hillshade_raster()
-            if geoserver_hs_raster.display_name in existing_layers:
+            hs_display_name = self.product_database.get_name_for_product(
+                product_record, RasterAddTask.hillshade_presentation_string)
+            if hs_display_name in existing_layers:
                 self.attach_style(
-                    geoserver_hs_raster.display_name, StyleAddTask.BATH_HILLSHADE_STYLE_NAME)
+                    hs_display_name, StyleAddTask.BATH_HILLSHADE_STYLE_NAME)
             else:
                 logging.info("Cannot find layer for raster: {}".format(
-                    geoserver_hs_raster.display_name))
-
-        #     geoserver_catalog_services.add_style_to_raster(geoserver_bath_raster_ref["name"],
-        #                                                    geoserver_catalog_services.BATH_STYLE_NAME)
-        #         geoserver_catalog_services.add_style_to_raster(geoserver_hs_raster_ref["name"],
-        #                                                        geoserver_catalog_services.BATH_HILLSHADE_STYLE_NAME)
-        #         geoserver_catalog_services.group_layers(
-        #             [geoserver_hs_raster, geoserver_bath_raster],
-        #             [geoserver_catalog_services.BATH_HILLSHADE_STYLE_NAME,
-        #                 geoserver_catalog_services.BATH_STYLE_NAME],
-        #             geoserver_hs_raster_ref["bbox"]
-        #         )
+                    hs_display_name))

@@ -40,6 +40,34 @@ class ConnectionParameters():
                 "Please set the environment variable GEOSERVER_ADMIN_PASSWORD")
             sys.exit(1)
 
+        try:
+            self.auth_host = os.environ['AUTH_HOST']
+        except KeyError:
+            logging.exception(
+                "Please set the environment variable AUTH_HOST")
+            sys.exit(1)
+
+        try:
+            self.auth_client_id = os.environ['AUTH_CLIENT_ID']
+        except KeyError:
+            logging.exception(
+                "Please set the environment variable AUTH_CLIENT_ID")
+            sys.exit(1)
+
+        try:
+            self.auth_client_pem_key = os.environ['CLIENT_PEM_KEY']
+        except KeyError:
+            logging.exception(
+                "Please set the environment variable CLIENT_PEM_KEY")
+            sys.exit(1)
+
+        try:
+            self.auth_client_pem_thumprint = os.environ['CLIENT_PEM_THUMBPRINT']
+        except KeyError:
+            logging.exception(
+                "Please set the environment variable CLIENT_PEM_THUMBPRINT")
+            sys.exit(1)
+
     def create_configuration(self):
         configuration = Configuration()
         configuration.host = self.geoserver_url + "/rest"

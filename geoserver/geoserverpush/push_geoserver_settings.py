@@ -9,6 +9,7 @@ export GEOSERVER_ADMIN_PASSWORD="###"
 export LIST_PATH="https://bathymetry-survey-288871573946.s3-ap-southeast-2.amazonaws.com/registered_files.json"
 """
 
+from dotenv import load_dotenv
 import os
 import sys
 
@@ -23,8 +24,11 @@ from raster_add_task import RasterAddTask
 from raster_style_attach_task import RasterStyleAttachTask
 from group_layer_task import GroupLayerTask
 import logging
+from auth_broker import AuthBroker
 
-logging.basicConfig(level=logging.INFO)
+from product_catalogue_py_rest_client.models import ProductL3Dist, ProductL3Src, SurveyL3Relation, Survey
+logging.basicConfig(level=logging.DEBUG)
+load_dotenv()
 
 
 class PushGeoserverSettings():
@@ -42,23 +46,26 @@ class PushGeoserverSettings():
         settings.load_from_commandline()
         configuration = settings.create_configuration()
 
-        product_database = ProductDatabase()
+        auth = AuthBroker(settings)
+        token = auth.get_auth_token()
+
+        product_database = ProductDatabase(token)
         product_database.load_from_commandline()
-        product_records = product_database.get_records()
+        product_database.download_from_rest()
 
         WorkspaceAddTask(configuration, self.workspace_name).run()
         StyleAddTask(configuration, self.workspace_name).run()
         CoverageAddTask(configuration, self.workspace_name,
-                        product_records).run()
+                        product_database).run()
 
         RasterAddTask(configuration, self.workspace_name,
-                      product_records).run()
+                      product_database).run()
 
         RasterStyleAttachTask(configuration, self.workspace_name,
-                              product_records).run()
+                              product_database).run()
 
         GroupLayerTask(configuration, self.workspace_name,
-                       product_records).run()
+                       product_database).run()
 
 
 if __name__ == '__main__':

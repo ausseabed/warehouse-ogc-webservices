@@ -15,14 +15,17 @@ import six
 from six.moves import http_client as httplib
 from product_record import ProductRecord
 from typing import List
+from product_database import ProductDatabase
+
+from product_catalogue_py_rest_client.models import ProductL3Dist, SurveyL3Relation, Survey
 
 
 class CoverageAddTask(object):
 
-    def __init__(self, configuration, workspace_name, product_records: List[ProductRecord]):
+    def __init__(self, configuration, workspace_name, product_database: ProductDatabase):
         self.configuration = configuration
         self.workspace_name = workspace_name
-        self.product_records = product_records
+        self.product_database = product_database
 
     def copy_shapefile_local(self, polygon_dest, shapefile_name):
 
@@ -76,7 +79,7 @@ class CoverageAddTask(object):
             polygon_dest.replace(".shp", ""))
 
         shapefile_name_plus_sidecars = self.shapefile_plus_sidecars(
-            shapefile_name.replace(".shp", ""))
+            shapefile_display_name)
         # shapefile_and_friends should look on the filesystem to find a shapefile
         # and related files based on the base path passed in
         #
@@ -90,7 +93,7 @@ class CoverageAddTask(object):
         # 2. use boto/gdal to copy local
         for (source, destination) in zip(source_shapefile_plus_sidecars.values(), shapefile_plus_sidecars.values()):
             self.copy_s3_file_local(source, destination)
-        #self.copy_shapefile_local(polygon_dest, shapefile_url)
+        # self.copy_shapefile_local(polygon_dest, shapefile_url)
 
         # 3. register in geoserver as below
         logging.info(shapefile_plus_sidecars)
@@ -104,14 +107,13 @@ class CoverageAddTask(object):
 
         return zip_buffer.getvalue()
 
-    def create_coverage(self, product_record: ProductRecord):
-        coverage_name = product_record.get_l0_coverage_name()
+    def create_coverage(self, coverage_location, coverage_name):
         logging.info("Creating datastore {}".format(coverage_name))
 
-        shapefile = product_record.get_l0_coverage()
-        zip_coverage = self.create_shapefile_zip(shapefile, coverage_name)
+        zip_coverage = self.create_shapefile_zip(
+            coverage_location, coverage_name)
 
-        logging.info("Using filename {}".format(shapefile))
+        logging.info("Using filename {}".format(coverage_location))
 
         # create an instance of the API class
         authtoken = self.configuration.get_basic_auth_token()
@@ -137,12 +139,18 @@ class CoverageAddTask(object):
             api_instance.put_data_store_upload(self.workspace_name, coverage_name, method, file_format,
                                                body=zip_coverage)
         except ApiException as e:
-            logging.exception(
+            logging.error(
                 "Exception when calling DefaultApi->put_data_store_upload: %s\n" % e)
 
         # TODO: rename from filename to layername?
         # coverage_info = gs_rest_api_coverages.CoverageInfo(name=display_name, native_name=native_layer_name, title=display_name, srs=srs, metadata=metadata)
         # api_instance.post_workspace_coverage_store(body, workspace, store)
+
+    format_string = "{0} L0 Coverage"
+
+    def get_coverage_name(self, product_l3_dist: ProductL3Dist):
+        # match on prod_id
+        return (self.product_database.get_name_for_product(product_l3_dist, self.format_string))
 
     def get_existing_datastores(self):
         # create an instance of the API class
@@ -171,13 +179,14 @@ class CoverageAddTask(object):
         logging.info("Found existing datastores {}".format(
             existing_datastores))
 
-        for product_record in self.product_records:
-            coverage_name = product_record.get_l0_coverage_name()
-            shapefile = product_record.get_l0_coverage()
-            if shapefile == '':
+        product_record: ProductL3Dist
+        for product_record in self.product_database.l3_products:
+            coverage_name = self.get_coverage_name(product_record)
+            if product_record.l3_coverage_location == '':
                 logging.info(
                     "Skipping coverage because there is no file: {}".format(coverage_name))
             elif coverage_name in existing_datastores:
                 logging.info("Already have coverage: {}".format(coverage_name))
             else:
-                self.create_coverage(product_record)
+                self.create_coverage(
+                    product_record.l3_coverage_location, coverage_name)

@@ -10,8 +10,6 @@ from style_add_task import StyleAddTask
 import os
 import sys
 import logging
-from product_record import ProductRecord
-from typing import List
 
 import gs_rest_api_coverages
 from gs_rest_api_coverages.rest import ApiException
@@ -20,13 +18,18 @@ from gs_rest_api_coverages import CoverageInfo
 
 from urllib.parse import quote_plus
 
+from typing import List
+from product_database import ProductDatabase
+from raster_add_task import RasterAddTask
+from product_catalogue_py_rest_client.models import ProductL3Dist, ProductL3Src, SurveyL3Relation, Survey
+
 
 class GroupLayerTask(object):
 
-    def __init__(self, configuration, workspace_name, product_records: List[ProductRecord]):
+    def __init__(self, configuration, workspace_name, product_database: ProductDatabase):
         self.configuration = configuration
         self.workspace_name = workspace_name
-        self.product_records = product_records
+        self.product_database = product_database
 
     def get_coverage_info(self, coverage_name):
         authtoken = self.configuration.get_basic_auth_token()
@@ -138,27 +141,37 @@ class GroupLayerTask(object):
 
         return layer_names
 
+    group_layer_presentation_string = "{0}"
+
     def run(self):
 
         existing_layer_groups = self.get_layer_groups()
         logging.info("Found existing layer groups {}".format(
             existing_layer_groups))
 
-        for product_record in self.product_records:
-            geoserver_bath_raster = product_record.get_bathymetric_raster()
-            geoserver_hs_raster = product_record.get_hillshade_raster()
-            if geoserver_hs_raster.source_tif == "":
-                logging.warn("No hillshade for {}".format(
-                    geoserver_hs_raster.display_name))
-            elif geoserver_bath_raster.base_name in existing_layer_groups:
+        product_record: ProductL3Dist
+        for product_record in self.product_database.l3_products:
+            gl_display_name = self.product_database.get_name_for_product(
+                product_record, self.group_layer_presentation_string)
+
+            bath_display_name = self.product_database.get_name_for_product(
+                product_record, RasterAddTask.raster_presentation_string)
+
+            hs_display_name = self.product_database.get_name_for_product(
+                product_record, RasterAddTask.hillshade_presentation_string)
+
+            if product_record.hillshade_location == "":
+                logging.info("No hillshade raster defined for: {}".format(
+                    hs_display_name))
+            elif bath_display_name in existing_layer_groups:
                 logging.info("Already have group layer for {}".format(
-                    geoserver_bath_raster.base_name))
+                    bath_display_name))
             else:
                 bbox = self.get_bounding_box(
-                    geoserver_bath_raster.display_name)
-                self.create_group_layers(geoserver_bath_raster.base_name,
-                                         [geoserver_hs_raster.display_name,
-                                             geoserver_bath_raster.display_name],
+                    bath_display_name)
+                self.create_group_layers(gl_display_name,
+                                         [hs_display_name,
+                                             bath_display_name],
                                          [StyleAddTask.BATH_HILLSHADE_STYLE_NAME,
                                              StyleAddTask.BATH_STYLE_NAME],
                                          bbox
