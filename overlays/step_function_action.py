@@ -8,6 +8,7 @@ import json
 import re
 from src_dist_name import SrcDistName
 import boto3
+import uuid
 
 
 class StepFunctionAction():
@@ -24,9 +25,11 @@ class StepFunctionAction():
              })
         logging.info(json_instruction)
         client = boto3.client('stepfunctions')
+        product_build = re.sub("[^a-zA-Z0-9]", "_",
+                               self.product_l3_src.name) + "_" + str(uuid.uuid4())
         response = client.start_execution(
             stateMachineArn='',
-            name='ausseabed-processing-pipeline-l3',
+            name=product_build,
             input=json_instruction
         )
         logging.info(response)

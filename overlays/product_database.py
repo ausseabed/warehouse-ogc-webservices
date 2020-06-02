@@ -30,13 +30,13 @@ class ProductDatabase():
 
     def load_from_commandline(self):
         try:
-            self.source_tif_path = os.environ['LIST_PATH']
+            self.database_url = os.environ['LIST_PATH']
         except KeyError:
             logging.exception("Please set the environment variable LIST_PATH")
             sys.exit(1)
 
         logging.info("Path to file that specifies what to load (LIST_PATH) = " +
-                     self.source_tif_path)
+                     self.database_url)
 
     def download_from_rest(self):
         self.l3_dist_products = self.retrieve_l3_dist_products_using_rest()
@@ -46,7 +46,7 @@ class ProductDatabase():
 
     def retrieve_l3_src_products_using_rest(self) -> List[ProductL3Src]:
         configuration = product_catalogue_py_rest_client.Configuration(
-            host=self.source_tif_path
+            host=self.database_url
         )
         configuration.access_token = self.bearer_id
         with product_catalogue_py_rest_client.ApiClient(configuration) as api_client:
@@ -64,7 +64,7 @@ class ProductDatabase():
 
     def retrieve_l3_dist_products_using_rest(self) -> List[ProductL3Dist]:
         configuration = product_catalogue_py_rest_client.Configuration(
-            host=self.source_tif_path
+            host=self.database_url
         )
         configuration.access_token = self.bearer_id
         with product_catalogue_py_rest_client.ApiClient(configuration) as api_client:
@@ -82,7 +82,7 @@ class ProductDatabase():
 
     def retrieve_survey_l3_relations(self) -> List[RelationSummaryDto]:
         configuration = product_catalogue_py_rest_client.Configuration(
-            host=self.source_tif_path
+            host=self.database_url
         )
         configuration.access_token = self.bearer_id
         with product_catalogue_py_rest_client.ApiClient(configuration) as api_client:
@@ -101,7 +101,7 @@ class ProductDatabase():
 
     def retrieve_surveys(self) -> List[Survey]:
         configuration = product_catalogue_py_rest_client.Configuration(
-            host=self.source_tif_path
+            host=self.database_url
         )
         configuration.access_token = self.bearer_id
         with product_catalogue_py_rest_client.ApiClient(configuration) as api_client:

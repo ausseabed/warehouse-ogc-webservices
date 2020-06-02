@@ -63,7 +63,8 @@ class Overlays():
             logging.info("Processing {}".format(unprocessed_product.name))
             step_function_action = StepFunctionAction(unprocessed_product)
             step_function_action.run_step_function()
-            update_database_action = UpdateDatabaseAction(unprocessed_product)
+            update_database_action = UpdateDatabaseAction(
+                unprocessed_product, product_database.database_url, self.token)
             update_database_action.update()
 
 
