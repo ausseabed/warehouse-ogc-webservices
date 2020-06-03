@@ -9,13 +9,21 @@ import re
 from src_dist_name import SrcDistName
 import boto3
 import uuid
+from botocore.config import Config
+
+config = Config(
+    retries=dict(
+        max_attempts=10
+    )
+)
 
 
 class StepFunctionAction():
 
-    def __init__(self, product_l3_src: ProductL3Src):
+    def __init__(self, product_l3_src: ProductL3Src, state_machine_arn):
         self.product_l3_src = product_l3_src
         self.src_dist_name = SrcDistName(product_l3_src)
+        self.state_machine_arn = state_machine_arn
 
     def run_step_function(self):
         json_instruction = json.dumps(
@@ -24,11 +32,11 @@ class StepFunctionAction():
              's3_hillshade_dest_tif': self.src_dist_name.s3_hillshade_dest_tif
              })
         logging.info(json_instruction)
-        client = boto3.client('stepfunctions')
+        client = boto3.client('stepfunctions', config=config)
         product_build = re.sub("[^a-zA-Z0-9]", "_",
-                               self.product_l3_src.name) + "_" + str(uuid.uuid4())
+                               self.product_l3_src.name)[0:39] + "_" + str(uuid.uuid4())
         response = client.start_execution(
-            stateMachineArn='',
+            stateMachineArn=self.state_machine_arn,
             name=product_build,
             input=json_instruction
         )

@@ -9,6 +9,7 @@ export GEOSERVER_ADMIN_PASSWORD="###"
 export LIST_PATH="https://bathymetry-survey-288871573946.s3-ap-southeast-2.amazonaws.com/registered_files.json"
 """
 
+from time import sleep
 from dotenv import load_dotenv
 import os
 import sys
@@ -59,10 +60,12 @@ class Overlays():
         logging.info("Planning on processing {} products".format(
             len(unprocessed_products)))
 
-        for unprocessed_product in [unprocessed_products[0]]:
+        for unprocessed_product in unprocessed_products:
             logging.info("Processing {}".format(unprocessed_product.name))
-            step_function_action = StepFunctionAction(unprocessed_product)
+            step_function_action = StepFunctionAction(
+                unprocessed_product, self.settings.state_machine_arn)
             step_function_action.run_step_function()
+            sleep(10)
             update_database_action = UpdateDatabaseAction(
                 unprocessed_product, product_database.database_url, self.token)
             update_database_action.update()

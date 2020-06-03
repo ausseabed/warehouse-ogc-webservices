@@ -44,3 +44,10 @@ class ConnectionParameters():
             logging.exception(
                 "Please set the environment variable CLIENT_PEM_THUMBPRINT")
             sys.exit(1)
+
+        try:
+            self.state_machine_arn = os.environ['STATEM_MACHINE_ARN']
+        except KeyError:
+            logging.exception(
+                "Please set the environment variable STATEM_MACHINE_ARN")
+            sys.exit(1)
