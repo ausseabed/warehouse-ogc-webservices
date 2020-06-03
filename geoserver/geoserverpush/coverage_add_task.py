@@ -11,12 +11,16 @@ import os
 import sys
 import logging
 from copy import copy
+import urllib
 import six
 from six.moves import http_client as httplib
 from product_record import ProductRecord
 from typing import List
 from product_database import ProductDatabase
-
+import gs_rest_api_layers
+from gs_rest_api_layers.rest import ApiException
+import gs_rest_api_featuretypes
+from gs_rest_api_featuretypes.rest import ApiException
 from product_catalogue_py_rest_client.models import ProductL3Dist, SurveyL3Relation, Survey
 
 
@@ -142,10 +146,6 @@ class CoverageAddTask(object):
             logging.error(
                 "Exception when calling DefaultApi->put_data_store_upload: %s\n" % e)
 
-        # TODO: rename from filename to layername?
-        # coverage_info = gs_rest_api_coverages.CoverageInfo(name=display_name, native_name=native_layer_name, title=display_name, srs=srs, metadata=metadata)
-        # api_instance.post_workspace_coverage_store(body, workspace, store)
-
     format_string = "{0} L0 Coverage"
 
     def get_coverage_name(self, product_l3_dist: ProductL3Dist):
@@ -174,6 +174,41 @@ class CoverageAddTask(object):
                                 for style_record in api_response['dataStores']['dataStore']]
         return data_store_names
 
+    def update_layer_name(self, coverage_name):
+        # find layer
+        logging.info("Changing name for coverage: {}".format(
+            coverage_name))
+        urlencoded_coverage_name = urllib.parse.quote(coverage_name)
+        logging.info("Changing name for coverage: {}".format(
+            urlencoded_coverage_name))
+
+        # create an instance of the API class
+        authtoken = self.configuration.get_basic_auth_token()
+
+        # create an instance of the API class
+        api_instance = gs_rest_api_featuretypes.DefaultApi(
+            gs_rest_api_featuretypes.ApiClient(self.configuration, header_name='Authorization', header_value=authtoken))
+        try:
+            api_response = api_instance.get_feature_type(
+                self.workspace_name, coverage_name, urlencoded_coverage_name, quiet_on_not_found=True)
+            logging.info(api_response)
+        except ApiException as e:
+            logging.error(
+                "Exception when calling DefaultApi->get_feature_type: %s\n" % e)
+            return
+
+        # Option 1: to change the feature type under the hood - requires updating the interface
+        body = api_response
+        body['featureType']['name'] = coverage_name
+        body['featureType']['title'] = coverage_name
+        # update layer
+        try:
+            api_instance.put_feature_type(
+                body, self.workspace_name, coverage_name, urlencoded_coverage_name)
+        except ApiException as e:
+            logging.error(
+                "Exception when calling DefaultApi->put_feature_type: %s\n" % e)
+
     def run(self):
         existing_datastores = self.get_existing_datastores()
         logging.info("Found existing datastores {}".format(
@@ -189,3 +224,4 @@ class CoverageAddTask(object):
             else:
                 self.create_coverage(
                     product_record.l3_coverage_location, coverage_name)
+                self.update_layer_name(coverage_name)
