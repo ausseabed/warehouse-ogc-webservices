@@ -54,7 +54,7 @@ class GroupLayerTask(object):
         try:
             layer = self.get_coverage_info(layer_name)
         except ApiException as e:
-            logging.error("Can't get bounding box")
+            logging.error("Can't get bounding box: %s\n" % e)
             raise
 
         bbox = layer["nativeBoundingBox"]
