@@ -44,13 +44,19 @@ class GroupLayerTask(object):
         except ApiException as e:
             logging.error(
                 "Exception when calling DefaultApi->get_coverage: %s\n" % e)
+            raise
 
         return api_response['coverage']
 
     def get_bounding_box(self, layer_name):
         logging.info(
             "Finding bounding box for {}".format(layer_name))
-        layer = self.get_coverage_info(layer_name)
+        try:
+            layer = self.get_coverage_info(layer_name)
+        except ApiException as e:
+            logging.error("Can't get bounding box")
+            raise
+
         bbox = layer["nativeBoundingBox"]
         srs = layer["srs"]
 
@@ -166,12 +172,15 @@ class GroupLayerTask(object):
                 logging.info("Already have group layer for {}".format(
                     bath_display_name))
             else:
-                bbox = self.get_bounding_box(
-                    bath_display_name)
-                self.create_group_layers(gl_display_name,
-                                         [hs_display_name,
-                                             bath_display_name],
-                                         [StyleAddTask.BATH_HILLSHADE_STYLE_NAME,
-                                             StyleAddTask.BATH_STYLE_NAME],
-                                         bbox
-                                         )
+                try:
+                    bbox = self.get_bounding_box(
+                        bath_display_name)
+                    self.create_group_layers(gl_display_name,
+                                             [hs_display_name,
+                                              bath_display_name],
+                                             [StyleAddTask.BATH_HILLSHADE_STYLE_NAME,
+                                                 StyleAddTask.BATH_STYLE_NAME],
+                                             bbox
+                                             )
+                except ApiException as e:
+                    logging.error("Can't create layer %s\n" % e)

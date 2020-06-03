@@ -8,8 +8,8 @@ class SrcDistName():
         self.product_l3_src = product_l3_src
         self.s3_src_tif = product_l3_src.product_tif_location
         self.s3_dest_tif = re.sub("public-bathymetry", "public-bathymetry-nonprod", re.sub(
-            ".tif[f]$", "_OV.tif", product_l3_src.product_tif_location))
+            ".tiff?$", "_OV.tif", product_l3_src.product_tif_location))
         self.s3_dest_shp = re.sub("public-bathymetry", "public-bathymetry-nonprod", re.sub(
-            ".tif[f]$", "_OV.shp", product_l3_src.product_tif_location))
+            ".tiff?$", "_OV.shp", product_l3_src.product_tif_location))
         self.s3_hillshade_dest_tif = re.sub("public-bathymetry", "public-bathymetry-nonprod", re.sub(
-            ".tif[f]$", "_HS.tif", product_l3_src.product_tif_location))
+            ".tiff?$", "_HS.tif", product_l3_src.product_tif_location))

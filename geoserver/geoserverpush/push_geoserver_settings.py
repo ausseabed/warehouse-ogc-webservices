@@ -69,5 +69,5 @@ class PushGeoserverSettings():
 
 
 if __name__ == '__main__':
-    warehouse = PushGeoserverSettings("ausseabed")
+    warehouse = PushGeoserverSettings("ausseabedB")
     warehouse.register_data_with_geoserver()

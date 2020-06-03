@@ -1,7 +1,6 @@
 import sys
 import os
 import requests
-from geoserver_raster import GeoserverRaster
 from xml.sax.saxutils import escape
 
 
@@ -29,16 +28,6 @@ class ProductRecord():
         self.UUID = input_dictionary["UUID"]
         self.srs = input_dictionary["srs"]
         self.metadata = input_dictionary["metadataPersistentId"]
-
-    def get_bathymetric_raster(self):
-        geoserver_bath_raster = GeoserverRaster()
-        geoserver_bath_raster.load_bath_from_database_entry(self)
-        return geoserver_bath_raster
-
-    def get_hillshade_raster(self):
-        geoserver_bath_raster = GeoserverRaster()
-        geoserver_bath_raster.load_hillshade_from_database_entry(self)
-        return geoserver_bath_raster
 
     def get_l0_coverage_name(self):
         return("{0} {1} {2} L0 Coverage".format(

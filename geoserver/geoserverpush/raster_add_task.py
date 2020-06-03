@@ -29,9 +29,9 @@ class RasterAddTask(object):
     def create_raster(self, display_name, display_description, url_location, srs, metadata):
 
         native_layer_name = re.sub(
-            ".tif", "", re.sub(".*/", "", url_location))
+            ".tiff?$", "", re.sub(".*/", "", url_location))
         logging.info(
-            "Creating coveragestore for raster {}".format(display_name))
+            "Creating coveragestore for raster {} = {}".format(display_name, native_layer_name))
 
         logging.info("Metadata link: {}".format(metadata))
         # create an instance of the API class
