@@ -110,11 +110,18 @@ class RasterStyleAttachTask(object):
         logging.info(
             "Found existing layer definitions {}".format(existing_layers))
 
+        published_records = []
         # First worry about bathymetry, then hillshade
         for product_record in self.product_database.l3_products:
 
             bath_display_name = self.product_database.get_name_for_product(
                 product_record, RasterAddTask.raster_presentation_string)
+
+            if bath_display_name in published_records:
+                logging.error(
+                    "Duplicate coverage name {}".format(bath_display_name))
+                continue
+            published_records.append(bath_display_name)
 
             # Add bathymetry Raster
             if bath_display_name in existing_layers:

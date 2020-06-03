@@ -155,6 +155,7 @@ class GroupLayerTask(object):
         logging.info("Found existing layer groups {}".format(
             existing_layer_groups))
 
+        published_records = []
         for product_record in self.product_database.l3_products:
             gl_display_name = self.product_database.get_name_for_product(
                 product_record, self.group_layer_presentation_string)
@@ -165,10 +166,16 @@ class GroupLayerTask(object):
             hs_display_name = self.product_database.get_name_for_product(
                 product_record, RasterAddTask.hillshade_presentation_string)
 
+            if bath_display_name in published_records:
+                logging.error(
+                    "Duplicate coverage name {}".format(bath_display_name))
+                continue
+            published_records.append(bath_display_name)
+
             if product_record.hillshade_location == "":
                 logging.info("No hillshade raster defined for: {}".format(
                     hs_display_name))
-            elif bath_display_name in existing_layer_groups:
+            elif gl_display_name in existing_layer_groups:
                 logging.info("Already have group layer for {}".format(
                     bath_display_name))
             else:

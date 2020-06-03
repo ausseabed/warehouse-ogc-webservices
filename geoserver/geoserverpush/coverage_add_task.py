@@ -53,7 +53,7 @@ class CoverageAddTask(object):
         except subprocess.CalledProcessError as exc:
             logging.error("Status : FAIL {}, {}".format(exc.returncode,
                                                         exc.output))
-            exit(exc.returncode)
+            raise
 
     def create_temp_dir(self):
         cwd = tempfile.gettempdir()
@@ -97,7 +97,6 @@ class CoverageAddTask(object):
         # 2. use boto/gdal to copy local
         for (source, destination) in zip(source_shapefile_plus_sidecars.values(), shapefile_plus_sidecars.values()):
             self.copy_s3_file_local(source, destination)
-        # self.copy_shapefile_local(polygon_dest, shapefile_url)
 
         # 3. register in geoserver as below
         logging.info(shapefile_plus_sidecars)
@@ -178,7 +177,7 @@ class CoverageAddTask(object):
         # find layer
         logging.info("Changing name for coverage: {}".format(
             coverage_name))
-        urlencoded_coverage_name = urllib.parse.quote(coverage_name)
+        urlencoded_coverage_name = re.sub(" ", "%20", coverage_name)
         logging.info("Changing name for coverage: {}".format(
             urlencoded_coverage_name))
 
@@ -214,14 +213,25 @@ class CoverageAddTask(object):
         logging.info("Found existing datastores {}".format(
             existing_datastores))
 
+        published_records = []
         for product_record in self.product_database.l3_products:
             coverage_name = self.get_coverage_name(product_record)
+            if coverage_name in published_records:
+                logging.error(
+                    "Duplicate coverage name {}".format(coverage_name))
+                continue
+            published_records.append(coverage_name)
+
             if product_record.l3_coverage_location == '':
                 logging.info(
                     "Skipping coverage because there is no file: {}".format(coverage_name))
             elif coverage_name in existing_datastores:
                 logging.info("Already have coverage: {}".format(coverage_name))
             else:
-                self.create_coverage(
-                    product_record.l3_coverage_location, coverage_name)
-                self.update_layer_name(coverage_name)
+                try:
+                    self.create_coverage(
+                        product_record.l3_coverage_location, coverage_name)
+                    self.update_layer_name(coverage_name)
+                except subprocess.CalledProcessError:
+                    logging.error(
+                        "Could not copy shapefile: {}".format(coverage_name))
