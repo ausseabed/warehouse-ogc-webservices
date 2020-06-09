@@ -1,42 +1,26 @@
 
-[![CircleCI](https://circleci.com/gh/GeoscienceAustralia/ausseabed-processing-pipeline.svg?style=svg&circle-token=46ef01ebd72b56ec05a514c067d23655292ac5d8)](https://circleci.com/gh/GeoscienceAustralia/ausseabed-processing-pipeline)
+[![CircleCI](https://circleci.com/gh/ausseabed/warehouse-ogc-webservices.svg?style=svg)](https://circleci.com/gh/ausseabed/warehouse-ogc-webservices)
 
 
+AusSeabed is a national seabed mapping coordination program. The program aims to serve the Australian community that relies on seabed data by coordinating collection efforts in Australian waters and improving data access. 
 
-This repo contains both the infrastructure and application code for ausseabed processing pipeline. There are two other supporting code repos
-1.https://github.com/GeoscienceAustralia/ausseabed-caris-ami (used for creating an AWS AMI with Caris installed)
-2.https://github.com/GeoscienceAustralia/ausseabed-caris-container (used for creating a socker image with Caris installed)
-
+This repository contains the code that builds OGC web service endpoints. Geoserver on AWS ECS Fargate infrastructure is used to provide the endpoints. The terraform code for deploying the infrastructure is housed in the https://github.com/ausseabed/ausseabed-aws-foundation/ repository.
 
  
 ______________________________________________________________________________________________________________
 
-#### Infarstructure as code
-Terrafrom v0.12.17 is used as the IaaC tool.
-Generally, the commands to create an infratucture setup with terraform is the following
-* terraform init
-* terraform plan
-* terraform apply
-
-However, refer to [circleci config](https://github.com/GeoscienceAustralia/ausseabed-processing-pipeline/blob/master/.circleci/config.yml) for exact steps.
-
+#### Build Workflow
+Circle CI builds and pushes the docker container. The steps involved in the build are:
+* build_tomcat_push_jar (create a launch script to pull configuration data)
+* build_and_push_geoserver_image (incorporate the launch script and any other configuration details into a docker container)
 
 
 ______________________________________________________________________________________________________________
 
-#### [User Ineraction diagram](./docs/ausseabed_processing_pipeline_component_diagram-user_interaction.png)
-![](./docs/ausseabed_processing_pipeline_component_diagram-user_interaction.png?raw=true)
-
-
-______________________________________________________________________________________________________________
-
-#### [Component diagram](./docs/ausseabed_processing_pipeline_component_diagram-Components.jpg)
-![](./docs/ausseabed_processing_pipeline_component_diagram-Components.jpg?raw=true)
+#### Build Tomcat Push Jar
+A very simple jar file is added to the TomCat service to allow push-on-load configuration of the GeoServer Instance. This is located in warehouse-ogc-webservices/geoserver/ausseabed.pipeline/
 
 ______________________________________________________________________________________________________________
 
-#### [Developers guide](./docs/dev_guide.md)
-If you are starting as a developer in this project this document will be useful.
-______________________________________________________________________________________________________________
-#### [Users guide](./docs/user_guide.md)
-If you are a hydorgrapher or a someone processing surveys this guide will be useful
+#### Push on load
+On load of the geoserver instance, the entrypoint warehouse-ogc-webservices/geoserver/geoserverpush/push_geoserver_settings.py runs to transfer information about layers from the Product Catalogue to the geoserver instance. The Product Catalogue restful interface is defined in the repo: https://github.com/ausseabed/product-catalogue. Geoserver is called through a set of restful libraries defined in the repo: https://github.com/ausseabed/geoserver-rest-client. These commands can be run to populate
