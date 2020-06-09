@@ -8,6 +8,7 @@ from product_catalogue_py_rest_client.rest import ApiException
 from product_catalogue_py_rest_client.models import ProductL3Dist, RelationSummaryDto, Survey
 from typing import List
 from xml.sax.saxutils import escape
+import re
 
 
 class ProductDatabase():
@@ -102,7 +103,7 @@ class ProductDatabase():
                     "Exception when calling CompilationsApi->compilations_controller_create: %s\n" % e)
 
     def create_raster_base_name(self):
-        self.base_names = {x.id: "{0} {1} {2}".format(x.source_product.name, z.year, x.source_product.resolution)
+        self.base_names = {x.id: re.sub(",", "_", "{0} {1} {2}".format(x.source_product.name, z.year, x.source_product.resolution))
                            for x in self.l3_products
                            for y in self.survey_l3_relations
                            for z in self.surveys

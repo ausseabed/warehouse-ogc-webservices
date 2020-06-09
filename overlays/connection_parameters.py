@@ -46,8 +46,8 @@ class ConnectionParameters():
             sys.exit(1)
 
         try:
-            self.state_machine_arn = os.environ['STATEM_MACHINE_ARN']
+            self.state_machine_arn = os.environ['STATE_MACHINE_ARN']
         except KeyError:
             logging.exception(
-                "Please set the environment variable STATEM_MACHINE_ARN")
+                "Please set the environment variable STATE_MACHINE_ARN")
             sys.exit(1)
