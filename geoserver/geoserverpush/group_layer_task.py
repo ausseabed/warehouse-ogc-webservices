@@ -86,7 +86,7 @@ class GroupLayerTask(object):
         logging.info("Created layer link: {}".format(style_name))
         return l
 
-    def create_group_layers(self, group_layer_name, list_of_layers, list_of_styles, bbox):
+    def create_group_layers(self, group_layer_name, group_layer_label, list_of_layers, list_of_styles, bbox):
         logging.info(
             "Creating group layer {}".format(group_layer_name))
 
@@ -100,7 +100,7 @@ class GroupLayerTask(object):
 
         # Layergroup | The layer group body information to upload.
         layergroup = gs_rest_api_layergroups.Layergroup(
-            name=group_layer_name, workspace=self.workspace_name, title=group_layer_name, bounds=bbox)
+            name=group_layer_name, workspace=self.workspace_name, title=group_layer_label, bounds=bbox)
         layergroup.publishables = {'published': [self.create_layer_link(
             layer) for layer in list_of_layers]}
 
@@ -157,14 +157,17 @@ class GroupLayerTask(object):
 
         published_records = []
         for product_record in self.product_database.l3_products:
-            gl_display_name = self.product_database.get_name_for_product(
+            group_layer_name = self.product_database.get_name_for_product(
+                product_record, self.group_layer_presentation_string)
+
+            group_layer_label = self.product_database.get_label_for_product(
                 product_record, self.group_layer_presentation_string)
 
             bath_display_name = self.product_database.get_name_for_product(
-                product_record, RasterAddTask.raster_presentation_string)
+                product_record, RasterAddTask.raster_name_string)
 
             hs_display_name = self.product_database.get_name_for_product(
-                product_record, RasterAddTask.hillshade_presentation_string)
+                product_record, RasterAddTask.hillshade_name_string)
 
             if bath_display_name in published_records:
                 logging.error(
@@ -175,14 +178,14 @@ class GroupLayerTask(object):
             if product_record.hillshade_location == "":
                 logging.info("No hillshade raster defined for: {}".format(
                     hs_display_name))
-            elif gl_display_name in existing_layer_groups:
+            elif group_layer_name in existing_layer_groups:
                 logging.info("Already have group layer for {}".format(
                     bath_display_name))
             else:
                 try:
                     bbox = self.get_bounding_box(
                         bath_display_name)
-                    self.create_group_layers(gl_display_name,
+                    self.create_group_layers(group_layer_name, group_layer_label,
                                              [hs_display_name,
                                               bath_display_name],
                                              [StyleAddTask.BATH_HILLSHADE_STYLE_NAME,

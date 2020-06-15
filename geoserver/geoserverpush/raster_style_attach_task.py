@@ -115,7 +115,7 @@ class RasterStyleAttachTask(object):
         for product_record in self.product_database.l3_products:
 
             bath_display_name = self.product_database.get_name_for_product(
-                product_record, RasterAddTask.raster_presentation_string)
+                product_record, RasterAddTask.raster_name_string)
 
             if bath_display_name in published_records:
                 logging.error(
@@ -132,7 +132,7 @@ class RasterStyleAttachTask(object):
                     bath_display_name))
 
             hs_display_name = self.product_database.get_name_for_product(
-                product_record, RasterAddTask.hillshade_presentation_string)
+                product_record, RasterAddTask.hillshade_name_string)
             if hs_display_name in existing_layers:
                 self.attach_style(
                     hs_display_name, StyleAddTask.BATH_HILLSHADE_STYLE_NAME)

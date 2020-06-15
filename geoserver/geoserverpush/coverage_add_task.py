@@ -145,11 +145,16 @@ class CoverageAddTask(object):
             logging.error(
                 "Exception when calling DefaultApi->put_data_store_upload: %s\n" % e)
 
-    format_string = "{0} L0 Coverage"
+    label_format_string = "{0} L0 Coverage"
+    name_format_string = "{0}_L0_Coverage"
+
+    def get_coverage_label(self, product_l3_dist: ProductL3Dist):
+        # match on prod_id
+        return (self.product_database.get_label_for_product(product_l3_dist, self.label_format_string))
 
     def get_coverage_name(self, product_l3_dist: ProductL3Dist):
         # match on prod_id
-        return (self.product_database.get_name_for_product(product_l3_dist, self.format_string))
+        return (self.product_database.get_name_for_product(product_l3_dist, self.name_format_string))
 
     def get_existing_datastores(self):
         # create an instance of the API class
@@ -173,11 +178,11 @@ class CoverageAddTask(object):
                                 for style_record in api_response['dataStores']['dataStore']]
         return data_store_names
 
-    def update_layer_name(self, coverage_name):
+    def update_layer_name(self, coverage_name, coverage_label):
         # find layer
         logging.info("Changing name for coverage: {}".format(
             coverage_name))
-        urlencoded_coverage_name = re.sub(" ", "%20", coverage_name)
+        urlencoded_coverage_name = re.sub(" ", "%20", coverage_label)
         logging.info("Changing name for coverage: {}".format(
             urlencoded_coverage_name))
 
@@ -189,7 +194,7 @@ class CoverageAddTask(object):
             gs_rest_api_featuretypes.ApiClient(self.configuration, header_name='Authorization', header_value=authtoken))
         try:
             api_response = api_instance.get_feature_type(
-                self.workspace_name, coverage_name, urlencoded_coverage_name, quiet_on_not_found=True)
+                self.workspace_name, coverage_name, coverage_name, quiet_on_not_found=True)
             logging.info(api_response)
         except ApiException as e:
             logging.error(
@@ -199,11 +204,11 @@ class CoverageAddTask(object):
         # Option 1: to change the feature type under the hood - requires updating the interface
         body = api_response
         body['featureType']['name'] = coverage_name
-        body['featureType']['title'] = coverage_name
+        body['featureType']['title'] = coverage_label
         # update layer
         try:
             api_instance.put_feature_type(
-                body, self.workspace_name, coverage_name, urlencoded_coverage_name)
+                body, self.workspace_name, coverage_name, coverage_name)
         except ApiException as e:
             logging.error(
                 "Exception when calling DefaultApi->put_feature_type: %s\n" % e)
@@ -216,6 +221,7 @@ class CoverageAddTask(object):
         published_records = []
         for product_record in self.product_database.l3_products:
             coverage_name = self.get_coverage_name(product_record)
+            coverage_label = self.get_coverage_label(product_record)
             if coverage_name in published_records:
                 logging.error(
                     "Duplicate coverage name {}".format(coverage_name))
@@ -231,7 +237,7 @@ class CoverageAddTask(object):
                 try:
                     self.create_coverage(
                         product_record.l3_coverage_location, coverage_name)
-                    self.update_layer_name(coverage_name)
+                    self.update_layer_name(coverage_name, coverage_label)
                 except subprocess.CalledProcessError:
                     logging.error(
                         "Could not copy shapefile: {}".format(coverage_name))

@@ -26,7 +26,7 @@ class RasterAddTask(object):
         self.workspace_name = workspace_name
         self.product_database = product_database
 
-    def create_raster(self, display_name, display_description, url_location, srs, metadata):
+    def create_raster(self, display_name, display_description, url_location, srs, metadata, dimensions):
 
         native_layer_name = re.sub(
             ".tiff?$", "", re.sub(".*/", "", url_location))
@@ -73,14 +73,8 @@ class RasterAddTask(object):
             gs_rest_api_coverages.ApiClient(self.configuration, header_name='Authorization', header_value=authtoken))
         # CoverageInfo | The body of the coverage to POST
         coverage_info = gs_rest_api_coverages.CoverageInfo(
-            name=display_name, native_name=native_layer_name, title=display_name, srs=srs, metadata_links=metadata_link_entry)
-        coverage_info.dimensions = {'coverageDimension': [
-            {
-                'name': 'Elevation',
-                'description': 'Elevation in metres'
-            }
-        ]
-        }
+            name=display_name, native_name=native_layer_name, title=display_description, srs=srs, metadata_links=metadata_link_entry)
+        coverage_info.dimensions = dimensions
         # data = "<coverage><name>{}</name><title>{}</title><nativeName>{}</nativeName><srs>{}</srs></coverage>".format(
         #    display_name, display_name, native_layer_name, srs)
         workspace = self.workspace_name  # str | The name of the workspace
@@ -122,54 +116,81 @@ class RasterAddTask(object):
                             for raster_record in api_response['coverageStores']['coverageStore']]
         return raster_names
 
-    raster_presentation_string = "{0} OV"
-    hillshade_presentation_string = "{0} HS"
+    raster_name_string = "{0}_OV"
+    hillshade_name_string = "{0}_HS"
 
-    def get_coverage_name(self, product_l3_dist: ProductL3Dist):
-        # match on prod_id
-        self.product_database.get_name_for_product(
-            product_l3_dist, self.raster_presentation_string)
-        self.product_database.get_name_for_product(
-            product_l3_dist, self.hillshade_presentation_string)
+    raster_label_string = "{0} OV"
+    hillshade_label_string = "{0} HS"
+
+    def get_coverage_label_bathy(self, product_l3_dist: ProductL3Dist):
+        return self.product_database.get_label_for_product(
+            product_l3_dist, self.raster_label_string)
+
+    def get_coverage_label_hillshade(self, product_l3_dist: ProductL3Dist):
+        return self.product_database.get_label_for_product(
+            product_l3_dist, self.hillshade_label_string)
+
+    def get_coverage_name_bathy(self, product_l3_dist: ProductL3Dist):
+        return self.product_database.get_name_for_product(
+            product_l3_dist, self.raster_name_string)
+
+    def get_coverage_name_hillshade(self, product_l3_dist: ProductL3Dist):
+        return self.product_database.get_name_for_product(
+            product_l3_dist, self.hillshade_name_string)
 
     def run(self):
 
         existing_rasters = self.get_coverages()
         logging.info("Found existing rasters {}".format(existing_rasters))
 
+        raster_dimensions = {'coverageDimension': [
+            {
+                'name': 'Elevation',
+                        'description': 'Elevation in metres'
+            }
+        ]
+        }
+        hillshade_dimensions = {'coverageDimension': [
+            {
+                'name': 'Shaded relief',
+                        'description': 'created with gdaldem hillshade -az 30 -alt 45 -s 2'
+            }
+        ]
+        }
+
         published_records = []
         # First worry about bathymetry, then hillshade
         for product_record in self.product_database.l3_products:
-            bath_display_name = self.product_database.get_name_for_product(
-                product_record, self.raster_presentation_string)
+            bath_name = self.get_coverage_name_bathy(product_record)
+            bath_label_name = self.get_coverage_label_bathy(product_record)
 
-            if bath_display_name in published_records:
+            if bath_name in published_records:
                 logging.error(
-                    "Duplicate coverage name {}".format(bath_display_name))
+                    "Duplicate coverage name {}".format(bath_name))
                 continue
-            published_records.append(bath_display_name)
+            published_records.append(bath_name)
 
             # Add bathymetry Raster
-            if bath_display_name in existing_rasters:
+            if bath_name in existing_rasters:
                 logging.info("Already have raster coveragestore: {}".format(
-                    bath_display_name))
+                    bath_name))
             else:
                 self.create_raster(
-                    bath_display_name, bath_display_name,
+                    bath_name, bath_label_name,
                     product_record.bathymetry_location, product_record.source_product.srs,
-                    product_record.source_product.metadata_persistent_id)
+                    product_record.source_product.metadata_persistent_id, raster_dimensions)
 
-            hs_display_name = self.product_database.get_name_for_product(
-                product_record, self.hillshade_presentation_string)
+            hillshade_name = self.get_coverage_name_hillshade(product_record)
+            hillshade_label = self.get_coverage_label_hillshade(product_record)
 
             if product_record.hillshade_location == "":
                 logging.info("No hillshade raster defined for: {}".format(
-                    hs_display_name))
-            elif hs_display_name in existing_rasters:
+                    hillshade_name))
+            elif hillshade_name in existing_rasters:
                 logging.info("Already have raster coveragestore: {}".format(
-                    hs_display_name))
+                    hillshade_name))
             else:
                 self.create_raster(
-                    hs_display_name, hs_display_name,
+                    hillshade_name, hillshade_label,
                     product_record.hillshade_location, product_record.source_product.srs,
-                    product_record.source_product.metadata_persistent_id)
+                    product_record.source_product.metadata_persistent_id, hillshade_dimensions)
