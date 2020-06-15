@@ -74,6 +74,13 @@ class RasterAddTask(object):
         # CoverageInfo | The body of the coverage to POST
         coverage_info = gs_rest_api_coverages.CoverageInfo(
             name=display_name, native_name=native_layer_name, title=display_name, srs=srs, metadata_links=metadata_link_entry)
+        coverage_info.dimensions = {'coverageDimension': [
+            {
+                'name': 'Elevation',
+                'description': 'Elevation in metres'
+            }
+        ]
+        }
         # data = "<coverage><name>{}</name><title>{}</title><nativeName>{}</nativeName><srs>{}</srs></coverage>".format(
         #    display_name, display_name, native_layer_name, srs)
         workspace = self.workspace_name  # str | The name of the workspace
