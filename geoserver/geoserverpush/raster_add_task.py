@@ -75,6 +75,8 @@ class RasterAddTask(object):
         coverage_info = gs_rest_api_coverages.CoverageInfo(
             name=display_name, native_name=native_layer_name, title=display_description, srs=srs, metadata_links=metadata_link_entry)
         coverage_info.dimensions = dimensions
+        coverage_info.supported_formats = {'string': ['GEOTIFF']}
+        coverage_info.native_format = 'GEOTIFF'
         # data = "<coverage><name>{}</name><title>{}</title><nativeName>{}</nativeName><srs>{}</srs></coverage>".format(
         #    display_name, display_name, native_layer_name, srs)
         workspace = self.workspace_name  # str | The name of the workspace
@@ -160,7 +162,7 @@ class RasterAddTask(object):
 
         published_records = []
         # First worry about bathymetry, then hillshade
-        for product_record in self.product_database.l3_products:
+        for product_record in [self.product_database.l3_products[0]]:
             bath_name = self.get_coverage_name_bathy(product_record)
             bath_label_name = self.get_coverage_label_bathy(product_record)
 
