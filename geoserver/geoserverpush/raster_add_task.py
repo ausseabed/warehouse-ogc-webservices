@@ -162,7 +162,7 @@ class RasterAddTask(object):
 
         published_records = []
         # First worry about bathymetry, then hillshade
-        for product_record in [self.product_database.l3_products[0]]:
+        for product_record in self.product_database.l3_products:
             bath_name = self.get_coverage_name_bathy(product_record)
             bath_label_name = self.get_coverage_label_bathy(product_record)
 
