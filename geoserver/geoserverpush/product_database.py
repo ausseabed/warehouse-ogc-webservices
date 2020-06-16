@@ -104,10 +104,10 @@ class ProductDatabase():
                     "Exception when calling CompilationsApi->compilations_controller_create: %s\n" % e)
 
     # https://www.w3.org/TR/1999/REC-xml-names-19990114/#NT-NCName defines the values allowable in a NCName (used in GML)
-    # See NGA-366
+    # See NGA-366 - also removing .
     # NCName = [\i-[:]][\c-[:]]*
     SLASH_I_LESS_COLON = "A-Z_a-z\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C-\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD"
-    SLASH_C_LESS_COLON = "-.0-9A-Z_a-z\u00B7\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u037D\u037F-\u1FFF\u200C-\u200D\u203F\u2040\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD"
+    SLASH_C_LESS_COLON = "-0-9A-Z_a-z\u00B7\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u037D\u037F-\u1FFF\u200C-\u200D\u203F\u2040\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD"
 
     def create_raster_base_name(self):
         self.base_names = {x_id: re.sub("^[^"+self.SLASH_I_LESS_COLON+"]", "_", re.sub("[^"+self.SLASH_C_LESS_COLON+"]", "_", x_name))

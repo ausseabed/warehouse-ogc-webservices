@@ -45,6 +45,7 @@ class RasterStyleAttachTask(object):
         except ApiException as e:
             logging.error(
                 "Exception when calling DefaultApi->layers_workspace_get: %s\n" % e)
+            raise
 
         return api_response
 
@@ -62,7 +63,13 @@ class RasterStyleAttachTask(object):
         api_instance = gs_rest_api_layers.DefaultApi(api_client)
 
         # Layer | The updated layer definition.
-        layer_wrapper = self.get_layer(display_name)
+        try:
+            layer_wrapper = self.get_layer(display_name)
+        except ApiException as e:
+            logging.error(
+                "Exception when calling get_layer: %s\n" % e)
+            return
+
         layer = layer_wrapper.layer
 
         style_url = '{server_url}/workspaces/{workspace_name}/styles/{style_name}.xml'.format(
