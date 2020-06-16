@@ -23,6 +23,7 @@ from coverage_add_task import CoverageAddTask
 from raster_add_task import RasterAddTask
 from raster_style_attach_task import RasterStyleAttachTask
 from group_layer_task import GroupLayerTask
+from service_description_add_task import ServiceDescriptionAddTask
 import logging
 from auth_broker import AuthBroker
 
@@ -54,6 +55,7 @@ class PushGeoserverSettings():
         product_database.download_from_rest()
 
         WorkspaceAddTask(configuration, self.workspace_name).run()
+        ServiceDescriptionAddTask(configuration, self.workspace_name).run()
         StyleAddTask(configuration, self.workspace_name).run()
         CoverageAddTask(configuration, self.workspace_name,
                         product_database).run()
