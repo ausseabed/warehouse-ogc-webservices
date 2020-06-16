@@ -1,10 +1,10 @@
 #--------- Generic stuff all our Dockerfiles should start with so we get caching ------------
-ARG IMAGE_VERSION=9.0.7-jre8
+# ARG IMAGE_VERSION=9.0.7-jre8
 
 ## The Geoserver version
-ARG GS_VERSION=2.16.2
+ARG GS_VERSION=2.17.0
 
-FROM kartoza/geoserver:2.16.2
+FROM kartoza/geoserver:2.17.0
 USER root
 
 WORKDIR /usr/src/app
