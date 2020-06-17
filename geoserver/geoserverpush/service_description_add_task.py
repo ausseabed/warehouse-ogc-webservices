@@ -63,7 +63,7 @@ class ServiceDescriptionAddTask(object):
                 "Exception when calling DefaultApi->get_wcs_settings: %s\n" % e)
 
         logging.info(api_response)
-        wcs_config: WCSInfo = api_response.wcs
+        wcs_config = api_response.wcs
         wcs_config.enabled = "True"
         wcs_config.name = "WCS"
         wcs_config.title = "Ausseabed Warehouse Bathymetry"
