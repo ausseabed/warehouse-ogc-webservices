@@ -18,6 +18,11 @@ from product_database import ProductDatabase
 from product_catalogue_py_rest_client.models import ProductL3Dist, ProductL3Src, SurveyL3Relation, Survey
 import re
 
+from gis_metadata.iso_metadata_parser import IsoParser
+
+from gis_metadata.metadata_parser import get_metadata_parser
+import requests
+
 
 class RasterAddTask(object):
 
@@ -26,7 +31,28 @@ class RasterAddTask(object):
         self.workspace_name = workspace_name
         self.product_database = product_database
 
-    def create_raster(self, display_name, display_description, url_location, srs, metadata, dimensions):
+    @staticmethod
+    def get_abstract(metadata_url):
+        logging.info("Loading metadata: %s\n" % metadata_url)
+        if not(metadata_url.startswith("http://pid") or metadata_url.startswith("https://pid")):
+            return metadata_url
+
+        try:
+            metadata_response = requests.get(
+                metadata_url + "?_format=text%2Fxml")
+            if (metadata_response.ok):
+                iso_from_file = get_metadata_parser(metadata_response.text)
+                return iso_from_file.convert_to(dict)['abstract'] + '\n\n' + metadata_url
+            else:
+                logging.error(
+                    "Could not download metadata from: %s\n" % metadata_url)
+
+        except Exception:
+            logging.exception(
+                "Could not load metadata from: %s\n" % metadata_url)
+            return metadata_url
+
+    def create_raster(self, display_name, title, url_location, srs, metadata, dimensions):
 
         native_layer_name = re.sub(
             ".tiff?$", "", re.sub(".*/", "", url_location))
@@ -44,8 +70,11 @@ class RasterAddTask(object):
         url = url_location + \
             "?useAnon=true&awsRegion=AP_SOUTHEAST_2"  # ap-southeast-2
 
+        display_description = RasterAddTask.get_abstract(metadata)
+        logging.info(display_description)
+
         coverage_store_info = gs_rest_api_coveragestores.CoverageStoreInfo(
-            name=display_name, description=display_description,
+            name=display_name, description=title,
             type="S3GeoTiff", workspace=self.workspace_name, enabled=True,
             url=url)
 
@@ -73,7 +102,7 @@ class RasterAddTask(object):
             gs_rest_api_coverages.ApiClient(self.configuration, header_name='Authorization', header_value=authtoken))
         # CoverageInfo | The body of the coverage to POST
         coverage_info = gs_rest_api_coverages.CoverageInfo(
-            name=display_name, native_name=native_layer_name, title=display_description, srs=srs, metadata_links=metadata_link_entry)
+            name=display_name, native_name=native_layer_name, title=title, srs=srs, metadata_links=metadata_link_entry, abstract=display_description)
         coverage_info.dimensions = dimensions
         coverage_info.supported_formats = {'string': ['GEOTIFF']}
         coverage_info.native_format = 'GEOTIFF'
@@ -91,8 +120,8 @@ class RasterAddTask(object):
             logging.error(
                 "Please manually remove coverage store {} before next attempt to submit".format(display_name))
             logging.error(
-                "The input params were native_layer_name: {} display_name: {} display_description: {} url_location: {} srs: {} metadata: {}".format(
-                    native_layer_name, display_name, display_description, url_location, srs, metadata))
+                "The input params were native_layer_name: {} display_name: {} title: {} url_location: {} srs: {} metadata: {}".format(
+                    native_layer_name, display_name, title, url_location, srs, metadata))
 
     def get_coverages(self):
         # create an instance of the API class

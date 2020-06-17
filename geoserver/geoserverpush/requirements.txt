@@ -8,6 +8,7 @@ git+https://github.com/ausseabed/geoserver-rest-client.git#subdirectory=modules/
 git+https://github.com/ausseabed/product-catalogue.git#subdirectory=py-rest-client
 git+https://github.com/ausseabed/geoserver-rest-client.git#subdirectory=modules/featuretypes
 git+https://github.com/ausseabed/geoserver-rest-client.git#subdirectory=modules/owsservices
+gis-metadata-parser
 requests
 msal>=0.6.1,<2
 python-dotenv

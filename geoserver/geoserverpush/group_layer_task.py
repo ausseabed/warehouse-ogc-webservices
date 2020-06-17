@@ -86,7 +86,7 @@ class GroupLayerTask(object):
         logging.info("Created layer link: {}".format(style_name))
         return l
 
-    def create_group_layers(self, group_layer_name, group_layer_label, list_of_layers, list_of_styles, bbox):
+    def create_group_layers(self, group_layer_name, group_layer_label, list_of_layers, list_of_styles, bbox, metadata_url):
         logging.info(
             "Creating group layer {}".format(group_layer_name))
 
@@ -98,9 +98,11 @@ class GroupLayerTask(object):
 
         api_instance = gs_rest_api_layergroups.DefaultApi(api_client)
 
+        abstract = RasterAddTask.get_abstract(metadata_url)
+
         # Layergroup | The layer group body information to upload.
         layergroup = gs_rest_api_layergroups.Layergroup(
-            name=group_layer_name, workspace=self.workspace_name, title=group_layer_label, bounds=bbox)
+            name=group_layer_name, workspace=self.workspace_name, title=group_layer_label, bounds=bbox, abstract_txt=abstract)
         layergroup.publishables = {'published': [self.create_layer_link(
             layer) for layer in list_of_layers]}
 
@@ -185,12 +187,13 @@ class GroupLayerTask(object):
                 try:
                     bbox = self.get_bounding_box(
                         bath_display_name)
+                    metadata_url = product_record.source_product.metadata_persistent_id
                     self.create_group_layers(group_layer_name, group_layer_label,
                                              [hs_display_name,
                                               bath_display_name],
                                              [StyleAddTask.BATH_HILLSHADE_STYLE_NAME,
                                                  StyleAddTask.BATH_STYLE_NAME],
-                                             bbox
+                                             bbox, metadata_url
                                              )
                 except ApiException as e:
                     logging.error("Can't create layer %s\n" % e)
