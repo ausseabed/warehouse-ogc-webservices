@@ -20,6 +20,7 @@ from product_database import ProductDatabase
 from connection_parameters import ConnectionParameters
 from update_database_action import UpdateDatabaseAction
 from step_function_action import StepFunctionAction
+import json
 
 from product_catalogue_py_rest_client.models import ProductL3Dist, ProductL3Src, SurveyL3Relation, Survey
 logging.basicConfig(level=logging.DEBUG)
@@ -40,6 +41,11 @@ class Overlays():
         auth = AuthBroker(self.settings)
         self.token = auth.get_auth_token()
 
+    def buildSrsMapping(self):
+        with open('reference-system.json') as f:
+            d = json.load(f)
+            return(d['Results'])
+
     def run(self):
         product_database = ProductDatabase(self.token)
         product_database.load_from_commandline()
@@ -51,6 +57,7 @@ class Overlays():
         logging.info("Found {} products that have been processed".format(len(
             [product.source_product.id for product in product_database.l3_dist_products])))
 
+        refs = self.buildSrsMapping()
         processed_product_ids = [product.source_product.id
                                  for product in product_database.l3_dist_products]
 
@@ -63,7 +70,7 @@ class Overlays():
         for unprocessed_product in unprocessed_products:
             logging.info("Processing {}".format(unprocessed_product.name))
             step_function_action = StepFunctionAction(
-                unprocessed_product, self.settings.state_machine_arn)
+                unprocessed_product, self.settings.state_machine_arn, refs)
             step_function_action.run_step_function()
             sleep(10)
             update_database_action = UpdateDatabaseAction(
