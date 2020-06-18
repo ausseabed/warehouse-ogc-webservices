@@ -106,6 +106,11 @@ class RasterAddTask(object):
         coverage_info.dimensions = dimensions
         coverage_info.supported_formats = {'string': ['GEOTIFF']}
         coverage_info.native_format = 'GEOTIFF'
+        coverage_info.request_srs = {"string": ["EPSG: 4326"]}
+        coverage_info.response_srs = {"string": ["EPSG: 4326"]}
+        coverage_info.interpolation_methods = {"string": ["nearest neighbor"]}
+        coverage_info.default_interpolation_method = {
+            "string": ["nearest neighbor"]}
         # data = "<coverage><name>{}</name><title>{}</title><nativeName>{}</nativeName><srs>{}</srs></coverage>".format(
         #    display_name, display_name, native_layer_name, srs)
         workspace = self.workspace_name  # str | The name of the workspace
