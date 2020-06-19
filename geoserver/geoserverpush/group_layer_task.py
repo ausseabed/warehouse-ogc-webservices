@@ -115,7 +115,7 @@ class GroupLayerTask(object):
             api_response = api_instance.post_workspace_layergroups(
                 layer_group_wrapper, self.workspace_name)
             logging.info(api_response)
-        except ApiException as e:
+        except Exception as e:
             logging.error(
                 "Exception when calling DefaultApi->post_workspace_layergroups: %s\n" % e)
 

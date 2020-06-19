@@ -69,6 +69,8 @@ class PushGeoserverSettings():
         GroupLayerTask(configuration, self.workspace_name,
                        product_database).run()
 
+        logging.info("Completed")
+
 
 if __name__ == '__main__':
     warehouse = PushGeoserverSettings("ausseabed")

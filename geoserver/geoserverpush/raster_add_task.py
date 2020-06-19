@@ -87,7 +87,7 @@ class RasterAddTask(object):
         try:
             cs_api_instance.post_coverage_stores(
                 coverage_store_info_wrapper, self.workspace_name)
-        except ApiException as e:
+        except Exception as e:
             logging.error(
                 "Exception when calling DefaultApi->post_coverage_store_upload: %s\n" % e)
             return
