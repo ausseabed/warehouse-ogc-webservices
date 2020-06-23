@@ -29,7 +29,25 @@ jobs:
           root: ./geoserver/ausseabed.pipeline/target
           paths:
             - ausseabed.pipeline-1.0-SNAPSHOT.jar
-
+  build_and_push_kartoza:
+    machine:
+      image: ubuntu-1604:201903-01
+    steps:
+      - run:
+          name: Download kartoza/geoserver
+          command: git clone git://github.com/kartoza/docker-geoserver
+      - aws-ecr/build-and-push-image:
+          account-url: AWS_ECR_ACCOUNT_URL_ENV_VAR_NAME
+          aws-access-key-id: ACCESS_KEY_ID_ENV_VAR_NAME
+          aws-secret-access-key: SECRET_ACCESS_KEY_ENV_VAR_NAME
+          checkout: false
+          create-repo: false
+          dockerfile: ./docker-geoserver/Dockerfile
+          path: ./docker-geoserver/
+          extra-build-args: "--build-arg GS_VERSION=2.17.0 --build-arg IMAGE_VERSION=9-jdk11-openjdk-slim"
+          region: AWS_REGION_ENV_VAR_NAME
+          repo: "ausseabed-kartoza-geoserver"
+          tag: "9-jdk11-openjdk-slim-2.17.0"
   build_and_push_geoserver_image:
     machine:
       image: ubuntu-1604:201903-01
@@ -50,7 +68,7 @@ jobs:
           checkout: false
           region: AWS_REGION_ENV_VAR_NAME
           repo: ausseabed-geoserver
-          extra-build-args: "--build-arg COMMUNITY_EXTENSIONS=gwc-s3-plugin --build-arg GS_VERSION=2.16.2"
+          extra-build-args: "--build-arg COMMUNITY_EXTENSIONS=gwc-s3-plugin --build-arg GS_VERSION=2.17.0"
           #tag: 'ausseabed-geoserver-2.16.2'
 
 workflows:
@@ -60,6 +78,12 @@ workflows:
           filters:
             branches:
               only:
+                - master
+      - build_and_push_kartoza:
+          filters:
+            branches:
+              only:
+                - /.*NGA-384.*/
                 - master
       - build_and_push_geoserver_image:
           filters:
