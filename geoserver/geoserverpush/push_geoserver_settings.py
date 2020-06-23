@@ -55,7 +55,7 @@ class PushGeoserverSettings():
         product_database.download_from_rest()
 
         WorkspaceAddTask(configuration, self.workspace_name).run()
-        ServiceDescriptionAddTask(configuration, self.workspace_name).run()
+        # ServiceDescriptionAddTask(configuration, self.workspace_name).run()
         StyleAddTask(configuration, self.workspace_name).run()
         CoverageAddTask(configuration, self.workspace_name,
                         product_database).run()
