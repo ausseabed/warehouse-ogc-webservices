@@ -15,7 +15,6 @@ import sys
 
 from connection_parameters import ConnectionParameters
 from product_database import ProductDatabase
-from product_record import ProductRecord
 import time
 from workspace_add_task import WorkspaceAddTask
 from style_add_task import StyleAddTask
@@ -55,7 +54,7 @@ class PushGeoserverSettings():
         product_database.download_from_rest()
 
         WorkspaceAddTask(configuration, self.workspace_name).run()
-        # ServiceDescriptionAddTask(configuration, self.workspace_name).run()
+        ServiceDescriptionAddTask(configuration, self.workspace_name).run()
         StyleAddTask(configuration, self.workspace_name).run()
         CoverageAddTask(configuration, self.workspace_name,
                         product_database).run()

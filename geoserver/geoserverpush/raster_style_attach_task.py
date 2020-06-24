@@ -8,13 +8,10 @@ from gs_rest_api_layers import StyleReference
 import os
 import sys
 import logging
-from product_record import ProductRecord
 from typing import List
 from style_add_task import StyleAddTask
 from urllib.parse import quote_plus
 
-from product_record import ProductRecord
-from typing import List
 from product_database import ProductDatabase
 
 from raster_add_task import RasterAddTask

@@ -14,7 +14,6 @@ from copy import copy
 import urllib
 import six
 from six.moves import http_client as httplib
-from product_record import ProductRecord
 from typing import List
 from product_database import ProductDatabase
 import gs_rest_api_layers

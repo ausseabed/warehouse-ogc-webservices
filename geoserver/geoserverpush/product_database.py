@@ -1,7 +1,6 @@
 import sys
 import os
 import requests
-from product_record import ProductRecord
 import logging
 import product_catalogue_py_rest_client
 from product_catalogue_py_rest_client.rest import ApiException

@@ -11,7 +11,6 @@ from gs_rest_api_coverages import MetadataEntry
 import os
 import sys
 import logging
-from product_record import ProductRecord
 from typing import List
 from product_database import ProductDatabase
 
@@ -39,16 +38,16 @@ class RasterAddTask(object):
 
         try:
             metadata_response = requests.get(
-                metadata_url + "?_format=text%2Fxml")
+                metadata_url + "?_format=text%2Fxml", timeout=5)
             if (metadata_response.ok):
                 iso_from_file = get_metadata_parser(metadata_response.text)
                 return iso_from_file.convert_to(dict)['abstract'] + '\n\n' + metadata_url
             else:
-                logging.error(
+                logging.warn(
                     "Could not download metadata from: %s\n" % metadata_url)
 
         except Exception:
-            logging.exception(
+            logging.warn(
                 "Could not load metadata from: %s\n" % metadata_url)
             return metadata_url
 
@@ -95,20 +94,22 @@ class RasterAddTask(object):
         if (metadata == ""):
             metadata_link_entry = None
         else:
-            metadata_link_entry = {'metadataLink': [
-                {'type': 'text/html', 'metadataType': 'ISO19115:2003', 'content': metadata}]}
+            metadata_link_entry = {"metadataLink": [
+                {"type": "text/html", "metadataType": "ISO19115:2003", "content": metadata}]}
         # create an instance of the API class
         api_instance = gs_rest_api_coverages.DefaultApi(
-            gs_rest_api_coverages.ApiClient(self.configuration, header_name='Authorization', header_value=authtoken))
+            gs_rest_api_coverages.ApiClient(self.configuration, header_name="Authorization", header_value=authtoken))
         # CoverageInfo | The body of the coverage to POST
         coverage_info = gs_rest_api_coverages.CoverageInfo(
             name=display_name, native_name=native_layer_name, title=title, srs=srs, metadata_links=metadata_link_entry, abstract=display_description)
         coverage_info.dimensions = dimensions
-        coverage_info.supported_formats = {'string': ['GEOTIFF']}
-        coverage_info.native_format = 'GEOTIFF'
-        coverage_info.request_srs = {"string": ["EPSG: 4326"]}
-        coverage_info.response_srs = {"string": ["EPSG: 4326"]}
-        coverage_info.interpolation_methods = {"string": ["nearest neighbor"]}
+        coverage_info.supported_formats = {
+            "string": ["GEOTIFF", "GIF", "JPEG", "PNG", "TIFF"]}
+        coverage_info.native_format = "GEOTIFF"
+        coverage_info.request_srs = {"string": [srs]}
+        coverage_info.response_srs = {"string": [srs]}
+        coverage_info.interpolation_methods = {
+            "string": ["nearest neighbor", "bilinear", "bicubic"]}
         coverage_info.default_interpolation_method = {
             "string": ["nearest neighbor"]}
         # data = "<coverage><name>{}</name><title>{}</title><nativeName>{}</nativeName><srs>{}</srs></coverage>".format(
