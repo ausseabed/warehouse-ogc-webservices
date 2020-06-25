@@ -4,7 +4,7 @@
 ## The Geoserver version
 ARG GS_VERSION=2.17.0
 
-FROM kartoza/geoserver:2.17.0
+FROM 288871573946.dkr.ecr.ap-southeast-2.amazonaws.com/ausseabed-kartoza-geoserver:9-jdk11-openjdk-slim-2.17.0
 USER root
 
 WORKDIR /usr/src/app
