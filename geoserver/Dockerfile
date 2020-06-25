@@ -21,8 +21,12 @@ curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip
 unzip awscliv2.zip && \
 ./aws/install 
 
-COPY geoserverpush/logging.xml /opt/geoserver/data_dir/logging.xml
+COPY logging.xml /opt/geoserver/data_dir/logging.xml
 RUN chmod +r /opt/geoserver/data_dir/logging.xml
+
+COPY logs /opt/geoserver/data_dir/logs
+RUN chmod +rx /opt/geoserver/data_dir/logs
+RUN chmod +r /opt/geoserver/data_dir/logs/*
 
 COPY geoserverpush/requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
@@ -35,6 +39,8 @@ RUN chmod +r /usr/local/pulldata/*.sld
 RUN chmod +rx /usr/local/pulldata/*.py
 COPY ausseabed.pipeline/target/*.jar /usr/local/tomcat/lib
 COPY tomcat/conf/server.xml /usr/local/tomcat/conf 
+COPY tomcat/index.html /usr/local/tomcat/webapps/ROOT/index.html
+RUN chmod +r /usr/local/tomcat/webapps/ROOT/index.html
 
 # 3 environmental variables are required for running
 # GEOSERVER_URL = "http://ec2-54-153-228-148.ap-southeast-2.compute.amazonaws.com/geoserver"
