@@ -81,8 +81,7 @@ workflows:
           filters:
             branches:
               only:
-                - /.*NGA-384.*/
-                - master
+                - /.*build_and_push_kartoza.*/
       - build_and_push_geoserver_image:
           filters:
             branches:
