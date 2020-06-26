@@ -9,6 +9,7 @@ export GEOSERVER_ADMIN_PASSWORD="###"
 export LIST_PATH="https://bathymetry-survey-288871573946.s3-ap-southeast-2.amazonaws.com/registered_files.json"
 """
 
+from product_catalogue_py_rest_client.models import ProductL3Dist, ProductL3Src, SurveyL3Relation, Survey
 from dotenv import load_dotenv
 import os
 import sys
@@ -25,9 +26,18 @@ from group_layer_task import GroupLayerTask
 from service_description_add_task import ServiceDescriptionAddTask
 import logging
 from auth_broker import AuthBroker
+from pythonjsonlogger import jsonlogger
 
-from product_catalogue_py_rest_client.models import ProductL3Dist, ProductL3Src, SurveyL3Relation, Survey
-logging.basicConfig(level=logging.DEBUG)
+handler = logging.StreamHandler()  # Or FileHandler or anything else
+# Configure the fields to include in the JSON output. message is the main log string itself
+format_str = '%(message)%(levelname)%(name)%(asctime)'
+formatter = jsonlogger.JsonFormatter(format_str)
+handler.setFormatter(formatter)
+logger = logging.getLogger()
+logger.addHandler(handler)
+logger.setLevel(logging.DEBUG)
+# Normally we would attach the handler to the root logger, and this would be unnecessary
+logger.propagate = False
 load_dotenv()
 
 

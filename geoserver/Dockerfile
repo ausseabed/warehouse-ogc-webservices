@@ -21,6 +21,11 @@ curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip
 unzip awscliv2.zip && \
 ./aws/install 
 
+COPY log4j.properties ${CATALINA_HOME}
+COPY logs/logging.properties ${CATALINA_HOME}/conf/ 
+COPY logs/logging.properties ${CATALINA_HOME}/webapps/geoserver/WEB-INF/classes/ 
+COPY /tomcat/bin/setenv.sh ${CATALINA_HOME}/bin/ 
+
 COPY logging.xml /opt/geoserver/data_dir/logging.xml
 RUN chmod +r /opt/geoserver/data_dir/logging.xml
 
@@ -38,6 +43,7 @@ COPY geoserverpush/*.py /usr/local/pulldata/
 RUN chmod +r /usr/local/pulldata/*.sld
 RUN chmod +rx /usr/local/pulldata/*.py
 COPY ausseabed.pipeline/target/*.jar /usr/local/tomcat/lib
+COPY ausseabed.pipeline/target/lib/*.jar /usr/local/tomcat/lib/
 COPY tomcat/conf/server.xml /usr/local/tomcat/conf 
 COPY tomcat/index.html /usr/local/tomcat/webapps/ROOT/index.html
 RUN chmod +r /usr/local/tomcat/webapps/ROOT/index.html
@@ -58,6 +64,7 @@ ENV \
     S3_USERNAME='' \
     S3_PASSWORD='' \
     GEOSERVER_URL='http://localhost:8080/geoserver' \
-    TOMCAT_POST_INIT_SCRIPT='/usr/local/pulldata/push_geoserver_settings.py'
+    TOMCAT_POST_INIT_SCRIPT='/usr/local/pulldata/push_geoserver_settings.py' \
+    JAVA_OPTS="-DGT2_LOGGING_REDIRECTION=JavaLogging -DRELINQUISH_LOG4J_CONTROL=true -Djava.util.logging.config.file=${CATALINA_HOME}/conf/logging.properties"
 
 CMD ["/scripts/entrypoint.sh"]
