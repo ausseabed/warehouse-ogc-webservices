@@ -38,7 +38,7 @@ COPY geoserverpush/*.py /usr/local/pulldata/
 RUN chmod +r /usr/local/pulldata/*.sld
 RUN chmod +rx /usr/local/pulldata/*.py
 COPY ausseabed.pipeline/target/*.jar /usr/local/tomcat/lib
-COPY ausseabed.pipeline/target/lib/*.jar /usr/local/tomcat/lib
+COPY ausseabed.pipeline/target/lib/*.jar /usr/local/tomcat/lib/
 COPY tomcat/conf/server.xml /usr/local/tomcat/conf 
 COPY tomcat/index.html /usr/local/tomcat/webapps/ROOT/index.html
 RUN chmod +r /usr/local/tomcat/webapps/ROOT/index.html
