@@ -30,6 +30,7 @@ jobs:
           paths:
             - ausseabed.pipeline-1.0-SNAPSHOT.jar
             - lib/jackson*.jar
+            - lib/jul*.jar
   build_and_push_kartoza:
     machine:
       image: ubuntu-1604:201903-01
