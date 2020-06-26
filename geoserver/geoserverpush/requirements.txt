@@ -12,3 +12,4 @@ gis-metadata-parser
 requests
 msal>=0.6.1,<2
 python-dotenv
+python-json-logger
