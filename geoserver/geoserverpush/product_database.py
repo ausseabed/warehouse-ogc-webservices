@@ -8,6 +8,7 @@ from product_catalogue_py_rest_client.models import ProductL3Dist, RelationSumma
 from typing import List
 from xml.sax.saxutils import escape
 import re
+from datetime import datetime
 
 
 class ProductDatabase():
@@ -39,12 +40,25 @@ class ProductDatabase():
         logging.info("Path to file that specifies what to load (LIST_PATH) = " +
                      self.source_tif_path)
 
+        try:
+            self.snapshot_iso_datetime = os.environ['SNAPSHOT_ISO_DATETIME']
+        except KeyError:
+            self.snapshot_iso_datetime = str(
+                datetime.utcnow().isoformat())
+            logging.warning(
+                "Please set the environment variable SNAPSHOT_ISO_DATETIME. Using: " + self.snapshot_iso_datetime)
+
+        logging.info("Using SNAPSHOT_ISO_DATETIME = " +
+                     self.snapshot_iso_datetime)
+
     def download_from_rest(self):
         self.l3_products = self.retrieve_l3_products_using_rest()
         self.survey_l3_relations = self.retrieve_survey_l3_relations()
         self.surveys = self.retrieve_surveys()
         self.create_label_base_name()
         self.create_raster_base_name()
+        self.create_survey_label_base_name()
+        self.create_survey_raster_base_name()
 
     def retrieve_l3_products_using_rest(self) -> List[ProductL3Dist]:
         configuration = product_catalogue_py_rest_client.Configuration(
@@ -57,7 +71,8 @@ class ProductDatabase():
                 api_client)
 
             try:
-                api_response = api_instance.products_l3_dist_controller_find_all()
+                api_response = api_instance.products_l3_dist_controller_find_all(
+                    snapshot_date_time=self.snapshot_iso_datetime)
                 # logging.info(api_response)
                 return api_response
             except ApiException as e:
@@ -76,7 +91,8 @@ class ProductDatabase():
                 api_client)
 
             try:
-                api_response = api_instance.product_relations_controller_find_all_l3_survey()
+                api_response = api_instance.product_relations_controller_find_all_l3_survey(
+                    snapshot_date_time=self.snapshot_iso_datetime)
                 # logging.info(api_response)
                 return api_response
             except ApiException as e:
@@ -95,7 +111,8 @@ class ProductDatabase():
                 api_client)
 
             try:
-                api_response = api_instance.surveys_controller_find_all()
+                api_response = api_instance.surveys_controller_find_all(
+                    snapshot_date_time=self.snapshot_iso_datetime)
                 # logging.info(api_response)
                 return api_response
             except ApiException as e:
@@ -118,6 +135,27 @@ class ProductDatabase():
                                  for y in self.survey_l3_relations
                                  for z in self.surveys
                                  if x.source_product.id == y.product_id and y.survey_id == z.id}
+
+    def create_survey_raster_base_name(self):
+        self.survey_base_names = {x_id: re.sub("^[^"+self.SLASH_I_LESS_COLON+"]", "_", re.sub("[^"+self.SLASH_C_LESS_COLON+"]", "_", x_name))
+                                  for (x_id, x_name) in self.survey_base_label_names.items()}
+
+    def create_survey_label_base_name(self):
+        self.survey_base_label_names = {x.id: "{0} {1} {2}".format(z.name, z.year, x.source_product.resolution)
+                                        for x in self.l3_products
+                                        for y in self.survey_l3_relations
+                                        for z in self.surveys
+                                        if x.source_product.id == y.product_id and y.survey_id == z.id}
+
+    def get_survey_names(self):
+        return set(zip(self.survey_base_names.values(), self.survey_base_label_names.values()))
+
+    def get_product_ids_for_survey_name(self, survey_name):
+        return [product_id for (product_id, s_name) in self.survey_base_label_names.items() if s_name == survey_name]
+
+    def get_products_for_survey_name(self, survey_name):
+        matching_ids = self.get_product_ids_for_survey_name(survey_name)
+        return [product for product in self.l3_products if product.id in matching_ids]
 
     def get_label_for_product(self, l3_product: ProductL3Dist, format_string):
         if not(l3_product.id in self.base_label_names):

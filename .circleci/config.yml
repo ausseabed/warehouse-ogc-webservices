@@ -44,10 +44,10 @@ jobs:
           create-repo: false
           dockerfile: ./docker-geoserver/Dockerfile
           path: ./docker-geoserver/
-          extra-build-args: "--build-arg GS_VERSION=2.17.0 --build-arg IMAGE_VERSION=9-jdk11-openjdk-slim --build-arg JAVA_HOME=/usr/local/openjdk-11/bin/java"
+          extra-build-args: "--build-arg GS_VERSION=2.17.0 --build-arg IMAGE_VERSION=9-jdk11-corretto --build-arg JAVA_HOME=/usr/lib/jvm/java-11-amazon-corretto"
           region: AWS_REGION_ENV_VAR_NAME
           repo: "ausseabed-kartoza-geoserver"
-          tag: "9-jdk11-openjdk-slim-2.17.0"
+          tag: "9-jdk11-corretto-2.17.0"
   build_and_push_geoserver_image:
     machine:
       image: ubuntu-1604:201903-01
