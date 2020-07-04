@@ -196,6 +196,7 @@ class GroupLayerTask(object):
             if group_layer_name in existing_layer_groups:
                 logging.warn("Already have group layer for {}".format(
                     group_layer_name))
+                continue
 
             product_records = self.product_database.get_products_for_survey_name(
                 group_layer_label)

@@ -8,6 +8,7 @@ from product_catalogue_py_rest_client.models import ProductL3Dist, RelationSumma
 from typing import List
 from xml.sax.saxutils import escape
 import re
+from datetime import datetime
 
 
 class ProductDatabase():
@@ -39,6 +40,17 @@ class ProductDatabase():
         logging.info("Path to file that specifies what to load (LIST_PATH) = " +
                      self.source_tif_path)
 
+        try:
+            self.snapshot_iso_datetime = os.environ['SNAPSHOT_ISO_DATETIME']
+        except KeyError:
+            self.snapshot_iso_datetime = str(
+                datetime.utcnow().isoformat())
+            logging.warning(
+                "Please set the environment variable SNAPSHOT_ISO_DATETIME. Using: " + self.snapshot_iso_datetime)
+
+        logging.info("Using SNAPSHOT_ISO_DATETIME = " +
+                     self.snapshot_iso_datetime)
+
     def download_from_rest(self):
         self.l3_products = self.retrieve_l3_products_using_rest()
         self.survey_l3_relations = self.retrieve_survey_l3_relations()
@@ -59,7 +71,8 @@ class ProductDatabase():
                 api_client)
 
             try:
-                api_response = api_instance.products_l3_dist_controller_find_all()
+                api_response = api_instance.products_l3_dist_controller_find_all(
+                    snapshot_date_time=self.snapshot_iso_datetime)
                 # logging.info(api_response)
                 return api_response
             except ApiException as e:
@@ -78,7 +91,8 @@ class ProductDatabase():
                 api_client)
 
             try:
-                api_response = api_instance.product_relations_controller_find_all_l3_survey()
+                api_response = api_instance.product_relations_controller_find_all_l3_survey(
+                    snapshot_date_time=self.snapshot_iso_datetime)
                 # logging.info(api_response)
                 return api_response
             except ApiException as e:
@@ -97,7 +111,8 @@ class ProductDatabase():
                 api_client)
 
             try:
-                api_response = api_instance.surveys_controller_find_all()
+                api_response = api_instance.surveys_controller_find_all(
+                    snapshot_date_time=self.snapshot_iso_datetime)
                 # logging.info(api_response)
                 return api_response
             except ApiException as e:
