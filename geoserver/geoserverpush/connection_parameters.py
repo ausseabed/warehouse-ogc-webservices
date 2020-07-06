@@ -73,7 +73,7 @@ class ConnectionParameters():
         configuration.host = self.geoserver_url + "/rest"
         configuration.username = 'admin'
         configuration.password = self.geoserver_password
-        configuration.debug = False
+        configuration.debug = True
 
-        httplib.HTTPConnection.debuglevel = 0
+        httplib.HTTPConnection.debuglevel = 2
         return configuration
