@@ -70,7 +70,6 @@ class RasterAddTask(object):
             "?useAnon=true&awsRegion=AP_SOUTHEAST_2"  # ap-southeast-2
 
         display_description = RasterAddTask.get_abstract(metadata)
-        logging.info(display_description)
 
         coverage_store_info = gs_rest_api_coveragestores.CoverageStoreInfo(
             name=display_name, description=title,
