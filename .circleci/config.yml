@@ -79,7 +79,7 @@ workflows:
             branches:
               only:
                 - master
-                - /.*NGA-388.*/
+                - /.*NGA-383.*/
       - build_and_push_kartoza:
           filters:
             branches:
@@ -90,6 +90,6 @@ workflows:
             branches:
               only:
                 - master
-                - /.*NGA-388.*/
+                - /.*NGA-383.*/
           requires:
             - build_tomcat_push_jar
