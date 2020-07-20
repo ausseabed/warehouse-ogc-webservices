@@ -242,7 +242,7 @@ jobs:
           paths:
             - terraform.plan
 
-  do_deploy_product_catalogue:
+  do_deploy_geoserver:
     docker:
       - image: circleci/python:3.7-stretch
     steps:
@@ -254,11 +254,11 @@ jobs:
           command: git clone git@github.com:ausseabed/ausseabed-aws-foundation.git
       - run:
           name: terragrunt init
-          working_directory: ./ausseabed-aws-foundation/pcat-app-deployment
+          working_directory: ./ausseabed-aws-foundation/geoserver-app-deployment
           command: pwd && echo $CIRCLE_WORKING_DIRECTORY && terragrunt init -input=false
       - run:
           name: terragrunt apply
-          working_directory: ./ausseabed-aws-foundation/pcat-app-deployment
+          working_directory: ./ausseabed-aws-foundation/geoserver-app-deployment
           command: |
             terragrunt apply -input=false --auto-approve /tmp/cci-extras/workspace/terraform.plan
 
