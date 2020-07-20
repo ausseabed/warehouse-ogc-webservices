@@ -63,6 +63,7 @@ commands:
       - run:
           name: "Verify Master branch"
           command: |
+            set -ex
             echo $CIRCLE_TAG
             git branch -r --contains $CIRCLE_SHA1 --format='%(refname:short)'
             IS_ON_MASTER="$(git branch -r --contains $CIRCLE_SHA1 --format='%(refname:short)' |grep ^origin/master$)"
