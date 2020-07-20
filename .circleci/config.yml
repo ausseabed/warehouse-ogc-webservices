@@ -195,6 +195,10 @@ jobs:
       - run:
           name: Check Scripts
           command: find .
+      - run:
+          name: Update ECR Reference
+          command: |
+            sed -i s/FROM\ 288871573946.dkr.ecr.ap-southeast-2.amazonaws.com/FROM\ ${AWS_ECR_ACCOUNT_URL_ENV_VAR_NAME}/g ./geoserver/Dockerfile
       - aws-cli/install
       - aws-cli/configure:
           aws-region: AWS_REGION_ENV_VAR_NAME
