@@ -66,7 +66,7 @@ commands:
             set -ex
             echo $CIRCLE_TAG
             git branch -r --contains $CIRCLE_SHA1 --format='%(refname:short)'
-            IS_ON_MASTER="$(git branch -r --contains $CIRCLE_SHA1 --format='%(refname:short)' |grep ^origin/master$)"
+            IS_ON_MASTER="$(git branch -r --contains $CIRCLE_SHA1 --format='%(refname:short)' | grep ^origin/master$ || true)"
             echo "IS_ON_MASTER: \"$IS_ON_MASTER\""
             if [[ -n "$IS_ON_MASTER" ]]
             then
