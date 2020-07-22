@@ -233,7 +233,7 @@ jobs:
       - prepare-terraform
       - run:
           name: Checkout Foundation repository
-          command: git clone git@github.com:ausseabed/ausseabed-aws-foundation.git
+          command: git clone --branch pcat-deployment git@github.com:ausseabed/ausseabed-aws-foundation.git
       - run:
           name: terragrunt init
           working_directory: ./ausseabed-aws-foundation/geoserver-app-deployment
@@ -257,7 +257,7 @@ jobs:
       - prepare-terraform
       - run:
           name: Checkout Foundation repository
-          command: git clone git@github.com:ausseabed/ausseabed-aws-foundation.git
+          command: git clone --branch pcat-deployment git@github.com:ausseabed/ausseabed-aws-foundation.git
       - run:
           name: terragrunt init
           working_directory: ./ausseabed-aws-foundation/geoserver-app-deployment
