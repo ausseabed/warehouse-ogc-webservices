@@ -290,40 +290,30 @@ master_branch_only: &master_branch_only
     branches:
       only:
         - master
+        - /.*circleci-prod.*/
 
 
 ### Workflows section
 workflows:
-  update_infra_and_application:
+  build_and_push_kartoza:
     jobs:
-      - build_tomcat_push_jar:
-          filters:
-            branches:
-              only:
-                - master
-                - /.*NGA-383.*/
       - build_and_push_kartoza:
           filters:
             branches:
               only:
                 - /.*build_and_push_kartoza.*/
-      - build_and_push_geoserver_image:
-          filters:
-            branches:
-              only:
-                - master
-                - /.*NGA-383.*/
-          requires:
-            - build_tomcat_push_jar
 
   build_and_deploy_dev_images:
     jobs:
       - dev_docker_tag:
           <<: *master_branch_only
+      - build_tomcat_push_jar:
+          <<: *master_branch_only
       - build_geoserver_image:
           <<: *master_branch_only
           requires:
             - dev_docker_tag
+            - build_tomcat_push_jar
       - prepare_deploy_geoserver:
           <<: *master_branch_only
           requires:
