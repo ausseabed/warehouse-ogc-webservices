@@ -175,21 +175,21 @@ class ProductDatabase():
 
     def get_products_for_survey_name(self, survey_name):
         matching_ids = self.get_product_ids_for_survey_name(survey_name)
-        return [product for product in self.l3_src_products if product.id in matching_ids]
+        return [product for product in self.l3_dist_products if product.source_product.id in matching_ids]
 
     def get_label_for_product(self, l3_product: ProductL3Dist, format_string):
         if not(l3_product in self.l3_dist_products):
             logging.error(
                 "Expecting to match product {} with survey".format(l3_product.id))
         else:
-            return get_label_for_product_src(l3_product.source_product)
+            return self.get_label_for_product_src(l3_product.source_product, format_string)
 
     def get_name_for_product(self, l3_product: ProductL3Dist, format_string):
         if not(l3_product in self.l3_dist_products):
             logging.error(
                 "Expecting to match product {} with survey".format(l3_product.id))
         else:
-            return get_name_for_product(l3_product.source_product)
+            return self.get_name_for_product_src(l3_product.source_product, format_string)
 
     def get_label_for_product_src(self, l3_product: ProductL3Src, format_string):
         if not(l3_product.id in self.base_label_names):
