@@ -116,7 +116,7 @@ class RasterStyleAttachTask(object):
 
         published_records = []
         # First worry about bathymetry, then hillshade
-        for product_record in self.product_database.l3_products:
+        for product_record in self.product_database.l3_dist_products:
 
             bath_display_name = self.product_database.get_name_for_product(
                 product_record, RasterAddTask.raster_name_string)

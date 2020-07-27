@@ -113,7 +113,7 @@ jobs:
     steps:
       - run:
           name: Download kartoza/geoserver
-          command: git clone --branch tomcat_upgrade_issue_165 git://github.com/ausseabed/docker-geoserver
+          command: git clone git://github.com/kartoza/docker-geoserver.git
       - aws-ecr/build-and-push-image:
           account-url: AWS_ECR_ACCOUNT_URL_ENV_VAR_NAME
           checkout: false

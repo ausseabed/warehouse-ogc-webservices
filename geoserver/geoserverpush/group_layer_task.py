@@ -246,3 +246,45 @@ class GroupLayerTask(object):
                                          bbox, metadata_url)
             except ApiException as e:
                 logging.error("Can't create layer %s\n" % e)
+
+        # For backwards compatibility
+        published_records = []
+        for product_record in self.product_database.l3_dist_products:
+            group_layer_name = self.product_database.get_name_for_product(
+                product_record, self.group_layer_presentation_string)
+
+            group_layer_label = self.product_database.get_label_for_product(
+                product_record, self.group_layer_presentation_string)
+
+            bath_display_name = self.product_database.get_name_for_product(
+                product_record, RasterAddTask.raster_name_string)
+
+            hs_display_name = self.product_database.get_name_for_product(
+                product_record, RasterAddTask.hillshade_name_string)
+
+            if bath_display_name in published_records:
+                logging.error(
+                    "Duplicate coverage name {}".format(bath_display_name))
+                continue
+            published_records.append(bath_display_name)
+
+            if product_record.hillshade_location == "":
+                logging.info("No hillshade raster defined for: {}".format(
+                    hs_display_name))
+            elif group_layer_name in existing_layer_groups:
+                logging.info("Already have group layer for {}".format(
+                    bath_display_name))
+            else:
+                try:
+                    bbox = self.get_bounding_box(
+                        bath_display_name)
+                    metadata_url = product_record.source_product.metadata_persistent_id
+                    self.create_group_layers(group_layer_name, group_layer_label,
+                                             [hs_display_name,
+                                              bath_display_name],
+                                             [StyleAddTask.BATH_HILLSHADE_STYLE_NAME,
+                                                 StyleAddTask.BATH_STYLE_NAME],
+                                             bbox, metadata_url
+                                             )
+                except ApiException as e:
+                    logging.error("Can't create layer %s\n" % e)

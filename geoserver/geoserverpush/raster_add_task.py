@@ -70,7 +70,6 @@ class RasterAddTask(object):
             "?useAnon=true&awsRegion=AP_SOUTHEAST_2"  # ap-southeast-2
 
         display_description = RasterAddTask.get_abstract(metadata)
-        logging.info(display_description)
 
         coverage_store_info = gs_rest_api_coveragestores.CoverageStoreInfo(
             name=display_name, description=title,
@@ -197,7 +196,7 @@ class RasterAddTask(object):
 
         published_records = []
         # First worry about bathymetry, then hillshade
-        for product_record in self.product_database.l3_products:
+        for product_record in self.product_database.l3_dist_products:
             bath_name = self.get_coverage_name_bathy(product_record)
             bath_label_name = self.get_coverage_label_bathy(product_record)
 

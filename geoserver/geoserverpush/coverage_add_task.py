@@ -218,7 +218,7 @@ class CoverageAddTask(object):
             existing_datastores))
 
         published_records = []
-        for product_record in self.product_database.l3_products:
+        for product_record in self.product_database.l3_dist_products:
             coverage_name = self.get_coverage_name(product_record)
             coverage_label = self.get_coverage_label(product_record)
             if coverage_name in published_records:
