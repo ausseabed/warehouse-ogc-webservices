@@ -77,6 +77,7 @@ commands:
               exit 100
             fi
 
+
 jobs:
   build_tomcat_push_jar:
     working_directory: ~/ausseabed-processing-pipeline
@@ -223,6 +224,7 @@ jobs:
       - checkout
       - validate_master_branch
 
+
   prepare_deploy_geoserver:
     docker:
       - image: circleci/python:3.7-stretch
@@ -266,6 +268,7 @@ jobs:
           command: |
             terragrunt apply -input=false --auto-approve /tmp/cci-extras/workspace/terraform.plan
 
+
 ### Pre-defined filters for workflows
 
 prod_publish_tag_only: &prod_publish_tag_only
@@ -288,6 +291,7 @@ master_branch_only: &master_branch_only
       only:
         - master
         - /.*circleci-prod.*/
+
 
 ### Workflows section
 workflows:
