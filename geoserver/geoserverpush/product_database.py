@@ -180,27 +180,27 @@ class ProductDatabase():
     def get_label_for_product(self, l3_product: ProductL3Dist, format_string):
         if not(l3_product in self.l3_dist_products):
             logging.error(
-                "Expecting to match product {} with survey".format(l3_product.id))
+                "Expecting to match product {} with survey (label0)".format(l3_product.source_product.name))
         else:
             return self.get_label_for_product_src(l3_product.source_product, format_string)
 
     def get_name_for_product(self, l3_product: ProductL3Dist, format_string):
         if not(l3_product in self.l3_dist_products):
             logging.error(
-                "Expecting to match product {} with survey".format(l3_product.id))
+                "Expecting to match product {} with survey (name0)".format(l3_product.source_product.name))
         else:
             return self.get_name_for_product_src(l3_product.source_product, format_string)
 
     def get_label_for_product_src(self, l3_product: ProductL3Src, format_string):
         if not(l3_product.id in self.base_label_names):
             logging.error(
-                "Expecting to match product {} with survey".format(l3_product.id))
+                "Expecting to match product {} with survey (label1)".format(l3_product.name))
         else:
             return escape(format_string.format(self.base_label_names[l3_product.id]))
 
     def get_name_for_product_src(self, l3_product: ProductL3Src, format_string):
         if not(l3_product.id in self.base_names):
             logging.error(
-                "Expecting to match product {} with survey".format(l3_product.id))
+                "Expecting to match product {} with survey (name1)".format(l3_product.name))
         else:
             return escape(format_string.format(self.base_names[l3_product.id]))
