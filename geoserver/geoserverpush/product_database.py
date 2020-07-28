@@ -57,10 +57,25 @@ class ProductDatabase():
         self.l3_src_products = self.retrieve_l3_src_products_using_rest()
         self.survey_l3_relations = self.retrieve_survey_l3_relations()
         self.surveys = self.retrieve_surveys()
+        self.remove_orphans()
         self.create_label_base_name()
         self.create_raster_base_name()
         self.create_survey_label_base_name()
         self.create_survey_raster_base_name()
+        self.remove_orphans()
+
+    def remove_orphans(self):
+        src_prods = [x for x in self.l3_src_products
+                     for y in self.survey_l3_relations
+                     for z in self.surveys
+                     if x.id == y.product_id and y.survey_id == z.id]
+        unmatched = [
+            x.source_product.name for x in self.l3_dist_products if x.source_product not in src_prods]
+        if (len(unmatched) > 0):
+            logging.error("Orphaned surveys: {}".format(", ".join(unmatched)))
+        matched = [
+            x for x in self.l3_dist_products if x.source_product in src_prods]
+        self.l3_dist_products = matched
 
     def retrieve_l3_src_products_using_rest(self) -> List[ProductL3Src]:
         configuration = product_catalogue_py_rest_client.Configuration(
