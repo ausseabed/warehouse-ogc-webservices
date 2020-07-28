@@ -248,6 +248,7 @@ class GroupLayerTask(object):
                 logging.error("Can't create layer %s\n" % e)
 
         # For backwards compatibility
+        existing_layer_groups = self.get_layer_groups()
         published_records = []
         for product_record in self.product_database.l3_dist_products:
             group_layer_name = self.product_database.get_name_for_product(

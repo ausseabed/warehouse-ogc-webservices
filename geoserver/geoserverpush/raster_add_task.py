@@ -1,3 +1,5 @@
+import boto3
+from botocore.errorfactory import ClientError
 import gs_rest_api_coveragestores
 from gs_rest_api_coveragestores.rest import ApiException
 from gs_rest_api_coveragestores.model.coverage_store_info import CoverageStoreInfo
@@ -7,6 +9,7 @@ from gs_rest_api_coverages.rest import ApiException
 from gs_rest_api_coverages.model.coverage_info import CoverageInfo
 from gs_rest_api_coverages.model.coverage_info_wrapper import CoverageInfoWrapper
 from gs_rest_api_coverages import MetadataEntry
+from s3util import S3Util
 
 import os
 import sys
@@ -51,10 +54,9 @@ class RasterAddTask(object):
                 "Could not load metadata from: %s\n" % metadata_url)
             return metadata_url
 
-    def create_raster(self, display_name, title, url_location, srs, metadata, dimensions):
-
+    def create_raster(self, display_name, title, s3_url, srs, metadata, dimensions):
         native_layer_name = re.sub(
-            ".tiff?$", "", re.sub(".*/", "", url_location))
+            ".tiff?$", "", re.sub(".*/", "", s3_url))
         logging.info(
             "Creating coveragestore for raster {} = {}".format(display_name, native_layer_name))
 
@@ -66,8 +68,8 @@ class RasterAddTask(object):
             self.configuration, header_name='Authorization', header_value=authtoken)
 
         # NOTE for non-public services, we will have some work to do here
-        url = url_location + \
-            "?useAnon=true&awsRegion=AP_SOUTHEAST_2"  # ap-southeast-2
+
+        url = s3_url + "?useAnon=true&awsRegion=AP_SOUTHEAST_2"  # ap-southeast-2
 
         display_description = RasterAddTask.get_abstract(metadata)
 
@@ -125,8 +127,8 @@ class RasterAddTask(object):
             logging.error(
                 "Please manually remove coverage store {} before next attempt to submit".format(display_name))
             logging.error(
-                "The input params were native_layer_name: {} display_name: {} title: {} url_location: {} srs: {} metadata: {}".format(
-                    native_layer_name, display_name, title, url_location, srs, metadata))
+                "The input params were native_layer_name: {} display_name: {} title: {} s3_url: {} srs: {} metadata: {}".format(
+                    native_layer_name, display_name, title, s3_url, srs, metadata))
 
     def get_coverages(self):
         # create an instance of the API class
@@ -211,10 +213,14 @@ class RasterAddTask(object):
                 logging.info("Already have raster coveragestore: {}".format(
                     bath_name))
             else:
-                self.create_raster(
-                    bath_name, bath_label_name,
-                    product_record.bathymetry_location, product_record.source_product.srs,
-                    product_record.source_product.metadata_persistent_id, raster_dimensions)
+                if (S3Util.s3_exists(product_record.bathymetry_location)):
+                    self.create_raster(
+                        bath_name, bath_label_name,
+                        product_record.bathymetry_location, product_record.source_product.srs,
+                        product_record.source_product.metadata_persistent_id, raster_dimensions)
+                else:
+                    logging.error("Missing raster {} for {} ({})".format(
+                        product_record.bathymetry_location, bath_name, product_record.id))
 
             hillshade_name = self.get_coverage_name_hillshade(product_record)
             hillshade_label = self.get_coverage_label_hillshade(product_record)
@@ -226,7 +232,11 @@ class RasterAddTask(object):
                 logging.info("Already have raster coveragestore: {}".format(
                     hillshade_name))
             else:
-                self.create_raster(
-                    hillshade_name, hillshade_label,
-                    product_record.hillshade_location, product_record.source_product.srs,
-                    product_record.source_product.metadata_persistent_id, hillshade_dimensions)
+                if (S3Util.s3_exists(product_record.bathymetry_location)):
+                    self.create_raster(
+                        hillshade_name, hillshade_label,
+                        product_record.hillshade_location, product_record.source_product.srs,
+                        product_record.source_product.metadata_persistent_id, hillshade_dimensions)
+                else:
+                    logging.error("Missing raster {} for {} ({})".format(
+                        product_record.hillshade_location, hillshade_name, product_record.id))

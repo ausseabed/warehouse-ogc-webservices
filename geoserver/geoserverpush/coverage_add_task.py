@@ -21,6 +21,7 @@ from gs_rest_api_layers.rest import ApiException
 import gs_rest_api_featuretypes
 from gs_rest_api_featuretypes.rest import ApiException
 from product_catalogue_py_rest_client.models import ProductL3Dist, SurveyL3Relation, Survey
+from s3util import S3Util
 
 
 class CoverageAddTask(object):
@@ -234,9 +235,13 @@ class CoverageAddTask(object):
                 logging.info("Already have coverage: {}".format(coverage_name))
             else:
                 try:
-                    self.create_coverage(
-                        product_record.l3_coverage_location, coverage_name)
-                    self.update_layer_name(coverage_name, coverage_label)
+                    if (S3Util.s3_exists(product_record.l3_coverage_location)):
+                        self.create_coverage(
+                            product_record.l3_coverage_location, coverage_name)
+                        self.update_layer_name(coverage_name, coverage_label)
+                    else:
+                        logging.error("Missing shapefile {} for {} ({})".format(
+                            product_record.l3_coverage_location, coverage_name, product_record.id))
                 except subprocess.CalledProcessError:
                     logging.error(
                         "Could not copy shapefile: {}".format(coverage_name))
