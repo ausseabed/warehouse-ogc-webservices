@@ -327,11 +327,14 @@ workflows:
     jobs:
       - prepare_docker_tag:
           <<: *prod_publish_tag_only
+      - build_tomcat_push_jar:
+          <<: *master_branch_only
       - build_geoserver_image:
           <<: *prod_publish_tag_only
           context: ga_sb_docker_prod_publish
           requires:
             - prepare_docker_tag
+            - build_tomcat_push_jar
 
   deploy_to_production:
     jobs:
