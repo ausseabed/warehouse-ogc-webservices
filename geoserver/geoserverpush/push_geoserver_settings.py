@@ -19,6 +19,7 @@ from product_database import ProductDatabase
 import time
 from workspace_add_task import WorkspaceAddTask
 from style_add_task import StyleAddTask
+# from test_add_task import TestAddTask
 from coverage_add_task import CoverageAddTask
 from raster_add_task import RasterAddTask
 from raster_style_attach_task import RasterStyleAttachTask
@@ -27,6 +28,7 @@ from service_description_add_task import ServiceDescriptionAddTask
 import logging
 from auth_broker import AuthBroker
 from pythonjsonlogger import jsonlogger
+from metadata_cache import MetaDataCache
 
 handler = logging.StreamHandler()  # Or FileHandler or anything else
 # Configure the fields to include in the JSON output. message is the main log string itself
@@ -46,8 +48,8 @@ class PushGeoserverSettings():
     def __init__(self, workspace_name='ausseabed'):
         self.workspace_name = workspace_name
 
-    """ 
-    Class that houses connection parameters and reads from a datasource 
+    """
+    Class that houses connection parameters and reads from a datasource
     such as environmental variables
     """
 
@@ -63,20 +65,24 @@ class PushGeoserverSettings():
         product_database.load_from_commandline()
         product_database.download_from_rest()
 
+        meta_cache = MetaDataCache()
+
         WorkspaceAddTask(configuration, self.workspace_name).run()
         ServiceDescriptionAddTask(configuration, self.workspace_name).run()
         StyleAddTask(configuration, self.workspace_name).run()
         CoverageAddTask(configuration, self.workspace_name,
-                        product_database).run()
+                        product_database, meta_cache).run()
 
         RasterAddTask(configuration, self.workspace_name,
-                      product_database).run()
+                      product_database, meta_cache).run()
 
         RasterStyleAttachTask(configuration, self.workspace_name,
                               product_database).run()
 
         GroupLayerTask(configuration, self.workspace_name,
-                       product_database).run()
+                       product_database, meta_cache).run()
+
+        # TestAddTask(configuration, self.workspace_name, product_database).run()
 
         logging.info("Completed")
 

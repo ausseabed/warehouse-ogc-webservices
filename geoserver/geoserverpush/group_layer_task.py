@@ -26,10 +26,11 @@ from product_catalogue_py_rest_client.models import ProductL3Dist, ProductL3Src,
 
 class GroupLayerTask(object):
 
-    def __init__(self, configuration, workspace_name, product_database: ProductDatabase):
+    def __init__(self, configuration, workspace_name, product_database: ProductDatabase, meta_cache):
         self.configuration = configuration
         self.workspace_name = workspace_name
         self.product_database = product_database
+        self.meta_cache = meta_cache
 
     def get_coverage_info(self, coverage_name):
         authtoken = self.configuration.get_basic_auth_token()
@@ -96,7 +97,7 @@ class GroupLayerTask(object):
 
         api_instance = gs_rest_api_layergroups.DefaultApi(api_client)
 
-        abstract = RasterAddTask.get_abstract(metadata_url)
+        abstract = self.meta_cache.get_abstract(metadata_url)
 
         # Layergroup | The layer group body information to upload.
         layergroup = gs_rest_api_layergroups.Layergroup(

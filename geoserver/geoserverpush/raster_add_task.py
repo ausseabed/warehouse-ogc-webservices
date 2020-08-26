@@ -20,39 +20,14 @@ from product_database import ProductDatabase
 from product_catalogue_py_rest_client.models import ProductL3Dist, ProductL3Src, SurveyL3Relation, Survey
 import re
 
-from gis_metadata.iso_metadata_parser import IsoParser
-
-from gis_metadata.metadata_parser import get_metadata_parser
-import requests
-
 
 class RasterAddTask(object):
 
-    def __init__(self, configuration, workspace_name, product_database: ProductDatabase):
+    def __init__(self, configuration, workspace_name, product_database: ProductDatabase, meta_cache):
         self.configuration = configuration
         self.workspace_name = workspace_name
         self.product_database = product_database
-
-    @staticmethod
-    def get_abstract(metadata_url):
-        logging.info("Loading metadata: %s\n" % metadata_url)
-        if not(metadata_url.startswith("http://pid") or metadata_url.startswith("https://pid")):
-            return metadata_url
-
-        try:
-            metadata_response = requests.get(
-                metadata_url + "?_format=text%2Fxml", timeout=5)
-            if (metadata_response.ok):
-                iso_from_file = get_metadata_parser(metadata_response.text)
-                return iso_from_file.convert_to(dict)['abstract'] + '\n\n' + metadata_url
-            else:
-                logging.warn(
-                    "Could not download metadata from: %s\n" % metadata_url)
-
-        except Exception:
-            logging.warn(
-                "Could not load metadata from: %s\n" % metadata_url)
-            return metadata_url
+        self.meta_cache = meta_cache
 
     def create_raster(self, display_name, title, s3_url, srs, metadata, dimensions):
         native_layer_name = re.sub(
@@ -71,7 +46,7 @@ class RasterAddTask(object):
 
         url = s3_url + "?useAnon=true&awsRegion=AP_SOUTHEAST_2"  # ap-southeast-2
 
-        display_description = RasterAddTask.get_abstract(metadata)
+        display_description = self.meta_cache.get_abstract(metadata)
 
         coverage_store_info = gs_rest_api_coveragestores.CoverageStoreInfo(
             name=display_name, description=title,

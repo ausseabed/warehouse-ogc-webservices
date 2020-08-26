@@ -65,3 +65,5 @@ target/
 
 # User environment variables
 .env
+
+.vscode/
