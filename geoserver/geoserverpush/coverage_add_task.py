@@ -22,14 +22,17 @@ import gs_rest_api_featuretypes
 from gs_rest_api_featuretypes.rest import ApiException
 from product_catalogue_py_rest_client.models import ProductL3Dist, SurveyL3Relation, Survey
 from s3util import S3Util
+import dbf
+from s3util import S3Util
 
 
 class CoverageAddTask(object):
 
-    def __init__(self, configuration, workspace_name, product_database: ProductDatabase):
+    def __init__(self, configuration, workspace_name, product_database: ProductDatabase, meta_cache):
         self.configuration = configuration
         self.workspace_name = workspace_name
         self.product_database = product_database
+        self.meta_cache = meta_cache
 
     def copy_shapefile_local(self, polygon_dest, shapefile_name):
 
@@ -71,7 +74,22 @@ class CoverageAddTask(object):
     def shapefile_plus_sidecars(self, path):
         return {ext: path + "." + ext for ext in ['shx', 'shp', 'dbf', 'prj']}
 
-    def create_shapefile_zip(self, shapefile_url, shapefile_display_name):
+    def update_shapefile_attributes(self, shapefile_display_name, dbf_location, product_record):
+        with dbf.Table(dbf_location) as db:
+            db.add_fields(
+                'BATHY_TYPE C(20); START_DATE C(30); END_DATE C(30); NAME C(255); BATHY_URL C(255)')
+            for record in db:
+                dbf.write(record,
+                          BATHY_TYPE='Multibeam',
+                          START_DATE=self.meta_cache.extract_start(
+                              product_record.source_product.metadata_persistent_id),
+                          END_DATE=self.meta_cache.extract_end(
+                              product_record.source_product.metadata_persistent_id),
+                          NAME=shapefile_display_name,
+                          BATHY_URL=S3Util.https_url(
+                              product_record.bathymetry_location))
+
+    def create_shapefile_zip(self, shapefile_url, shapefile_display_name, product_record):
         # 1. create a temp directory
         base_dir = self.create_temp_dir()
         shapefile_name = re.sub(".*/", "", shapefile_url)
@@ -98,6 +116,9 @@ class CoverageAddTask(object):
         for (source, destination) in zip(source_shapefile_plus_sidecars.values(), shapefile_plus_sidecars.values()):
             self.copy_s3_file_local(source, destination)
 
+        self.update_shapefile_attributes(shapefile_display_name,
+                                         shapefile_plus_sidecars['dbf'], product_record)
+
         # 3. register in geoserver as below
         logging.info(shapefile_plus_sidecars)
         zip_buffer = io.BytesIO()
@@ -110,11 +131,11 @@ class CoverageAddTask(object):
 
         return zip_buffer.getvalue()
 
-    def create_coverage(self, coverage_location, coverage_name):
+    def create_coverage(self, coverage_location, coverage_name, product_record):
         logging.info("Creating datastore {}".format(coverage_name))
 
         zip_coverage = self.create_shapefile_zip(
-            coverage_location, coverage_name)
+            coverage_location, coverage_name, product_record)
 
         logging.info("Using filename {}".format(coverage_location))
 
@@ -237,7 +258,7 @@ class CoverageAddTask(object):
                 try:
                     if (S3Util.s3_exists(product_record.l3_coverage_location)):
                         self.create_coverage(
-                            product_record.l3_coverage_location, coverage_name)
+                            product_record.l3_coverage_location, coverage_name, product_record)
                         self.update_layer_name(coverage_name, coverage_label)
                     else:
                         logging.error("Missing shapefile {} for {} ({})".format(
