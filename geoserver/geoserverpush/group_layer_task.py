@@ -21,6 +21,7 @@ from urllib.parse import quote_plus
 from typing import List
 from product_database import ProductDatabase
 from raster_add_task import RasterAddTask
+from coverage_add_task import CoverageAddTask
 from product_catalogue_py_rest_client.models import ProductL3Dist, ProductL3Src, SurveyL3Relation, Survey
 
 
@@ -229,11 +230,19 @@ class GroupLayerTask(object):
                     metadata_urls.append(metadata_url)
                 except ApiException as e:
                     logging.error("Can't create layer %s\n" % e)
+
+                coverage_name = self.product_database.get_name_for_product(
+                    product_record, CoverageAddTask.name_format_string)
+
+                error_free_product_records.append(coverage_name)
                 error_free_product_records.append(hs_display_name)
                 error_free_product_records.append(bath_display_name)
+
+                error_free_product_styles.append(StyleAddTask.POLY_STYLE_NAME)
                 error_free_product_styles.append(
                     StyleAddTask.BATH_HILLSHADE_STYLE_NAME)
                 error_free_product_styles.append(StyleAddTask.BATH_STYLE_NAME)
+
             if (len(error_free_product_records) == 0):
                 logging.error("No records for group layer " +
                               group_layer_label)
@@ -264,6 +273,9 @@ class GroupLayerTask(object):
             hs_display_name = self.product_database.get_name_for_product(
                 product_record, RasterAddTask.hillshade_name_string)
 
+            coverage_name = self.product_database.get_name_for_product(
+                product_record, CoverageAddTask.name_format_string)
+
             if bath_display_name in published_records:
                 logging.error(
                     "Duplicate coverage name {}".format(bath_display_name))
@@ -282,9 +294,9 @@ class GroupLayerTask(object):
                         bath_display_name)
                     metadata_url = product_record.source_product.metadata_persistent_id
                     self.create_group_layers(group_layer_name, group_layer_label,
-                                             [hs_display_name,
+                                             [coverage_name, hs_display_name,
                                               bath_display_name],
-                                             [StyleAddTask.BATH_HILLSHADE_STYLE_NAME,
+                                             [StyleAddTask.POLY_STYLE_NAME, StyleAddTask.BATH_HILLSHADE_STYLE_NAME,
                                                  StyleAddTask.BATH_STYLE_NAME],
                                              bbox, metadata_url
                                              )
