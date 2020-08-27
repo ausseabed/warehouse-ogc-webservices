@@ -16,6 +16,7 @@ class StyleAddTask(object):
     # BATH_HILLSHADE_STYLE_FILENAME = "bathymetry_hillshade.sld"
     BATH_STYLE_NAME = "Bathymetry"
     BATH_HILLSHADE_STYLE_NAME = "BathymetryHillshade"
+    POLY_STYLE_NAME = "polygon"
 
     def __init__(self, configuration, workspace_name):
         self.configuration = configuration
