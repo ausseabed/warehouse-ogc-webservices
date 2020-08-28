@@ -24,6 +24,7 @@ from product_catalogue_py_rest_client.models import ProductL3Dist, SurveyL3Relat
 from s3util import S3Util
 import dbf
 from s3util import S3Util
+from dbf import DbfError
 
 
 class CoverageAddTask(object):
@@ -266,3 +267,9 @@ class CoverageAddTask(object):
                 except subprocess.CalledProcessError:
                     logging.error(
                         "Could not copy shapefile: {}".format(coverage_name))
+                except DbfError:
+                    logging.exception(
+                        "Could not understand dbf associated with shapefile: {}".format(coverage_name))
+                except:
+                    logging.exception(
+                        "Unknown error associated with shapefile: {}".format(coverage_name))
