@@ -188,6 +188,9 @@ class GroupLayerTask(object):
         logging.info("Found existing layer groups {}".format(
             existing_layer_groups))
 
+        existing_polies = CoverageAddTask.get_existing_datastores(
+            self.configuration, self.workspace_name)
+
         published_records = []
 
         # Collate by survey - year - resolution
@@ -234,11 +237,14 @@ class GroupLayerTask(object):
                 coverage_name = self.product_database.get_name_for_product(
                     product_record, CoverageAddTask.name_format_string)
 
-                error_free_product_records.append(coverage_name)
+                if coverage_name in existing_polies:
+                    error_free_product_records.append(coverage_name)
+                    error_free_product_styles.append(
+                        StyleAddTask.POLY_STYLE_NAME)
+
                 error_free_product_records.append(hs_display_name)
                 error_free_product_records.append(bath_display_name)
 
-                error_free_product_styles.append(StyleAddTask.POLY_STYLE_NAME)
                 error_free_product_styles.append(
                     StyleAddTask.BATH_HILLSHADE_STYLE_NAME)
                 error_free_product_styles.append(StyleAddTask.BATH_STYLE_NAME)
@@ -293,12 +299,16 @@ class GroupLayerTask(object):
                     bbox = self.get_bounding_box(
                         bath_display_name)
                     metadata_url = product_record.source_product.metadata_persistent_id
+                    layers = []
+                    styles = []
+                    if coverage_name in existing_polies:
+                        layers.append(coverage_name)
+                        styles.append(StyleAddTask.POLY_STYLE_NAME)
+                    layers.append(hs_display_name)
+                    layers.append(bath_display_name)
+                    styles.append(StyleAddTask.BATH_HILLSHADE_STYLE_NAME)
+                    styles.append(StyleAddTask.BATH_STYLE_NAME)
                     self.create_group_layers(group_layer_name, group_layer_label,
-                                             [coverage_name, hs_display_name,
-                                              bath_display_name],
-                                             [StyleAddTask.POLY_STYLE_NAME, StyleAddTask.BATH_HILLSHADE_STYLE_NAME,
-                                                 StyleAddTask.BATH_STYLE_NAME],
-                                             bbox, metadata_url
-                                             )
+                                             layers, styles, bbox, metadata_url)
                 except ApiException as e:
                     logging.error("Can't create layer %s\n" % e)

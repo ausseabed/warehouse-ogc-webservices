@@ -178,16 +178,17 @@ class CoverageAddTask(object):
         # match on prod_id
         return (self.product_database.get_name_for_product(product_l3_dist, self.name_format_string))
 
-    def get_existing_datastores(self):
+    @staticmethod
+    def get_existing_datastores(configuration, workspace_name):
         # create an instance of the API class
-        authtoken = self.configuration.get_basic_auth_token()
+        authtoken = configuration.get_basic_auth_token()
         # create an instance of the API class
         api_instance = gs_rest_api_datastores.DefaultApi(
-            gs_rest_api_datastores.ApiClient(self.configuration, header_name='Authorization', header_value=authtoken))
+            gs_rest_api_datastores.ApiClient(configuration, header_name='Authorization', header_value=authtoken))
 
         try:
             # Get a list of data stores
-            api_response = api_instance.get_datastores(self.workspace_name)
+            api_response = api_instance.get_datastores(workspace_name)
             logging.info(api_response)
         except ApiException as e:
             logging.exception(
@@ -236,7 +237,8 @@ class CoverageAddTask(object):
                 "Exception when calling DefaultApi->put_feature_type: %s\n" % e)
 
     def run(self):
-        existing_datastores = self.get_existing_datastores()
+        existing_datastores = CoverageAddTask.get_existing_datastores(
+            self.configuration, self.workspace_name)
         logging.info("Found existing datastores {}".format(
             existing_datastores))
 
