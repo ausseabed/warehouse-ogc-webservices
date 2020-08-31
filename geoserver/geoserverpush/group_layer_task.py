@@ -312,3 +312,14 @@ class GroupLayerTask(object):
                                              layers, styles, bbox, metadata_url)
                 except ApiException as e:
                     logging.error("Can't create layer %s\n" % e)
+
+        if not('Holdings' in existing_layer_groups):
+            bbox = {u'minx': -180, u'miny': -90, u'maxx': 180,
+                    u'maxy': 10, u'crs': u'EPSG:4326'}
+            coverages = CoverageAddTask.get_existing_datastores(
+                self.configuration, self.workspace_name)
+            self.create_group_layers('Holdings', 'Holdings',
+                                     coverages,
+                                     [StyleAddTask.POLY_STYLE_NAME for x in coverages],
+                                     bbox, 'metadata_url'
+                                     )

@@ -67,17 +67,17 @@ class PushGeoserverSettings():
 
         meta_cache = MetaDataCache()
 
-        WorkspaceAddTask(configuration, self.workspace_name).run()
-        ServiceDescriptionAddTask(configuration, self.workspace_name).run()
-        StyleAddTask(configuration, self.workspace_name).run()
-        CoverageAddTask(configuration, self.workspace_name,
-                        product_database, meta_cache).run()
+        # WorkspaceAddTask(configuration, self.workspace_name).run()
+        # ServiceDescriptionAddTask(configuration, self.workspace_name).run()
+        # StyleAddTask(configuration, self.workspace_name).run()
+        # CoverageAddTask(configuration, self.workspace_name,
+        #                 product_database, meta_cache).run()
 
-        RasterAddTask(configuration, self.workspace_name,
-                      product_database, meta_cache).run()
+        # RasterAddTask(configuration, self.workspace_name,
+        #               product_database, meta_cache).run()
 
-        RasterStyleAttachTask(configuration, self.workspace_name,
-                              product_database).run()
+        # RasterStyleAttachTask(configuration, self.workspace_name,
+        #                       product_database).run()
 
         GroupLayerTask(configuration, self.workspace_name,
                        product_database, meta_cache).run()
