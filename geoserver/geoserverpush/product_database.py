@@ -89,6 +89,8 @@ class ProductDatabase():
         logging.info(
             "Removing MSL products in surveys with Ellipsoid products: " + str(removed))
 
+        self.l3_dist_products = self.l3_dist_products2
+
     def remove_orphans(self):
         src_prods = [x for x in self.l3_src_products
                      for y in self.survey_l3_relations
