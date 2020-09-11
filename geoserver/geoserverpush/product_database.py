@@ -58,11 +58,36 @@ class ProductDatabase():
         self.survey_l3_relations = self.retrieve_survey_l3_relations()
         self.surveys = self.retrieve_surveys()
         self.remove_orphans()
+        self.remove_msl_when_ellipsoid()
         self.create_label_base_name()
         self.create_raster_base_name()
         self.create_survey_label_base_name()
         self.create_survey_raster_base_name()
         self.remove_orphans()
+
+    """ If there is a record with ellipsoid in a survey, only
+    allow products with an ellipsoid
+    """
+
+    def remove_msl_when_ellipsoid(self):
+        self.ellipsoid_parents = set([z.id for x in self.l3_src_products
+                                      for y in self.survey_l3_relations
+                                      for z in self.surveys
+                                      if x.id == y.product_id and y.survey_id == z.id
+                                      and x.vertical_datum == 'WGS84'])
+
+        self.l3_dist_products2 = [l3_dist_product for l3_dist_product in self.l3_dist_products
+                                  for relation in self.survey_l3_relations
+                                  if relation.product_id == l3_dist_product.source_product.id and
+                                  (l3_dist_product.source_product.vertical_datum == 'WGS84' or
+                                   relation.survey_id not in self.ellipsoid_parents)
+                                  ]
+
+        removed = set([x.source_product.name for x in self.l3_dist_products]).difference(
+            set([x.source_product.name for x in self.l3_dist_products2]))
+
+        logging.info(
+            "Removing MSL products in surveys with Ellipsoid products: " + str(removed))
 
     def remove_orphans(self):
         src_prods = [x for x in self.l3_src_products
