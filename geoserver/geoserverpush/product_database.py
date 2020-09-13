@@ -76,20 +76,20 @@ class ProductDatabase():
                                       if x.id == y.product_id and y.survey_id == z.id
                                       and x.vertical_datum == 'WGS84'])
 
-        self.l3_dist_products2 = [l3_dist_product for l3_dist_product in self.l3_dist_products
-                                  for relation in self.survey_l3_relations
-                                  if relation.product_id == l3_dist_product.source_product.id and
-                                  (l3_dist_product.source_product.vertical_datum == 'WGS84' or
-                                   relation.survey_id not in self.ellipsoid_parents)
-                                  ]
+        self.l3_dist_products_filtered = [l3_dist_product for l3_dist_product in self.l3_dist_products
+                                          for relation in self.survey_l3_relations
+                                          if relation.product_id == l3_dist_product.source_product.id and
+                                          (l3_dist_product.source_product.vertical_datum == 'WGS84' or
+                                           relation.survey_id not in self.ellipsoid_parents)
+                                          ]
 
         removed = set([x.source_product.name for x in self.l3_dist_products]).difference(
-            set([x.source_product.name for x in self.l3_dist_products2]))
+            set([x.source_product.name for x in self.l3_dist_products_filtered]))
 
         logging.info(
             "Removing MSL products in surveys with Ellipsoid products: " + str(removed))
 
-        self.l3_dist_products = self.l3_dist_products2
+        self.l3_dist_products = self.l3_dist_products_filtered
 
     def remove_orphans(self):
         src_prods = [x for x in self.l3_src_products
