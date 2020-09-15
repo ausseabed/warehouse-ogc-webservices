@@ -24,6 +24,8 @@ from raster_add_task import RasterAddTask
 from coverage_add_task import CoverageAddTask
 from product_catalogue_py_rest_client.models import ProductL3Dist, ProductL3Src, SurveyL3Relation, Survey
 
+from pyproj import Proj, transform, Transformer
+
 
 class GroupLayerTask(object):
 
@@ -68,6 +70,7 @@ class GroupLayerTask(object):
                        bbox[u'miny'], bbox[u'maxy'], srs)
         bbox["crs"] = srs
         logging.info(str(bbox))
+
         return bbox
 
     def create_layer_link(self, layer_name):
@@ -146,6 +149,30 @@ class GroupLayerTask(object):
 
     group_layer_presentation_string = "{0}"
 
+    def convert_bbox(self, bbox):
+        try:
+            transformer = Transformer.from_crs(
+                bbox['crs'], 'epsg:4326', always_xy=True)
+            bbox_wgs84_minx, bbox_wgs84_miny = transformer.transform(
+                bbox[u'minx'], bbox[u'miny'])
+
+            bbox_wgs84_maxx, bbox_wgs84_maxy = transformer.transform(
+                bbox[u'maxx'], bbox[u'maxy'])
+
+            bbox_result = {
+                "crs": "EPSG:4326",
+                'minx': bbox_wgs84_minx,
+                'maxx': bbox_wgs84_maxx,
+                'miny': bbox_wgs84_miny,
+                'maxy': bbox_wgs84_maxy
+            }
+        except Exception as e:
+            logging.exception(
+                "Can't translate to WGS84 - using raw projection", e)
+            return bbox
+
+        return bbox_result
+
     def merge_bbox(self, list_bboxes, group_layer_name):
         crc_to_bboxes = {}
         for bbox in list_bboxes:
@@ -156,7 +183,12 @@ class GroupLayerTask(object):
 
         if len(crc_to_bboxes.keys()) > 1:
             logging.warn('Multiple CRCs found for ' +
-                         group_layer_name + '. Bounds will be incorrectly set. Crcs: ' + str(crc_to_bboxes.keys()))
+                         group_layer_name + '. Bounds will be converted to WGS84. Previos crcs: ' + str(crc_to_bboxes.keys()))
+            crc_to_bboxes = {}
+            for bbox in list_bboxes:
+                bbox_transformed = self.convert_bbox(bbox)
+                crc_to_bboxes.setdefault(
+                    bbox_transformed['crs'], []).append(bbox_transformed)
 
         max_bboxes = max([len(value_list)
                           for (crc, value_list) in crc_to_bboxes.items()])
@@ -210,6 +242,15 @@ class GroupLayerTask(object):
             metadata_urls = []
             error_free_product_records = []
             error_free_product_styles = []
+
+            for product_record in product_records:
+                coverage_name = self.product_database.get_name_for_product(
+                    product_record, CoverageAddTask.name_format_string)
+                if coverage_name in existing_polies:
+                    error_free_product_records.append(coverage_name)
+                    error_free_product_styles.append(
+                        StyleAddTask.POLY_STYLE_NAME)
+
             for product_record in product_records:
                 bath_display_name = self.product_database.get_name_for_product(
                     product_record, RasterAddTask.raster_name_string)
@@ -233,14 +274,6 @@ class GroupLayerTask(object):
                     metadata_urls.append(metadata_url)
                 except ApiException as e:
                     logging.error("Can't create layer %s\n" % e)
-
-                coverage_name = self.product_database.get_name_for_product(
-                    product_record, CoverageAddTask.name_format_string)
-
-                if coverage_name in existing_polies:
-                    error_free_product_records.append(coverage_name)
-                    error_free_product_styles.append(
-                        StyleAddTask.POLY_STYLE_NAME)
 
                 error_free_product_records.append(hs_display_name)
                 error_free_product_records.append(bath_display_name)
