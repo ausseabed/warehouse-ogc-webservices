@@ -48,6 +48,13 @@ class MetaDataCache():
             abstract = meta.abstract
         return abstract + '\n\n' + metadata_url
 
+    def extract_title(self, metadata_url):
+        meta = self.get_metadata(metadata_url)
+        if (meta == None):
+            return ""
+
+        return meta.title
+
     def extract_start(self, metadata_url):
         meta = self.get_metadata(metadata_url)
         if (meta == None):
@@ -61,6 +68,20 @@ class MetaDataCache():
             return "N/A"
 
         return meta.date_end
+
+    def extract_vessel(self, metadata_url):
+        meta = self.get_metadata(metadata_url)
+        if (meta == None):
+            return "N/A"
+
+        return meta.vessel
+
+    def extract_instrument(self, metadata_url):
+        meta = self.get_metadata(metadata_url)
+        if (meta == None):
+            return "N/A"
+
+        return meta.instrument
 
 
 if __name__ == "__main__":

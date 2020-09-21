@@ -76,19 +76,28 @@ class CoverageAddTask(object):
         return {ext: path + "." + ext for ext in ['shx', 'shp', 'dbf', 'prj']}
 
     def update_shapefile_attributes(self, shapefile_display_name, dbf_location, product_record):
+        display_title = self.meta_cache.extract_title(
+            product_record.source_product.metadata_persistent_id)
+        if (display_title == ""):
+            display_title = shapefile_display_name
         with dbf.Table(dbf_location) as db:
             db.add_fields(
-                'BATHY_TYPE C(20); START_DATE C(30); END_DATE C(30); NAME C(255); BATHY_URL C(255)')
+                'BATHY_TYPE C(20); NAME C(255); START_DATE C(30); END_DATE C(30); VESSEL C(255); INSTRUMENT C(255); BATHY_URL C(255); META_URL C(255)')
             for record in db:
                 dbf.write(record,
+                          NAME=display_title,
                           BATHY_TYPE='Multibeam',
                           START_DATE=self.meta_cache.extract_start(
                               product_record.source_product.metadata_persistent_id),
                           END_DATE=self.meta_cache.extract_end(
                               product_record.source_product.metadata_persistent_id),
-                          NAME=shapefile_display_name,
+                          VESSEL=self.meta_cache.extract_vessel(
+                              product_record.source_product.metadata_persistent_id),
+                          INSTRUMENT=self.meta_cache.extract_instrument(
+                              product_record.source_product.metadata_persistent_id),
                           BATHY_URL=S3Util.https_url(
-                              product_record.bathymetry_location))
+                              product_record.bathymetry_location),
+                          META_URL=product_record.source_product.metadata_persistent_id)
 
     def create_shapefile_zip(self, shapefile_url, shapefile_display_name, product_record):
         # 1. create a temp directory
