@@ -15,3 +15,11 @@ class CustomIsoParser(IsoParser):
         date_end = 'date_end'
         self._data_map[date_end] = 'identificationInfo/MD_DataIdentification/extent/EX_Extent/temporalElement/EX_TemporalExtent/extent/TimePeriod/endPosition'
         self._metadata_props.add(date_end)
+
+        vessel = 'vessel'
+        self._data_map[vessel] = 'acquisitionInformation/MI_AcquisitionInformation/platform/MI_Platform/identifier/MD_Identifier/code/Anchor'
+        self._metadata_props.add(vessel)
+
+        instrument = 'instrument'
+        self._data_map[instrument] = 'acquisitionInformation/MI_AcquisitionInformation/platform/MI_Platform/instrument/MI_Instrument/identifier/MD_Identifier/code/Anchor'
+        self._metadata_props.add(instrument)
