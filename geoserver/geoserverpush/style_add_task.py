@@ -10,11 +10,14 @@ class StyleAddTask(object):
 
     LOCAL_STYLE_FILENAME = os.path.dirname(os.path.realpath(__file__)) + \
         "/bathymetry_transparent.sld"
+    BATH_ALT_LOCAL_STYLE_FILENAME = os.path.dirname(os.path.realpath(__file__)) + \
+        "/bathymetry_shallow.sld"
     BATH_HILLSHADE_STYLE_FILENAME = os.path.dirname(os.path.realpath(__file__)) + \
         "/bathymetry_hillshade.sld"
     # LOCAL_STYLE_FILENAME = "bathymetry_transparent.sld"
     # BATH_HILLSHADE_STYLE_FILENAME = "bathymetry_hillshade.sld"
     BATH_STYLE_NAME = "Bathymetry"
+    BATH_ALT_STYLE_NAME = "BathymetryShallow"
     BATH_HILLSHADE_STYLE_NAME = "BathymetryHillshade"
     POLY_STYLE_NAME = "polygon"
 
@@ -22,8 +25,10 @@ class StyleAddTask(object):
         self.configuration = configuration
         self.workspace_name = workspace_name
 
-        self.styles = {self.BATH_STYLE_NAME: self.LOCAL_STYLE_FILENAME,
-                       self.BATH_HILLSHADE_STYLE_NAME: self.BATH_HILLSHADE_STYLE_FILENAME}
+        self.styles = {
+            self.BATH_STYLE_NAME: self.LOCAL_STYLE_FILENAME,
+            self.BATH_ALT_STYLE_NAME: self.BATH_ALT_LOCAL_STYLE_FILENAME,
+            self.BATH_HILLSHADE_STYLE_NAME: self.BATH_HILLSHADE_STYLE_FILENAME}
 
     def create_style(self, style_name, local_file_name):
         # create an instance of the API class

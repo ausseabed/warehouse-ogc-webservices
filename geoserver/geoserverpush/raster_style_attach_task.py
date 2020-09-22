@@ -5,6 +5,8 @@ from gs_rest_api_layers import LayerWrapper
 from gs_rest_api_layers import Layer
 from gs_rest_api_layers import StyleReference
 
+import six
+from six.moves import http_client as httplib
 import os
 import sys
 import logging
@@ -46,7 +48,7 @@ class RasterStyleAttachTask(object):
 
         return api_response
 
-    def attach_style(self, display_name, style_name):
+    def attach_style(self, display_name, default_style_name, alternate_style_names=[]):
 
         logging.info(
             "Attaching style for raster {}".format(display_name))
@@ -70,12 +72,21 @@ class RasterStyleAttachTask(object):
         layer = layer_wrapper.layer
 
         style_url = '{server_url}/workspaces/{workspace_name}/styles/{style_name}.xml'.format(
-            server_url=self.server_url, workspace_name=quote_plus(self.workspace_name), style_name=quote_plus(style_name))
-        style_ref = StyleReference(style_name, style_url)
+            server_url=self.server_url, workspace_name=quote_plus(self.workspace_name), style_name=quote_plus(default_style_name))
+        style_ref = StyleReference(default_style_name, style_url)
         logging.info("Creating ref to schema {}, url: {}".format(
-                     style_name, style_ref))
+                     default_style_name, style_ref))
         layer.default_style = style_ref
 
+        layer_styles = [style_ref]
+
+        for style_name in alternate_style_names:
+            style_url = '{server_url}/workspaces/{workspace_name}/styles/{style_name}.xml'.format(
+                server_url=self.server_url, workspace_name=quote_plus(self.workspace_name), style_name=quote_plus(style_name))
+            style_ref = StyleReference(style_name, style_url)
+            layer_styles.append(style_ref)
+
+        layer.styles = {"style": layer_styles}
         try:
             # Modify a layer.
             api_instance.layers_name_workspace_put(
@@ -130,7 +141,7 @@ class RasterStyleAttachTask(object):
             # Add bathymetry Raster
             if bath_display_name in existing_layers:
                 self.attach_style(
-                    bath_display_name, StyleAddTask.BATH_STYLE_NAME)
+                    bath_display_name, StyleAddTask.BATH_STYLE_NAME, [StyleAddTask.BATH_ALT_STYLE_NAME])
             else:
                 logging.warn("Cannot find layer for raster: {}".format(
                     bath_display_name))

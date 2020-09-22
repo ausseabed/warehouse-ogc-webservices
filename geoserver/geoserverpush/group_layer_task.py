@@ -105,7 +105,7 @@ class GroupLayerTask(object):
 
         # Layergroup | The layer group body information to upload.
         layergroup = gs_rest_api_layergroups.Layergroup(
-            name=group_layer_name, workspace=self.workspace_name, title=group_layer_label, bounds=bbox, abstract_txt=abstract)
+            name=group_layer_name, workspace=self.workspace_name, title=group_layer_label, bounds=bbox, abstract_txt=abstract, mode='NAMED')
         layergroup.publishables = {'published': [self.create_layer_link(
             layer) for layer in list_of_layers]}
 
