@@ -4,7 +4,7 @@
 ## The Geoserver version
 ARG GS_VERSION=2.17.2
 
-FROM 288871573946.dkr.ecr.ap-southeast-2.amazonaws.com/ausseabed-kartoza-geoserver:9-jdk14-openjdk-slim-buster-2.17.2-NGA-733-noJAI
+FROM 288871573946.dkr.ecr.ap-southeast-2.amazonaws.com/ausseabed-kartoza-geoserver:9-jdk14-openjdk-slim-buster-2.17.1
 USER root
 
 WORKDIR /usr/src/app
