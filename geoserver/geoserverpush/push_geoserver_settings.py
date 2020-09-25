@@ -37,7 +37,7 @@ formatter = jsonlogger.JsonFormatter(format_str)
 handler.setFormatter(formatter)
 logger = logging.getLogger()
 logger.addHandler(handler)
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.WARNING)
 # Normally we would attach the handler to the root logger, and this would be unnecessary
 logger.propagate = False
 load_dotenv()
