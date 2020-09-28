@@ -37,13 +37,13 @@ COPY tomcat/bin/setenv.sh ${CATALINA_HOME}/bin/
 RUN chmod +rx ${CATALINA_HOME}/bin/setenv.sh
 
 # This is the logging that geoserver will use for log4j
-# COPY logs/log4j.properties ${CATALINA_HOME}
-# RUN chmod +r ${CATALINA_HOME}/log4j.properties
-# COPY logs/logging.xml /opt/geoserver/data_dir/logging.xml
-# RUN chmod +r /opt/geoserver/data_dir/logging.xml
-# COPY logs/logs /opt/geoserver/data_dir/logs
-# RUN chmod +rx /opt/geoserver/data_dir/logs
-# RUN chmod +r /opt/geoserver/data_dir/logs/*
+COPY logs/log4j.properties ${CATALINA_HOME}
+RUN chmod +r ${CATALINA_HOME}/log4j.properties
+COPY logs/logging.xml /opt/geoserver/data_dir/logging.xml
+RUN chmod +r /opt/geoserver/data_dir/logging.xml
+COPY logs/logs /opt/geoserver/data_dir/logs
+RUN chmod +rx /opt/geoserver/data_dir/logs
+RUN chmod +r /opt/geoserver/data_dir/logs/*
 
 COPY geoserverpush/requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
@@ -88,9 +88,12 @@ ENV \
     GEOSERVER_URL='http://localhost:8080/geoserver' \
     LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/apr/lib:/opt/libjpeg-turbo/lib64:/usr/lib:/usr/lib/x86_64-linux-gnu:/usr/lib/jni;/usr/local/openjdk-14/bin/java" \
     JAVA_OPTS="-Dpost.init.script=/usr/local/pulldata/push_geoserver_settings.py \
-    -Ds3.caching.chunkSizeBytes=524288 -DGT2_LOGGING_REDIRECTION=JavaLogging \
-    -DRELINQUISH_LOG4J_CONTROL=true \
-    -Djava.util.logging.config.file=${CATALINA_HOME}/webapps/geoserver/WEB-INF/classes/logging.properties"
+    -Ds3.caching.chunkSizeBytes=524288 \
+    -Dlog4j.configuration=${CATALINA_HOME}/log4j.properties"
+    #\
+    #-DGT2_LOGGING_REDIRECTION=JavaLogging 
+    #-DRELINQUISH_LOG4J_CONTROL=true \
+    #-Djava.util.logging.config.file=${CATALINA_HOME}/webapps/geoserver/WEB-INF/classes/logging.properties"
 
 # \"-Djava.util.logging.config.file=${CATALINA_HOME}/conf/logging.properties" \
     
