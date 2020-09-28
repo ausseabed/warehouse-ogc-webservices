@@ -21,10 +21,16 @@ curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip
 unzip awscliv2.zip && \
 ./aws/install 
 
+## Why all the chmod - why don't we change the USER that is executing the script?
+
 COPY log4j.properties ${CATALINA_HOME}
+RUN chmod +r ${CATALINA_HOME}/log4j.properties
 COPY logs/logging.properties ${CATALINA_HOME}/conf/ 
+RUN chmod +r ${CATALINA_HOME}/conf/* 
 COPY logs/logging.properties ${CATALINA_HOME}/webapps/geoserver/WEB-INF/classes/ 
+RUN chmod +r ${CATALINA_HOME}/webapps/geoserver/WEB-INF/classes/logging.properties 
 COPY /tomcat/bin/setenv.sh ${CATALINA_HOME}/bin/ 
+RUN chmod +rx ${CATALINA_HOME}/bin/setenv.sh
 
 COPY logging.xml /opt/geoserver/data_dir/logging.xml
 RUN chmod +r /opt/geoserver/data_dir/logging.xml
@@ -44,7 +50,9 @@ RUN chmod +r /usr/local/pulldata/*.sld
 RUN chmod +rx /usr/local/pulldata/*.py
 COPY ausseabed.pipeline/target/*.jar /usr/local/tomcat/lib
 COPY ausseabed.pipeline/target/lib/*.jar /usr/local/tomcat/lib/
+RUN chmod +r /usr/local/tomcat/lib/*
 COPY tomcat/conf/server.xml /usr/local/tomcat/conf 
+RUN chmod +r /usr/local/tomcat/conf/*
 COPY tomcat/index.html /usr/local/tomcat/webapps/ROOT/index.html
 RUN chmod +r /usr/local/tomcat/webapps/ROOT/index.html
 
@@ -64,9 +72,9 @@ ENV \
     S3_USERNAME='' \
     S3_PASSWORD='' \
     GEOSERVER_URL='http://localhost:8080/geoserver' \
-    JAVA_OPTS="-Ds3.caching.chunkSizeBytes=524288"
-    #JAVA_OPTS="-DGT2_LOGGING_REDIRECTION=JavaLogging -DRELINQUISH_LOG4J_CONTROL=true \
-    #-Djava.util.logging.config.file=${CATALINA_HOME}/conf/logging.properties \
+    JAVA_OPTS="-Ds3.caching.chunkSizeBytes=524288 \
+    -DGT2_LOGGING_REDIRECTION=JavaLogging -DRELINQUISH_LOG4J_CONTROL=true \
+    -Djava.util.logging.config.file=${CATALINA_HOME}/conf/logging.properties"
 
 # defaults for Cache config that could also be tailored:
 # -Ds3.caching.diskCacheSize= 524288000 # 500 MB
