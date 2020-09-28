@@ -56,9 +56,11 @@ COPY geoserverpush/*.py /usr/local/pulldata/
 RUN chmod +r /usr/local/pulldata/*.sld
 RUN chmod +rx /usr/local/pulldata/*.py
 
-COPY ausseabed.pipeline/target/*.jar ${CATALINA_HOME}/webapps/geoserver/WEB-INF/lib/
+COPY ausseabed.pipeline/target/*.jar ${CATALINA_HOME}/lib/
+RUN chmod +r ${CATALINA_HOME}/lib/*
+
 COPY ausseabed.pipeline/target/lib/*.jar ${CATALINA_HOME}/webapps/geoserver/WEB-INF/lib/
-RUN chmod +r /${CATALINA_HOME}/webapps/geoserver/WEB-INF/lib/*
+RUN chmod +r ${CATALINA_HOME}/webapps/geoserver/WEB-INF/lib/*
 
 COPY tomcat/conf/server.xml /usr/local/tomcat/conf 
 RUN chmod +r /usr/local/tomcat/conf/*
