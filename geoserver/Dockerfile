@@ -41,7 +41,7 @@ COPY logs/log4j.properties ${CATALINA_HOME}
 RUN chmod +r ${CATALINA_HOME}/log4j.properties
 COPY logs/logging.xml /opt/geoserver/data_dir/logging.xml
 RUN chmod +r /opt/geoserver/data_dir/logging.xml
-COPY logs/logs /opt/geoserver/data_dir/logs
+COPY logs /opt/geoserver/data_dir/logs
 RUN chmod +rx /opt/geoserver/data_dir/logs
 RUN chmod +r /opt/geoserver/data_dir/logs/*
 
