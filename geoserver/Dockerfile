@@ -64,10 +64,9 @@ ENV \
     S3_USERNAME='' \
     S3_PASSWORD='' \
     GEOSERVER_URL='http://localhost:8080/geoserver' \
-    TOMCAT_POST_INIT_SCRIPT='/usr/local/pulldata/push_geoserver_settings.py' \
-    JAVA_OPTS="-DGT2_LOGGING_REDIRECTION=JavaLogging -DRELINQUISH_LOG4J_CONTROL=true \
-    -Djava.util.logging.config.file=${CATALINA_HOME}/conf/logging.properties \
-    -Ds3.caching.chunkSizeBytes=524288"
+    JAVA_OPTS="-Ds3.caching.chunkSizeBytes=524288"
+    #JAVA_OPTS="-DGT2_LOGGING_REDIRECTION=JavaLogging -DRELINQUISH_LOG4J_CONTROL=true \
+    #-Djava.util.logging.config.file=${CATALINA_HOME}/conf/logging.properties \
 
 # defaults for Cache config that could also be tailored:
 # -Ds3.caching.diskCacheSize= 524288000 # 500 MB
