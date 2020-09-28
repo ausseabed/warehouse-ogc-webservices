@@ -56,8 +56,8 @@ COPY geoserverpush/*.py /usr/local/pulldata/
 RUN chmod +r /usr/local/pulldata/*.sld
 RUN chmod +rx /usr/local/pulldata/*.py
 
-COPY ausseabed.pipeline/target/*.jar ${CATALINA_HOME}/webapps/geoserver/WEB-INF/lib
-COPY ausseabed.pipeline/target/lib/*.jar ${CATALINA_HOME}/webapps/geoserver/WEB-INF/lib
+COPY ausseabed.pipeline/target/*.jar ${CATALINA_HOME}/webapps/geoserver/WEB-INF/lib/
+COPY ausseabed.pipeline/target/lib/*.jar ${CATALINA_HOME}/webapps/geoserver/WEB-INF/lib/
 RUN chmod +r /${CATALINA_HOME}/webapps/geoserver/WEB-INF/lib/*
 
 COPY tomcat/conf/server.xml /usr/local/tomcat/conf 
@@ -85,8 +85,8 @@ ENV \
     S3_PASSWORD='' \
     GEOSERVER_URL='http://localhost:8080/geoserver' \
     LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/apr/lib:/opt/libjpeg-turbo/lib64:/usr/lib:/usr/lib/x86_64-linux-gnu:/usr/lib/jni;/usr/local/openjdk-14/bin/java" \
-    JAVA_OPTS= "-Dpost.init.script=/usr/local/pulldata/push_geoserver_settings.py" \
-    CATALINA_OPTS="-Ds3.caching.chunkSizeBytes=524288 \
+    JAVA_OPTS= "-Dpost.init.script=/usr/local/pulldata/push_geoserver_settings.py \
+    -Ds3.caching.chunkSizeBytes=524288 \
     -DGT2_LOGGING_REDIRECTION=JavaLogging -DRELINQUISH_LOG4J_CONTROL=true \
     -Djava.util.logging.config.file=${CATALINA_HOME}/webapps/geoserver/WEB-INF/classes/logging.properties"
 
