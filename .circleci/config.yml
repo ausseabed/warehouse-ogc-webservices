@@ -144,7 +144,7 @@ jobs:
           checkout: false
           region: AWS_REGION_ENV_VAR_NAME
           repo: ausseabed-geoserver
-          extra-build-args: "--build-arg COMMUNITY_EXTENSIONS=gwc-s3-plugin --build-arg GS_VERSION=2.17.1"
+          extra-build-args: "--build-arg COMMUNITY_EXTENSIONS=s3-geotiff-plugin"
           #tag: 'ausseabed-geoserver-2.16.2'
 
   dev_docker_tag:
