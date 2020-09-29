@@ -80,7 +80,8 @@ class RasterAddTask(object):
             name=display_name, native_name=native_layer_name, title=title, srs=srs, metadata_links=metadata_link_entry, abstract=display_description)
         coverage_info.dimensions = dimensions
         coverage_info.supported_formats = {
-            "string": ["GEOTIFF", "GIF", "JPEG", "PNG", "TIFF"]}
+            "string": ["GEOTIFF"]}
+        # "string": ["GEOTIFF", "GIF", "JPEG", "PNG", "TIFF"]} NGA-733 only GEOTIFF is working
         coverage_info.native_format = "GEOTIFF"
         coverage_info.request_srs = {"string": [srs]}
         coverage_info.response_srs = {"string": [srs]}
