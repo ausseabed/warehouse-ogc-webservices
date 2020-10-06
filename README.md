@@ -57,35 +57,36 @@ The infrastructure for the product catalogue sits in the [ausseabed-aws-foundati
 5. Tag the deployment on master: git tag prod/deploy/X.X.X
 6. Approve the deployment on the CI system
 
-Steps 2-5 should be written out in the do_deploy_product_catalogue step of CI server logs. E.g.,
+Steps 2-5 should be written out in the do_deploy_warehouse step of CI server logs. E.g.,
 ```
 git checkout master
 git pull
-git tag prod/publish/0.1.5
-git push origin prod/publish/0.1.5
+git tag prod/publish/0.6.1
+git push origin prod/publish/0.6.1
 ```
-then update ausseabed-aws-foundation/geoserver-app-deployment/terragrunt.hcl in pcat-app-deployment 
-(git clone git@github.com:ausseabed/ausseabed-aws-foundation.git; cd geoserver-app-deployment/terragrunt.hcl)
+then update ausseabed-aws-foundation/geoserver-app-deployment/terragrunt.hcl in 
+git clone git@github.com:ausseabed/ausseabed-aws-foundation.git
 with
 ```
 git checkout master
 git pull
-git checkout -b warehouse-rel/0.1.5
-sed -i "s/\(ausseabed-geoserver*:\)0.1.4/\10.1.5/" terragrunt.hcl
+git checkout -b warehouse-rel/0.6.1
+sed -i "s/\(ausseabed-geoserver:\)0.6.0/\10.6.1/" terragrunt.hcl
 git add terragrunt.hcl
-git commit -m "Update data warehouse version"
-git push origin warehouse-rel/0.1.5
+git commit -m "Update warehouse version"
+git push origin warehouse-rel/0.6.1
 ```
-then crete a pull request to master on ausseabed-aws-foundation. And on warehouse repo, run:
+
+then run:
 
 ```
 git checkout master
 git pull
-git tag prod/deploy/0.1.5
-git push origin prod/deploy/0.1.5
+git tag prod/deploy/0.6.1
+git push origin prod/deploy/0.6.1
 ```
 
-Note: The warehoue will automatically deploy a new task into production by virtue of the ECR image changing. However, in non-production, the existing service will need to be restarted as it won't recognise the new deploy has changed what latest means.
+Note: The warehouse will automatically deploy a new task into production by virtue of the ECR image changing. However, in non-production, the existing service will need to be restarted as it won't recognise the new deploy has changed what latest means.
 
 ## How to Set the Snapshot Date
 The geoserver pull script requests a snapshot of the product catalogue on a particular date. This date is pinned in the CI server. To update the snapshot date in production:

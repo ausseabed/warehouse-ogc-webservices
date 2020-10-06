@@ -242,6 +242,10 @@ jobs:
           working_directory: ./ausseabed-aws-foundation/geoserver-app-deployment
           command: |
             terragrunt apply -input=false --auto-approve /tmp/cci-extras/workspace/terraform.plan
+      - run:
+          name: Print Commands for Next Production Tag
+          working_directory: ./ausseabed-aws-foundation/geoserver-app-deployment
+          command: ./update_message.sh
 
 ### Pre-defined filters for workflows
 
