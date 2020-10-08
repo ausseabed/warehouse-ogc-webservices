@@ -34,6 +34,9 @@ class MetaDataCache():
             else:
                 logging.warn(
                     "Could not download metadata from: %s\n" % metadata_url)
+                logging.warn(
+                    "Response {} was returned from attempt to download. Content was {}".format(
+                        metadata_response.status_code, metadata_response.text))
                 return None
 
         except Exception:
