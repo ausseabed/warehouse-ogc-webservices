@@ -49,7 +49,8 @@ class ConnectionParameters():
             json_doc = json.loads(os.environ['PRODUCT_CATALOGUE_CREDS'])
             self.auth_host = json_doc["auth_host"]
             self.auth_client_id = json_doc["auth_client_id"]
-            self.auth_client_pem_key = json_doc["client_pem_key"]
+            self.auth_client_pem_key = json_doc["client_pem_key"].replace(
+                "\\n", "\n")
             self.auth_client_pem_thumprint = json_doc["client_pem_thumbprint"]
         else:
             try:
