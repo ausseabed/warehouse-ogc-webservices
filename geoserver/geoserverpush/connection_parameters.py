@@ -7,6 +7,8 @@ import six
 from six.moves import http_client as httplib
 import logging
 
+import json
+
 
 class ConnectionParameters():
     """ 
@@ -24,6 +26,7 @@ class ConnectionParameters():
     def load_from_commandline(self):
         """ Load parameters from environment variables GEOSERVER_URL / GEOSERVER_ADMIN_PASSWORD 
         """
+
         try:
             self.geoserver_url = os.environ['GEOSERVER_URL']
         except KeyError:
@@ -34,39 +37,48 @@ class ConnectionParameters():
         logging.info("GEOSERVER_URL = " + self.geoserver_url)
 
         try:
-            self.geoserver_password = os.environ['GEOSERVER_ADMIN_PASSWORD']
+            self.geoserver_password = json.loads(os.environ['GEOSERVER_ADMIN_PASSWORD'])[
+                'TF_VAR_geoserver_admin_password']
         except KeyError:
             logging.exception(
                 "Please set the environment variable GEOSERVER_ADMIN_PASSWORD")
             sys.exit(1)
 
-        try:
-            self.auth_host = os.environ['AUTH_HOST']
-        except KeyError:
-            logging.exception(
-                "Please set the environment variable AUTH_HOST")
-            sys.exit(1)
+        if ('PRODUCT_CATALOGUE_CREDS' in os.environ):
+            # using secretsmanager json config
+            json_doc = json.loads(os.environ['PRODUCT_CATALOGUE_CREDS'])
+            self.auth_host = json_doc["auth_host"]
+            self.auth_client_id = json_doc["auth_client_id"]
+            self.auth_client_pem_key = json_doc["client_pem_key"]
+            self.auth_client_pem_thumprint = json_doc["client_pem_thumbprint"]
+        else:
+            try:
+                self.auth_host = os.environ['AUTH_HOST']
+            except KeyError:
+                logging.exception(
+                    "Please set the environment variable AUTH_HOST")
+                sys.exit(1)
 
-        try:
-            self.auth_client_id = os.environ['AUTH_CLIENT_ID']
-        except KeyError:
-            logging.exception(
-                "Please set the environment variable AUTH_CLIENT_ID")
-            sys.exit(1)
+            try:
+                self.auth_client_id = os.environ['AUTH_CLIENT_ID']
+            except KeyError:
+                logging.exception(
+                    "Please set the environment variable AUTH_CLIENT_ID")
+                sys.exit(1)
 
-        try:
-            self.auth_client_pem_key = os.environ['CLIENT_PEM_KEY']
-        except KeyError:
-            logging.exception(
-                "Please set the environment variable CLIENT_PEM_KEY")
-            sys.exit(1)
+            try:
+                self.auth_client_pem_key = os.environ['CLIENT_PEM_KEY']
+            except KeyError:
+                logging.exception(
+                    "Please set the environment variable CLIENT_PEM_KEY")
+                sys.exit(1)
 
-        try:
-            self.auth_client_pem_thumprint = os.environ['CLIENT_PEM_THUMBPRINT']
-        except KeyError:
-            logging.exception(
-                "Please set the environment variable CLIENT_PEM_THUMBPRINT")
-            sys.exit(1)
+            try:
+                self.auth_client_pem_thumprint = os.environ['CLIENT_PEM_THUMBPRINT']
+            except KeyError:
+                logging.exception(
+                    "Please set the environment variable CLIENT_PEM_THUMBPRINT")
+                sys.exit(1)
 
     def create_configuration(self):
         configuration = Configuration()
