@@ -67,7 +67,8 @@ class ConnectionParameters():
                 sys.exit(1)
 
             try:
-                self.auth_client_pem_key = os.environ['CLIENT_PEM_KEY']
+                self.auth_client_pem_key = os.environ['CLIENT_PEM_KEY'].replace(
+                    "\\n", "\n")
             except KeyError:
                 logging.exception(
                     "Please set the environment variable CLIENT_PEM_KEY")
