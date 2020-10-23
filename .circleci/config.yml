@@ -52,7 +52,7 @@ commands:
             cat ~/.ssh/known_hosts
       - run:
           name: Install terraform
-          command: wget https://releases.hashicorp.com/terraform/0.12.26/terraform_0.12.26_linux_amd64.zip && unzip terraform_0.12.26_linux_amd64.zip && chmod +x terraform && sudo mv terraform /usr/bin/
+          command: wget https://releases.hashicorp.com/terraform/0.12.29/terraform_0.12.29_linux_amd64.zip && unzip terraform_0.12.29_linux_amd64.zip && chmod +x terraform && sudo mv terraform /usr/bin/
       - run:
           name: Install terragrunt
           command: wget https://github.com/gruntwork-io/terragrunt/releases/download/v0.23.27/terragrunt_linux_amd64 && chmod +x terragrunt_linux_amd64 && sudo mv terragrunt_linux_amd64 /usr/bin/terragrunt
