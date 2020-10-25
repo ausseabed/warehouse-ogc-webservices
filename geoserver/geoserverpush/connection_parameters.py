@@ -37,8 +37,7 @@ class ConnectionParameters():
         logging.info("GEOSERVER_URL = " + self.geoserver_url)
 
         try:
-            self.geoserver_password = json.loads(os.environ['GEOSERVER_ADMIN_PASSWORD'])[
-                'TF_VAR_geoserver_admin_password']
+            self.geoserver_password = os.environ['GEOSERVER_ADMIN_PASSWORD']
         except KeyError:
             logging.exception(
                 "Please set the environment variable GEOSERVER_ADMIN_PASSWORD")
