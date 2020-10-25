@@ -101,4 +101,4 @@ ENV \
 # -Ds3.caching.diskCacheSize= 524288000 # 500 MB
 # -Ds3.caching.diskPath= Files.createTempDirectory("s3Cachine")
 
-CMD ["/usr/local/pulldata/decode_aws_json.sh /scripts/entrypoint.sh"]
+CMD ["/usr/local/pulldata/decode_aws_json.sh","/scripts/entrypoint.sh"]
