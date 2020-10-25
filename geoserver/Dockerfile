@@ -53,8 +53,10 @@ RUN chmod +rx /usr/local/pulldata
 
 COPY geoserverpush/*.sld /usr/local/pulldata/
 COPY geoserverpush/*.py /usr/local/pulldata/
+COPY geoserverpush/*.sh /usr/local/pulldata/
 RUN chmod +r /usr/local/pulldata/*.sld
 RUN chmod +rx /usr/local/pulldata/*.py
+RUN chmod +rx /usr/local/pulldata/*.sh
 
 COPY ausseabed.pipeline/target/*.jar ${CATALINA_HOME}/lib/
 RUN chmod +r ${CATALINA_HOME}/lib/*
@@ -99,4 +101,4 @@ ENV \
 # -Ds3.caching.diskCacheSize= 524288000 # 500 MB
 # -Ds3.caching.diskPath= Files.createTempDirectory("s3Cachine")
 
-CMD ["/scripts/entrypoint.sh"]
+CMD ["/usr/local/pulldata/decode_aws_json.sh /scripts/entrypoint.sh"]
