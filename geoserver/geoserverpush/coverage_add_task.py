@@ -26,6 +26,15 @@ import dbf
 from s3util import S3Util
 from dbf import DbfError
 
+from style_add_task import StyleAddTask
+import gs_rest_api_layers
+from gs_rest_api_layers.rest import ApiException
+from gs_rest_api_layers import Layers
+from gs_rest_api_layers import LayerWrapper
+from gs_rest_api_layers import Layer
+from gs_rest_api_layers import StyleReference
+from urllib.parse import quote_plus
+
 
 class CoverageAddTask(object):
 
@@ -33,6 +42,7 @@ class CoverageAddTask(object):
         self.configuration = configuration
         self.workspace_name = workspace_name
         self.product_database = product_database
+        self.server_url = configuration.host
         self.meta_cache = meta_cache
 
     def copy_shapefile_local(self, polygon_dest, shapefile_name):
@@ -99,7 +109,7 @@ class CoverageAddTask(object):
                               product_record.bathymetry_location),
                           META_URL=product_record.source_product.metadata_persistent_id)
 
-    def create_shapefile_zip(self, shapefile_url, shapefile_display_name, product_record):
+    def create_shapefile_zip(self, shapefile_url, shapefile_display_name, product_record=None):
         # 1. create a temp directory
         base_dir = self.create_temp_dir()
         shapefile_name = re.sub(".*/", "", shapefile_url)
@@ -126,8 +136,9 @@ class CoverageAddTask(object):
         for (source, destination) in zip(source_shapefile_plus_sidecars.values(), shapefile_plus_sidecars.values()):
             self.copy_s3_file_local(source, destination)
 
-        self.update_shapefile_attributes(shapefile_display_name,
-                                         shapefile_plus_sidecars['dbf'], product_record)
+        if product_record != None:
+            self.update_shapefile_attributes(shapefile_display_name,
+                                             shapefile_plus_sidecars['dbf'], product_record)
 
         # 3. register in geoserver as below
         logging.info(shapefile_plus_sidecars)
@@ -245,11 +256,104 @@ class CoverageAddTask(object):
             logging.error(
                 "Exception when calling DefaultApi->put_feature_type: %s\n" % e)
 
+    def get_layer(self, layer_name) -> LayerWrapper:
+        logging.info("Getting layer {}".format(layer_name))
+        # create an instance of the API class
+        authtoken = self.configuration.get_basic_auth_token()
+        # create an instance of the API class
+        api_instance = gs_rest_api_layers.DefaultApi(
+            gs_rest_api_layers.ApiClient(self.configuration, header_name='Authorization', header_value=authtoken))
+
+        try:
+            # Get a list of all coverage stores in {workspace}
+            api_response = api_instance.layers_name_workspace_get(
+                self.workspace_name, layer_name)
+        except ApiException as e:
+            logging.error(
+                "Exception when calling DefaultApi->layers_workspace_get: %s\n" % e)
+            raise
+
+        return api_response
+
+    def attach_style(self, display_name, default_style_name, alternate_style_names=[]):
+
+        logging.info(
+            "Attaching style for raster {}".format(display_name))
+
+        authtoken = self.configuration.get_basic_auth_token()
+
+        api_client = gs_rest_api_layers.ApiClient(
+            self.configuration, header_name='Authorization', header_value=authtoken)
+
+        # create an instance of the API class
+        api_instance = gs_rest_api_layers.DefaultApi(api_client)
+
+        # Layer | The updated layer definition.
+        try:
+            layer_wrapper = self.get_layer(display_name)
+        except ApiException as e:
+            logging.error(
+                "Exception when calling get_layer: %s\n" % e)
+            return
+
+        layer = layer_wrapper.layer
+
+        style_url = '{server_url}/workspaces/{workspace_name}/styles/{style_name}.xml'.format(
+            server_url=self.server_url, workspace_name=quote_plus(self.workspace_name), style_name=quote_plus(default_style_name))
+        style_ref = StyleReference(default_style_name, style_url)
+        logging.info("Creating ref to schema {}, url: {}".format(
+                     default_style_name, style_ref))
+        layer.default_style = style_ref
+
+        layer_styles = [style_ref]
+
+        for style_name in alternate_style_names:
+            style_url = '{server_url}/workspaces/{workspace_name}/styles/{style_name}.xml'.format(
+                server_url=self.server_url, workspace_name=quote_plus(self.workspace_name), style_name=quote_plus(style_name))
+            style_ref = StyleReference(style_name, style_url)
+            layer_styles.append(style_ref)
+
+        layer.styles = {"style": layer_styles}
+        try:
+            # Modify a layer.
+            api_instance.layers_name_workspace_put(
+                layer_wrapper, self.workspace_name, display_name)
+        except ApiException as e:
+            logging.error(
+                "Exception when calling DefaultApi->layers_name_workspace_put: %s\n" % e)
+
+    def add_holdings_layers(self, existing_datastores):
+        # The layers that need to be added:
+        holding_survey = 's3://ausseabed-public-warehouse-bathymetry/custom/85f8969c-c579-49d4-a00f-df50262e2cc6/asb_coverage_2020.shp'
+        holding_survey_name = 'ausseabed_bathymetry'
+        holding_survey_description = 'AusSeabed Bathymetry Holdings'
+
+        holding_compilation = 's3://ausseabed-public-warehouse-bathymetry/custom/85bab83c-9ef6-4e9f-b242-a72dcd00aadc/ga_holdings_compilations.shp'
+        holding_compilation_name = 'ga_holdings_compilations'
+        holding_compilation_description = 'AusSeabed Bathymetry Holdings (compilations)'
+
+        if holding_survey_name not in existing_datastores:
+            self.create_coverage(holding_survey, holding_survey_name, None)
+            self.update_layer_name(holding_survey_name,
+                                   holding_survey_description)
+            self.attach_style(holding_survey_name, StyleAddTask.AUSSEABED_BATHY_HOLDINGS_PURPLE_NAME, [
+                              StyleAddTask.AUSSEABED_BATHY_HOLDINGS_PURPLE_NAME, StyleAddTask.AUSSEABED_BATHY_HOLDINGS_BY_SOURCE_NAME, StyleAddTask.AUSSEABED_BATHY_WITH_DATA_ACCESS_NAME])
+
+        if holding_compilation_name not in existing_datastores:
+            self.create_coverage(holding_compilation,
+                                 holding_compilation_name, None)
+            self.update_layer_name(
+                holding_compilation_name, holding_compilation_description)
+            self.attach_style(holding_compilation_name, StyleAddTask.AUSSEABED_BATHY_HOLDINGS_PURPLE_NAME, [
+                              StyleAddTask.AUSSEABED_BATHY_HOLDINGS_PURPLE_NAME])
+
     def run(self):
         existing_datastores = CoverageAddTask.get_existing_datastores(
             self.configuration, self.workspace_name)
         logging.info("Found existing datastores {}".format(
             existing_datastores))
+
+        self.add_holdings_layers(existing_datastores)
 
         published_records = []
         for product_record in self.product_database.l3_dist_products:

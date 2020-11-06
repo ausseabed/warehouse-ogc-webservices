@@ -14,11 +14,23 @@ class StyleAddTask(object):
         "/bathymetry_shallow.sld"
     BATH_HILLSHADE_STYLE_FILENAME = os.path.dirname(os.path.realpath(__file__)) + \
         "/bathymetry_hillshade.sld"
-    # LOCAL_STYLE_FILENAME = "bathymetry_transparent.sld"
-    # BATH_HILLSHADE_STYLE_FILENAME = "bathymetry_hillshade.sld"
+
+    AUSSEABED_BATHY_HOLDINGS_PURPLE = os.path.dirname(os.path.realpath(__file__)) + \
+        "/ausseabed_bathy_holdings_purple.sld"
+
+    AUSSEABED_BATHY_HOLDINGS_BY_SOURCE = os.path.dirname(os.path.realpath(__file__)) + \
+        "/Ausseabed_bathy_by_source.sld"
+
+    AUSSEABED_BATHY_WITH_DATA_ACCESS = os.path.dirname(os.path.realpath(__file__)) + \
+        "/Ausseabed_with_data_access.sld"
+
     BATH_STYLE_NAME = "Bathymetry"
     BATH_ALT_STYLE_NAME = "BathymetryShallow"
     BATH_HILLSHADE_STYLE_NAME = "BathymetryHillshade"
+    AUSSEABED_BATHY_HOLDINGS_PURPLE_NAME = "HoldingsPurple"
+    AUSSEABED_BATHY_HOLDINGS_BY_SOURCE_NAME = "HoldingsBySource"
+    AUSSEABED_BATHY_WITH_DATA_ACCESS_NAME = "HoldingsDataAccess"
+
     POLY_STYLE_NAME = "polygon"
 
     def __init__(self, configuration, workspace_name):
@@ -28,7 +40,11 @@ class StyleAddTask(object):
         self.styles = {
             self.BATH_STYLE_NAME: self.LOCAL_STYLE_FILENAME,
             self.BATH_ALT_STYLE_NAME: self.BATH_ALT_LOCAL_STYLE_FILENAME,
-            self.BATH_HILLSHADE_STYLE_NAME: self.BATH_HILLSHADE_STYLE_FILENAME}
+            self.BATH_HILLSHADE_STYLE_NAME: self.BATH_HILLSHADE_STYLE_FILENAME,
+            self.AUSSEABED_BATHY_HOLDINGS_PURPLE_NAME: self.AUSSEABED_BATHY_HOLDINGS_PURPLE,
+            self.AUSSEABED_BATHY_HOLDINGS_BY_SOURCE_NAME: self.AUSSEABED_BATHY_HOLDINGS_BY_SOURCE,
+            self.AUSSEABED_BATHY_WITH_DATA_ACCESS_NAME: self.AUSSEABED_BATHY_WITH_DATA_ACCESS
+        }
 
     def create_style(self, style_name, local_file_name):
         # create an instance of the API class

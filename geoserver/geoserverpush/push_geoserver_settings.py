@@ -37,7 +37,7 @@ formatter = jsonlogger.JsonFormatter(format_str)
 handler.setFormatter(formatter)
 logger = logging.getLogger()
 logger.addHandler(handler)
-logger.setLevel(logging.WARNING)
+logger.setLevel(logging.INFO)
 # Normally we would attach the handler to the root logger, and this would be unnecessary
 logger.propagate = False
 load_dotenv()
@@ -73,14 +73,14 @@ class PushGeoserverSettings():
         CoverageAddTask(configuration, self.workspace_name,
                         product_database, meta_cache).run()
 
-        RasterAddTask(configuration, self.workspace_name,
-                      product_database, meta_cache).run()
+        # RasterAddTask(configuration, self.workspace_name,
+        #               product_database, meta_cache).run()
 
-        RasterStyleAttachTask(configuration, self.workspace_name,
-                              product_database).run()
+        # RasterStyleAttachTask(configuration, self.workspace_name,
+        #                       product_database).run()
 
-        GroupLayerTask(configuration, self.workspace_name,
-                       product_database, meta_cache).run()
+        # GroupLayerTask(configuration, self.workspace_name,
+        #                product_database, meta_cache).run()
 
         # TestAddTask(configuration, self.workspace_name, product_database).run()
 
