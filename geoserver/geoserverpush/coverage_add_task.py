@@ -324,7 +324,7 @@ class CoverageAddTask(object):
 
     def add_holdings_layers(self, existing_datastores):
         # The layers that need to be added:
-        holding_survey = 's3://ausseabed-public-warehouse-bathymetry/custom/85f8969c-c579-49d4-a00f-df50262e2cc6/asb_coverage_2020.shp'
+        holding_survey = 's3://ausseabed-public-warehouse-bathymetry/custom/83adda30-0374-40cd-a97b-29e21481f236/AusSeabed_Holdings_AusOnly.shp'
         holding_survey_name = 'ausseabed_bathymetry'
         holding_survey_description = 'AusSeabed Bathymetry Holdings'
 
