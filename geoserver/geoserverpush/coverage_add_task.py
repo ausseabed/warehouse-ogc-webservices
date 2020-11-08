@@ -82,8 +82,11 @@ class CoverageAddTask(object):
         return(new_dir)
 
     # https://pypi.org/project/geoserver-restconfig/
-    def shapefile_plus_sidecars(self, path):
-        return {ext: path + "." + ext for ext in ['shx', 'shp', 'dbf', 'prj']}
+    def shapefile_plus_sidecars(self, path, plus_index=False):
+        if plus_index:
+            return {ext: path + "." + ext for ext in ['shx', 'shp', 'dbf', 'prj', 'sbx', 'sbn']}
+        else:
+            return {ext: path + "." + ext for ext in ['shx', 'shp', 'dbf', 'prj']}
 
     def update_shapefile_attributes(self, shapefile_display_name, dbf_location, product_record):
         display_title = self.meta_cache.extract_title(
@@ -115,13 +118,18 @@ class CoverageAddTask(object):
         shapefile_name = re.sub(".*/", "", shapefile_url)
         polygon_dest = base_dir + "/" + shapefile_name
 
+        spatial_index = S3Util.s3_exists(shapefile_url.replace(".shp", ".sbx"))
+
+        logging.info(shapefile_url + " has spatial index = " +
+                     str(spatial_index))
+
         source_shapefile_plus_sidecars = self.shapefile_plus_sidecars(
-            shapefile_url.replace(".shp", ""))
+            shapefile_url.replace(".shp", ""), spatial_index)
         shapefile_plus_sidecars = self.shapefile_plus_sidecars(
-            polygon_dest.replace(".shp", ""))
+            polygon_dest.replace(".shp", ""), spatial_index)
 
         shapefile_name_plus_sidecars = self.shapefile_plus_sidecars(
-            shapefile_display_name)
+            shapefile_display_name, spatial_index)
         # shapefile_and_friends should look on the filesystem to find a shapefile
         # and related files based on the base path passed in
         #
