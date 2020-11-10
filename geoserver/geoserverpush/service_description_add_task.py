@@ -2,7 +2,7 @@ import time
 import logging
 import gs_rest_api_owsservices
 from gs_rest_api_owsservices.rest import ApiException
-from gs_rest_api_owsservices import WMSInfoWrapper, WMSInfo, WCSInfo, WCSInfoWrapper
+from gs_rest_api_owsservices import WMSInfoWrapper, WMSInfo, WCSInfo, WCSInfoWrapper, WFSInfo, WFSInfoWrapper
 
 
 class ServiceDescriptionAddTask(object):
@@ -89,8 +89,49 @@ class ServiceDescriptionAddTask(object):
             logging.error(
                 "Exception when calling DefaultApi->put_wcs_workspace_settings: %s\n" % e)
 
+    def run_wfs(self):
+        authtoken = self.configuration.get_basic_auth_token()
+        # create an instance of the API class
+        api_instance = gs_rest_api_owsservices.DefaultApi(
+            gs_rest_api_owsservices.ApiClient(self.configuration, header_name='Authorization', header_value=authtoken))
+
+        try:
+            # Get wms for workspace
+            api_response = api_instance.get_wfs_settings()
+        except ApiException as e:
+            logging.error(
+                "Exception when calling DefaultApi->get_wfs_settings: %s\n" % e)
+
+        logging.info(api_response)
+        wfs_config = api_response.wfs
+        wfs_config.enabled = "True"
+        wfs_config.name = "WFS"
+        wfs_config.title = "Ausseabed Warehouse Bathymetry"
+        wfs_config.maintainer = "http://www.ausseabed.gov.au"
+        # Spelling mistake part of geoserver's rest interface
+        wfs_config.abstrct = "This web service contains marine geospatial bathymetry held by Geoscience Australia and the Ausseabed community. It includes bathymetry plus derived layers. This web service allows exploration of the seafloor topography through the compilation of multibeam sonar and other marine datasets."
+        wfs_config.access_constraints = "Unless otherwise stated, © Commonwealth of Australia (Geoscience Australia) 2020. This product is released under the Creative Commons Attribution 4.0 International Licence. http://creativecommons.org/licenses/by/4.0/legalcode"
+        wfs_config.max_input_memory = 0
+        wfs_config.max_output_memory = 0
+        wfs_config_wrapper = WFSInfoWrapper(wfs_config)
+
+        logging.info("Writing WFS abstract for {}".format(self.workspace_name))
+
+        try:
+            api_response = api_instance.put_wfs_settings(wfs_config_wrapper)
+        except ApiException as e:
+            logging.error(
+                "Exception when calling DefaultApi->put_wfs_settings: %s\n" % e)
+        try:
+            api_response = api_instance.put_wfs_workspace_settings(
+                wfs_config_wrapper, self.workspace_name)
+        except ApiException as e:
+            logging.error(
+                "Exception when calling DefaultApi->put_wfs_workspace_settings: %s\n" % e)
+
     def run(self):
         logging.info("Creating service description {}".format(
             self.workspace_name))
         self.run_wms()
         self.run_wcs()
+        self.run_wfs()
