@@ -28,7 +28,7 @@ The warehouse-ogc-webservices sit as a container called Geoserver in the figure 
 ## Geoserver
 Geoserver provides OGC webservices such as WMS and WCS. Geoserver is configured as per the base docker container (kartoza/geoserver). There is nothing particularly specialy about our configuration. The S3GeoTiff plugin provides capacity to reference cloud optimised geotiffs. Logging is adjusted to provide json output (and support better AWS insight queries).
 
-The kartoza/geoserver docker container can run behind the latest Tomcat versions, so we push a version to our container repository based on latest upstream dependencies. 
+The kartoza/geoserver docker container can run behind the latest Tomcat versions, so we push a version to our container repository based on latest upstream dependencies.
 
 ## Push on load
 On load of the geoserver instance, the entrypoint warehouse-ogc-webservices/geoserver/geoserverpush/push_geoserver_settings.py runs to transfer information about layers from the Product Catalogue to the geoserver instance. The Product Catalogue restful interface is defined in the repo: https://github.com/ausseabed/product-catalogue. Geoserver is called through a set of restful libraries defined in the repo: https://github.com/ausseabed/geoserver-rest-client.
@@ -37,7 +37,7 @@ On load of the geoserver instance, the entrypoint warehouse-ogc-webservices/geos
 The continuous integration server (CircleCI) compiles, publishes and deploys the Warehouse to the development environment and production.
 ## Build
 The steps involved in the build are:
-* build kartoza base image (commiting to a branch with "build_and_push_kartoza" will cause a new image to be built with latest upstream dependencies) 
+* build kartoza base image (commiting to a branch with "build_and_push_kartoza" will cause a new image to be built with latest upstream dependencies). This image needs to be manually copied to production - a helper script copyKartozaImageToProduction.sh is available if appropriate AWS profiles are set up.
 * build_tomcat_push_jar (create a launch script to pull configuration data)
 * build_and_push_geoserver_image (incorporate the launch script and any other configuration details into a docker container)
 
