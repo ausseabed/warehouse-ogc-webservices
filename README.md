@@ -15,7 +15,7 @@
 
 # Introduction
 AusSeabed is a national seabed mapping coordination program. The program aims to serve the Australian community that relies on seabed data by coordinating collection efforts in Australian waters and improving data access. 
-
+ 
 This repository contains the code that builds OGC web service endpoints. The terraform code for deploying the infrastructure is housed in the https://github.com/ausseabed/ausseabed-aws-foundation/ repository.
 
 # Architecture
