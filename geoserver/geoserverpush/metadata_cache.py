@@ -1,9 +1,10 @@
-
 import logging
-from gis_metadata.iso_metadata_parser import IsoParser
+import unittest
+from unittest.mock import patch, Mock
 
-from gis_metadata.metadata_parser import get_metadata_parser
 import requests
+from gis_metadata.iso_metadata_parser import IsoParser
+from gis_metadata.metadata_parser import get_metadata_parser
 
 from custom_iso_parser import CustomIsoParser
 
@@ -84,7 +85,30 @@ class MetaDataCache():
         if (meta == None):
             return "N/A"
 
-        return meta.instrument
+        return self.combine_if_list(meta.instrument)
+
+    def combine_if_list(self, value, separator=', '):
+        return separator.join(value) if isinstance(value, list) else value
+
+
+class TestMetadataCache(unittest.TestCase):
+    def test_single_instrument(self):
+        m = Mock()
+        m.instrument = 'Kongsberg EM2040C'
+
+        with patch.object(MetaDataCache, 'get_metadata', lambda x, y: m) as mock_method:
+            meta_cache = MetaDataCache()
+            result = meta_cache.extract_instrument('url')
+            self.assertEqual('Kongsberg EM2040C', result)
+
+    def test_multiple_instruments(self):
+        m = Mock()
+        m.instrument = ['Kongsberg EM2040C', 'Kongsberg EM3002D']
+
+        with patch.object(MetaDataCache, 'get_metadata', lambda x, y: m) as mock_method:
+            meta_cache = MetaDataCache()
+            result = meta_cache.extract_instrument('url')
+            self.assertEqual('Kongsberg EM2040C, Kongsberg EM3002D', result)
 
 
 if __name__ == "__main__":
