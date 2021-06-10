@@ -78,7 +78,7 @@ class MetaDataCache():
         if (meta == None):
             return "N/A"
 
-        return meta.vessel
+        return self.combine_if_list(meta.vessel)
 
     def extract_instrument(self, metadata_url):
         meta = self.get_metadata(metadata_url)
