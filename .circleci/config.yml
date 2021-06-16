@@ -177,7 +177,7 @@ jobs:
           command: |
             sed -i s/FROM\ 288871573946.dkr.ecr.ap-southeast-2.amazonaws.com/FROM\ ${AWS_ECR_ACCOUNT_URL_ENV_VAR_NAME}/g ./geoserver/Dockerfile
       - aws-cli/setup:
-          version: 1
+          version: "1"
           aws-region: AWS_REGION_ENV_VAR_NAME
       - aws-ecr/ecr-login:
           account-url: AWS_ECR_ACCOUNT_URL_ENV_VAR_NAME
