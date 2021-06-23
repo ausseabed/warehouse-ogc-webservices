@@ -48,7 +48,7 @@ RUN chmod +r /opt/geoserver/data_dir/logs/*
 COPY geoserverpush/requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
-RUN mkdir /usr/local/pulldata/styles
+RUN mkdir -p /usr/local/pulldata/styles
 RUN chmod +rx /usr/local/pulldata
 
 COPY geoserverpush/styles/*.sld /usr/local/pulldata/styles/
