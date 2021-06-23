@@ -51,7 +51,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 RUN mkdir /usr/local/pulldata
 RUN chmod +rx /usr/local/pulldata
 
-COPY geoserverpush/*.sld /usr/local/pulldata/
+COPY geoserverpush/styles/*.sld /usr/local/pulldata/
 COPY geoserverpush/*.py /usr/local/pulldata/
 COPY geoserverpush/*.sh /usr/local/pulldata/
 RUN chmod +r /usr/local/pulldata/*.sld
