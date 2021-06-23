@@ -9,20 +9,23 @@ import logging
 class StyleAddTask(object):
 
     LOCAL_STYLE_FILENAME = os.path.dirname(os.path.realpath(__file__)) + \
-        "/bathymetry_transparent.sld"
+        "/styles/bathymetry_transparent.sld"
     BATH_ALT_LOCAL_STYLE_FILENAME = os.path.dirname(os.path.realpath(__file__)) + \
-        "/bathymetry_shallow.sld"
+        "/styles/bathymetry_shallow.sld"
     BATH_HILLSHADE_STYLE_FILENAME = os.path.dirname(os.path.realpath(__file__)) + \
-        "/bathymetry_hillshade.sld"
+        "/styles/bathymetry_hillshade.sld"
 
     AUSSEABED_BATHY_HOLDINGS_PURPLE = os.path.dirname(os.path.realpath(__file__)) + \
-        "/ausseabed_bathy_holdings_purple.sld"
-
+        "/styles/ausseabed_bathy_holdings_purple.sld"
     AUSSEABED_BATHY_HOLDINGS_BY_SOURCE = os.path.dirname(os.path.realpath(__file__)) + \
-        "/Ausseabed_bathy_by_source.sld"
-
+        "/styles/Ausseabed_bathy_by_source.sld"
     AUSSEABED_BATHY_WITH_DATA_ACCESS = os.path.dirname(os.path.realpath(__file__)) + \
-        "/Ausseabed_with_data_access.sld"
+        "/styles/Ausseabed_with_data_access.sld"
+
+    MH370_PHASE2 = os.path.dirname(os.path.realpath(__file__)) + \
+        "/styles/phase2_data.sld"
+    MH370_PHASE2_INVERSE = os.path.dirname(os.path.realpath(__file__)) + \
+        "/styles/phase2_data_inverse.sld"
 
     BATH_STYLE_NAME = "Bathymetry"
     BATH_ALT_STYLE_NAME = "BathymetryShallow"
@@ -30,6 +33,8 @@ class StyleAddTask(object):
     AUSSEABED_BATHY_HOLDINGS_PURPLE_NAME = "HoldingsPurple"
     AUSSEABED_BATHY_HOLDINGS_BY_SOURCE_NAME = "HoldingsBySource"
     AUSSEABED_BATHY_WITH_DATA_ACCESS_NAME = "HoldingsDataAccess"
+    MH370_PHASE2_STYLE_NAME = "MH370Phase2"
+    MH370_PHASE2_INVERSE_STYLE_NAME = "MH370Phase2Inverse"
 
     POLY_STYLE_NAME = "polygon"
 
@@ -43,7 +48,9 @@ class StyleAddTask(object):
             self.BATH_HILLSHADE_STYLE_NAME: self.BATH_HILLSHADE_STYLE_FILENAME,
             self.AUSSEABED_BATHY_HOLDINGS_PURPLE_NAME: self.AUSSEABED_BATHY_HOLDINGS_PURPLE,
             self.AUSSEABED_BATHY_HOLDINGS_BY_SOURCE_NAME: self.AUSSEABED_BATHY_HOLDINGS_BY_SOURCE,
-            self.AUSSEABED_BATHY_WITH_DATA_ACCESS_NAME: self.AUSSEABED_BATHY_WITH_DATA_ACCESS
+            self.AUSSEABED_BATHY_WITH_DATA_ACCESS_NAME: self.AUSSEABED_BATHY_WITH_DATA_ACCESS,
+            self.MH370_PHASE2_STYLE_NAME: self.MH370_PHASE2,
+            self.MH370_PHASE2_INVERSE_STYLE_NAME: self.MH370_PHASE2_INVERSE
         }
 
     def create_style(self, style_name, local_file_name):

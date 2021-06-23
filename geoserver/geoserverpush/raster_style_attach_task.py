@@ -138,12 +138,26 @@ class RasterStyleAttachTask(object):
                 continue
             published_records.append(bath_display_name)
 
+            bathymetry_style = StyleAddTask.BATH_STYLE_NAME
+            bathymetry_available_styles = [StyleAddTask.BATH_ALT_STYLE_NAME]
+
+            if product_record.source_product.default_style:
+                bathymetry_style = product_record.source_product.default_style.geoserver_style_name
+                bathymetry_available_styles = []
+
+                logging.info('Overriding default style with: {}'.format(bathymetry_style))
+
+            if product_record.source_product.available_styles:
+                bathymetry_available_styles = list(map(lambda x: x.geoserver_style_name, product_record.source_product.available_styles))
+
+                logging.info('Overriding default available styles with: {}'.format(bathymetry_available_styles))
+
             # Add bathymetry Raster
             if bath_display_name in existing_layers:
                 self.attach_style(
-                    bath_display_name, StyleAddTask.BATH_STYLE_NAME, [StyleAddTask.BATH_ALT_STYLE_NAME])
+                    bath_display_name, bathymetry_style, bathymetry_available_styles)
             else:
-                logging.warn("Cannot find layer for raster: {}".format(
+                logging.warning("Cannot find layer for raster: {}".format(
                     bath_display_name))
 
             hs_display_name = self.product_database.get_name_for_product(
