@@ -48,13 +48,13 @@ RUN chmod +r /opt/geoserver/data_dir/logs/*
 COPY geoserverpush/requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
-RUN mkdir /usr/local/pulldata
+RUN mkdir /usr/local/pulldata/styles
 RUN chmod +rx /usr/local/pulldata
 
-COPY geoserverpush/styles/*.sld /usr/local/pulldata/
+COPY geoserverpush/styles/*.sld /usr/local/pulldata/styles/
 COPY geoserverpush/*.py /usr/local/pulldata/
 COPY geoserverpush/*.sh /usr/local/pulldata/
-RUN chmod +r /usr/local/pulldata/*.sld
+RUN chmod +r /usr/local/pulldata/styles/*.sld
 RUN chmod +rx /usr/local/pulldata/*.py
 RUN chmod +rx /usr/local/pulldata/*.sh
 
