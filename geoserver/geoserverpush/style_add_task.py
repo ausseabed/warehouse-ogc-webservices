@@ -1,9 +1,8 @@
+import logging
+import os
+
 import gs_rest_api_styles
 from gs_rest_api_styles.rest import ApiException
-
-import os
-import sys
-import logging
 
 
 class StyleAddTask(object):
@@ -26,6 +25,8 @@ class StyleAddTask(object):
         "/styles/phase2_data.sld"
     MH370_PHASE2_INVERSE = os.path.dirname(os.path.realpath(__file__)) + \
         "/styles/phase2_data_inverse.sld"
+    BACKSCATTER = os.path.dirname(os.path.realpath(__file__)) + \
+        "/styles/backscatter.sld"
 
     BATH_STYLE_NAME = "Bathymetry"
     BATH_ALT_STYLE_NAME = "BathymetryShallow"
@@ -35,6 +36,7 @@ class StyleAddTask(object):
     AUSSEABED_BATHY_WITH_DATA_ACCESS_NAME = "HoldingsDataAccess"
     MH370_PHASE2_STYLE_NAME = "MH370Phase2"
     MH370_PHASE2_INVERSE_STYLE_NAME = "MH370Phase2Inverse"
+    BACKSCATTER_STYLE_NAME = "Backscatter"
 
     POLY_STYLE_NAME = "polygon"
 
@@ -50,7 +52,8 @@ class StyleAddTask(object):
             self.AUSSEABED_BATHY_HOLDINGS_BY_SOURCE_NAME: self.AUSSEABED_BATHY_HOLDINGS_BY_SOURCE,
             self.AUSSEABED_BATHY_WITH_DATA_ACCESS_NAME: self.AUSSEABED_BATHY_WITH_DATA_ACCESS,
             self.MH370_PHASE2_STYLE_NAME: self.MH370_PHASE2,
-            self.MH370_PHASE2_INVERSE_STYLE_NAME: self.MH370_PHASE2_INVERSE
+            self.MH370_PHASE2_INVERSE_STYLE_NAME: self.MH370_PHASE2_INVERSE,
+            self.BACKSCATTER_STYLE_NAME: self.BACKSCATTER
         }
 
     def create_style(self, style_name, local_file_name):
@@ -105,7 +108,6 @@ class StyleAddTask(object):
         return style_names
 
     def run(self):
-
         existing_styles = self.get_styles()
         logging.info("Found existing styles {}".format(existing_styles))
 
