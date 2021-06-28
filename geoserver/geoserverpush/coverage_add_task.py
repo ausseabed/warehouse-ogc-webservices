@@ -392,8 +392,11 @@ class CoverageAddTask(object):
 
         api_response = api_instance.get_feature_types_0(self.workspace_name)
 
-        existing_featuretypes = list(map(lambda x: x["name"], api_response["featureTypes"]["featureType"]))
-        logging.info("Found existing featuretypes {}".format(existing_featuretypes))
+        existing_featuretypes = []
+        if 'featureTypes' in api_response:
+            existing_featuretypes = list(map(lambda x: x["name"], api_response["featureTypes"]["featureType"]))
+
+        logging.info("Found existing featuretypes: {}".format(existing_featuretypes))
 
         for row in self.read_csv("vector_config/layers.csv"):
             datastore_name, native_name, layer_name, abstract_file, default_style, available_styles = row
