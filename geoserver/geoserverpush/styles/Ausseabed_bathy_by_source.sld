@@ -12,13 +12,13 @@
           </se:Description>
           <ogc:Filter xmlns:ogc="http://www.opengis.net/ogc">
             <ogc:PropertyIsEqualTo>
-              <ogc:PropertyName>SOURCE</ogc:PropertyName>
+              <ogc:PropertyName>source</ogc:PropertyName>
               <ogc:Literal>Government</ogc:Literal>
             </ogc:PropertyIsEqualTo>
           </ogc:Filter>
           <se:PolygonSymbolizer>
             <se:Fill>
-              <se:SvgParameter name="fill">#00a9ce</se:SvgParameter>
+              <se:CssParameter name="fill">#00a9ce</se:CssParameter>
             </se:Fill>
           </se:PolygonSymbolizer>
         </se:Rule>
@@ -29,13 +29,13 @@
           </se:Description>
           <ogc:Filter xmlns:ogc="http://www.opengis.net/ogc">
             <ogc:PropertyIsEqualTo>
-              <ogc:PropertyName>SOURCE</ogc:PropertyName>
+              <ogc:PropertyName>source</ogc:PropertyName>
               <ogc:Literal>Industry</ogc:Literal>
             </ogc:PropertyIsEqualTo>
           </ogc:Filter>
           <se:PolygonSymbolizer>
             <se:Fill>
-              <se:SvgParameter name="fill">#006ba6</se:SvgParameter>
+              <se:CssParameter name="fill">#006ba6</se:CssParameter>
             </se:Fill>
           </se:PolygonSymbolizer>
         </se:Rule>
@@ -46,13 +46,13 @@
           </se:Description>
           <ogc:Filter xmlns:ogc="http://www.opengis.net/ogc">
             <ogc:PropertyIsEqualTo>
-              <ogc:PropertyName>SOURCE</ogc:PropertyName>
+              <ogc:PropertyName>source</ogc:PropertyName>
               <ogc:Literal>Research Institute</ogc:Literal>
             </ogc:PropertyIsEqualTo>
           </ogc:Filter>
           <se:PolygonSymbolizer>
             <se:Fill>
-              <se:SvgParameter name="fill">#003145</se:SvgParameter>
+              <se:CssParameter name="fill">#003145</se:CssParameter>
             </se:Fill>
           </se:PolygonSymbolizer>
         </se:Rule>
@@ -63,41 +63,41 @@
           </se:Description>
           <ogc:Filter xmlns:ogc="http://www.opengis.net/ogc">
             <ogc:PropertyIsEqualTo>
-              <ogc:PropertyName>SOURCE</ogc:PropertyName>
+              <ogc:PropertyName>source</ogc:PropertyName>
               <ogc:Literal>University</ogc:Literal>
             </ogc:PropertyIsEqualTo>
           </ogc:Filter>
           <se:PolygonSymbolizer>
             <se:Fill>
-              <se:SvgParameter name="fill">#9d9d9c</se:SvgParameter>
+              <se:CssParameter name="fill">#9d9d9c</se:CssParameter>
             </se:Fill>
           </se:PolygonSymbolizer>
         </se:Rule>
         <se:Rule>
           <se:Name></se:Name>
           <se:Description>
-            <se:Title>SOURCE is ''</se:Title>
+            <se:Title>source is ''</se:Title>
           </se:Description>
           <ogc:Filter xmlns:ogc="http://www.opengis.net/ogc">
             <ogc:Or>
               <ogc:PropertyIsEqualTo>
-                <ogc:PropertyName>SOURCE</ogc:PropertyName>
+                <ogc:PropertyName>source</ogc:PropertyName>
                 <ogc:Literal></ogc:Literal>
               </ogc:PropertyIsEqualTo>
               <ogc:PropertyIsNull>
-                <ogc:PropertyName>SOURCE</ogc:PropertyName>
+                <ogc:PropertyName>source</ogc:PropertyName>
               </ogc:PropertyIsNull>
             </ogc:Or>
           </ogc:Filter>
           <se:PolygonSymbolizer>
             <se:Fill>
-              <se:SvgParameter name="fill">#eaeaea</se:SvgParameter>
-              <se:SvgParameter name="fill-opacity">0</se:SvgParameter>
+              <se:CssParameter name="fill">#eaeaea</se:CssParameter>
+              <se:CssParameter name="fill-opacity">0</se:CssParameter>
             </se:Fill>
             <se:Stroke>
-              <se:SvgParameter name="stroke">#232323</se:SvgParameter>
-              <se:SvgParameter name="stroke-width">1</se:SvgParameter>
-              <se:SvgParameter name="stroke-linejoin">bevel</se:SvgParameter>
+              <se:CssParameter name="stroke">#232323</se:CssParameter>
+              <se:CssParameter name="stroke-width">1</se:CssParameter>
+              <se:CssParameter name="stroke-linejoin">bevel</se:CssParameter>
             </se:Stroke>
           </se:PolygonSymbolizer>
         </se:Rule>

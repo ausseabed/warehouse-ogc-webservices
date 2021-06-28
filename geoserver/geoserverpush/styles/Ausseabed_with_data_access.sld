@@ -12,18 +12,18 @@
           </se:Description>
           <ogc:Filter xmlns:ogc="http://www.opengis.net/ogc">
             <ogc:PropertyIsLike escape="\" matchCase="false" wildCard="%" singleChar="_">
-              <ogc:PropertyName>BATHY_URL</ogc:PropertyName>
+              <ogc:PropertyName>bathy_url</ogc:PropertyName>
               <ogc:Literal>http%</ogc:Literal>
             </ogc:PropertyIsLike>
           </ogc:Filter>
           <se:PolygonSymbolizer>
             <se:Fill>
-              <se:SvgParameter name="fill">#9152e0</se:SvgParameter>
+              <se:CssParameter name="fill">#9152e0</se:CssParameter>
             </se:Fill>
             <se:Stroke>
-              <se:SvgParameter name="stroke">#bababa</se:SvgParameter>
-              <se:SvgParameter name="stroke-width">0.5</se:SvgParameter>
-              <se:SvgParameter name="stroke-linejoin">bevel</se:SvgParameter>
+              <se:CssParameter name="stroke">#bababa</se:CssParameter>
+              <se:CssParameter name="stroke-width">0.5</se:CssParameter>
+              <se:CssParameter name="stroke-linejoin">bevel</se:CssParameter>
             </se:Stroke>
           </se:PolygonSymbolizer>
         </se:Rule>
@@ -34,18 +34,18 @@
           </se:Description>
           <ogc:Filter xmlns:ogc="http://www.opengis.net/ogc">
             <ogc:PropertyIsLike escape="\" matchCase="false" wildCard="%" singleChar="_">
-              <ogc:PropertyName>BATHY_URL</ogc:PropertyName>
+              <ogc:PropertyName>bathy_url</ogc:PropertyName>
               <ogc:Literal>%N/A</ogc:Literal>
             </ogc:PropertyIsLike>
           </ogc:Filter>
           <se:PolygonSymbolizer>
             <se:Fill>
-              <se:SvgParameter name="fill">#fcfcfc</se:SvgParameter>
+              <se:CssParameter name="fill">#fcfcfc</se:CssParameter>
             </se:Fill>
             <se:Stroke>
-              <se:SvgParameter name="stroke">#969595</se:SvgParameter>
-              <se:SvgParameter name="stroke-width">1</se:SvgParameter>
-              <se:SvgParameter name="stroke-linejoin">bevel</se:SvgParameter>
+              <se:CssParameter name="stroke">#969595</se:CssParameter>
+              <se:CssParameter name="stroke-width">1</se:CssParameter>
+              <se:CssParameter name="stroke-linejoin">bevel</se:CssParameter>
             </se:Stroke>
           </se:PolygonSymbolizer>
         </se:Rule>

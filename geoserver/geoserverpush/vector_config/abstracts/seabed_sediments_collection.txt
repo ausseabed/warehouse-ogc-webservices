@@ -1,0 +1,1 @@
+This service contains point data describing physical properties of marine sediments as held within the Geoscience Australia Marine Sediment database (MARS) for samples acquired by marine surveys that occurred between 1905 and 2017. Points are symbolised by individual texture class according to the Folk (1954) nomenclature for sediments.

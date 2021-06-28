@@ -1,39 +1,34 @@
-import gs_rest_api_datastores
-from gs_rest_api_datastores.rest import ApiException
-import uuid
+import csv
+import io
+import json
+import logging
+import os
 import re
-from shlex import quote
 import subprocess
 import tempfile
+import uuid
 import zipfile
-import io
-import os
-import sys
-import logging
 from copy import copy
-import urllib
-import six
-from six.moves import http_client as httplib
-from typing import List
-from product_database import ProductDatabase
-import gs_rest_api_layers
-from gs_rest_api_layers.rest import ApiException
-import gs_rest_api_featuretypes
-from gs_rest_api_featuretypes.rest import ApiException
-from product_catalogue_py_rest_client.models import ProductL3Dist, SurveyL3Relation, Survey
-from s3util import S3Util
-import dbf
-from s3util import S3Util
-from dbf import DbfError
-
-from style_add_task import StyleAddTask
-import gs_rest_api_layers
-from gs_rest_api_layers.rest import ApiException
-from gs_rest_api_layers import Layers
-from gs_rest_api_layers import LayerWrapper
-from gs_rest_api_layers import Layer
-from gs_rest_api_layers import StyleReference
+from pathlib import Path
 from urllib.parse import quote_plus
+
+import boto3
+import dbf
+import gs_rest_api_datastores
+import gs_rest_api_featuretypes
+import gs_rest_api_layers
+from dbf import DbfError
+from gs_rest_api_datastores import Datastore, DatastoreWrapper
+from gs_rest_api_datastores.rest import ApiException
+from gs_rest_api_featuretypes import FeatureTypeInfoWrapper, FeatureTypeInfo
+from gs_rest_api_featuretypes.rest import ApiException
+from gs_rest_api_layers import LayerWrapper
+from gs_rest_api_layers import StyleReference
+from gs_rest_api_layers.rest import ApiException
+from product_catalogue_py_rest_client.models import ProductL3Dist
+
+from product_database import ProductDatabase
+from s3util import S3Util
 
 
 class CoverageAddTask(object):
@@ -44,9 +39,24 @@ class CoverageAddTask(object):
         self.product_database = product_database
         self.server_url = configuration.host
         self.meta_cache = meta_cache
+        self.secret_manager = boto3.client('secretsmanager', region_name='ap-southeast-2')
+
+    def get_secret(self, secret_id):
+        response = self.secret_manager.get_secret_value(SecretId=secret_id)
+        return json.loads(response['SecretString'])
+
+    def read_csv(self, filename, skip_header_row=True):
+        with open(filename, 'r') as f:
+            reader = csv.reader(f)
+
+            for row in reader:
+                if skip_header_row:
+                    skip_header_row = False
+                    continue
+
+                yield row
 
     def copy_shapefile_local(self, polygon_dest, shapefile_name):
-
         polygon_src = shapefile_name.replace("s3://", "/vsis3/")
 
         cmd = ["/usr/bin/ogr2ogr", "-f",
@@ -284,9 +294,8 @@ class CoverageAddTask(object):
         return api_response
 
     def attach_style(self, display_name, default_style_name, alternate_style_names=[]):
-
         logging.info(
-            "Attaching style for raster {}".format(display_name))
+            "Attaching style for coverage {}".format(display_name))
 
         authtoken = self.configuration.get_basic_auth_token()
 
@@ -330,30 +339,79 @@ class CoverageAddTask(object):
             logging.error(
                 "Exception when calling DefaultApi->layers_name_workspace_put: %s\n" % e)
 
-    def add_holdings_layers(self, existing_datastores):
-        # The layers that need to be added:
-        holding_survey = 's3://ausseabed-public-warehouse-bathymetry/custom/83adda30-0374-40cd-a97b-29e21481f236/AusSeabed_Holdings_AusOnly.shp'
-        holding_survey_name = 'ausseabed_bathymetry'
-        holding_survey_description = 'AusSeabed Bathymetry Holdings'
+    def add_postgis_datastores(self, existing_datastores):
+        auth_token = self.configuration.get_basic_auth_token()
+        # create an instance of the API class
+        no_byte_debug_configuration = copy(self.configuration)
 
-        holding_compilation = 's3://ausseabed-public-warehouse-bathymetry/custom/85bab83c-9ef6-4e9f-b242-a72dcd00aadc/ga_holdings_compilations.shp'
-        holding_compilation_name = 'ga_holdings_compilations'
-        holding_compilation_description = 'AusSeabed Bathymetry Holdings (compilations)'
+        # so we don't end up with bytes on the output stream
+        no_byte_debug_configuration.debug = False
+        api_client = gs_rest_api_datastores.ApiClient(
+            no_byte_debug_configuration, header_name='Authorization', header_value=auth_token)
 
-        if holding_survey_name not in existing_datastores:
-            self.create_coverage(holding_survey, holding_survey_name, None)
-            self.update_layer_name(holding_survey_name,
-                                   holding_survey_description)
-            self.attach_style(holding_survey_name, StyleAddTask.AUSSEABED_BATHY_HOLDINGS_PURPLE_NAME, [
-                              StyleAddTask.AUSSEABED_BATHY_HOLDINGS_PURPLE_NAME, StyleAddTask.AUSSEABED_BATHY_HOLDINGS_BY_SOURCE_NAME, StyleAddTask.AUSSEABED_BATHY_WITH_DATA_ACCESS_NAME])
+        api_instance = gs_rest_api_datastores.DefaultApi(api_client)
 
-        if holding_compilation_name not in existing_datastores:
-            self.create_coverage(holding_compilation,
-                                 holding_compilation_name, None)
-            self.update_layer_name(
-                holding_compilation_name, holding_compilation_description)
-            self.attach_style(holding_compilation_name, StyleAddTask.AUSSEABED_BATHY_HOLDINGS_PURPLE_NAME, [
-                              StyleAddTask.AUSSEABED_BATHY_HOLDINGS_PURPLE_NAME])
+        for row in self.read_csv("vector_config/datastores.csv"):
+            name, secret_id = row
+
+            if name not in existing_datastores:
+                config = self.get_secret(secret_id)
+                logging.info("Adding PostGIS datastore: {}".format(name))
+
+                datastore = DatastoreWrapper(Datastore(
+                    name=name,
+                    workspace=self.workspace_name,
+                    enabled=True,
+                    connection_parameters={
+                    "host": config["hostname"],
+                    "port": config["port"],
+                    "database": config["database"],
+                    "user": config["username"],
+                    "passwd": config["password"],
+                    "dbtype": "postgis",
+                    "schema": config["schema"],
+                    "Expose primary keys": "true"
+                }))
+
+                api_instance.post_datastores(datastore, self.workspace_name)
+            else:
+                logging.info("Skipping existing datastore: {}".format(name))
+
+    def add_vector_feature_layers(self):
+        auth_token = self.configuration.get_basic_auth_token()
+        # create an instance of the API class
+        no_byte_debug_configuration = copy(self.configuration)
+
+        # so we don't end up with bytes on the output stream
+        no_byte_debug_configuration.debug = False
+        api_client = gs_rest_api_featuretypes.ApiClient(
+            no_byte_debug_configuration, header_name='Authorization', header_value=auth_token)
+
+        api_instance = gs_rest_api_featuretypes.DefaultApi(api_client)
+
+        api_response = api_instance.get_feature_types_0(self.workspace_name)
+
+        existing_featuretypes = list(map(lambda x: x["name"], api_response["featureTypes"]["featureType"]))
+        logging.info("Found existing featuretypes {}".format(existing_featuretypes))
+
+        for row in self.read_csv("vector_config/layers.csv"):
+            datastore_name, native_name, layer_name, abstract_file, default_style, available_styles = row
+
+            if layer_name not in existing_featuretypes:
+                logging.info("Adding vector feature layer: {}".format(layer_name))
+                abstract = Path("vector_config", "abstracts", abstract_file).read_text()
+
+                feature = FeatureTypeInfoWrapper(FeatureTypeInfo(
+                    native_name=native_name,
+                    name=layer_name,
+                    title=layer_name,
+                    abstract=abstract
+                ))
+
+                api_instance.post_feature_types(feature, self.workspace_name, datastore_name)
+                self.attach_style(layer_name, default_style, available_styles.split(','))
+            else:
+                logging.info("Skipping existing feature layer: {}".format(layer_name))
 
     def run(self):
         existing_datastores = CoverageAddTask.get_existing_datastores(
@@ -361,7 +419,8 @@ class CoverageAddTask(object):
         logging.info("Found existing datastores {}".format(
             existing_datastores))
 
-        self.add_holdings_layers(existing_datastores)
+        self.add_postgis_datastores(existing_datastores)
+        self.add_vector_feature_layers()
 
         published_records = []
         for product_record in self.product_database.l3_dist_products:

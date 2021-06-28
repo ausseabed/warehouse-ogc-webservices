@@ -20,6 +20,8 @@ class StyleAddTask(object):
         "/styles/Ausseabed_bathy_by_source.sld"
     AUSSEABED_BATHY_WITH_DATA_ACCESS = os.path.dirname(os.path.realpath(__file__)) + \
         "/styles/Ausseabed_with_data_access.sld"
+    SEABED_SEDIMENTS_COLLECTION = os.path.dirname(os.path.realpath(__file__)) + \
+        "/styles/seabed_sediments_collection.sld"
 
     MH370_PHASE2 = os.path.dirname(os.path.realpath(__file__)) + \
         "/styles/phase2_data.sld"
@@ -37,6 +39,7 @@ class StyleAddTask(object):
     MH370_PHASE2_STYLE_NAME = "MH370Phase2"
     MH370_PHASE2_INVERSE_STYLE_NAME = "MH370Phase2Inverse"
     BACKSCATTER_STYLE_NAME = "Backscatter"
+    SEABED_SEDIMENTS_COLLECTION_STYLE_NAME = "SeabedSedimentsCollection"
 
     POLY_STYLE_NAME = "polygon"
 
@@ -53,7 +56,8 @@ class StyleAddTask(object):
             self.AUSSEABED_BATHY_WITH_DATA_ACCESS_NAME: self.AUSSEABED_BATHY_WITH_DATA_ACCESS,
             self.MH370_PHASE2_STYLE_NAME: self.MH370_PHASE2,
             self.MH370_PHASE2_INVERSE_STYLE_NAME: self.MH370_PHASE2_INVERSE,
-            self.BACKSCATTER_STYLE_NAME: self.BACKSCATTER
+            self.BACKSCATTER_STYLE_NAME: self.BACKSCATTER,
+            self.SEABED_SEDIMENTS_COLLECTION_STYLE_NAME: self.SEABED_SEDIMENTS_COLLECTION
         }
 
     def create_style(self, style_name, local_file_name):
