@@ -49,12 +49,15 @@ COPY geoserverpush/requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
 RUN mkdir -p /usr/local/pulldata/styles
+RUN mkdir -p /usr/local/pulldata/vector_config
 RUN chmod +rx /usr/local/pulldata
 
 COPY geoserverpush/styles/*.sld /usr/local/pulldata/styles/
+COPY geoserverpush/vector_config/ /usr/local/pulldata/vector_config/
 COPY geoserverpush/*.py /usr/local/pulldata/
 COPY geoserverpush/*.sh /usr/local/pulldata/
 RUN chmod +r /usr/local/pulldata/styles/*.sld
+RUN chmod +r /usr/local/pulldata/vector_config/*.sld
 RUN chmod +rx /usr/local/pulldata/*.py
 RUN chmod +rx /usr/local/pulldata/*.sh
 
