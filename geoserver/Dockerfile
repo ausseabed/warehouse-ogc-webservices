@@ -57,7 +57,7 @@ COPY geoserverpush/vector_config/ /usr/local/pulldata/vector_config/
 COPY geoserverpush/*.py /usr/local/pulldata/
 COPY geoserverpush/*.sh /usr/local/pulldata/
 RUN chmod +r /usr/local/pulldata/styles/*.sld
-RUN chmod +r /usr/local/pulldata/vector_config/*.sld
+RUN chmod -R +r /usr/local/pulldata/vector_config/
 RUN chmod +rx /usr/local/pulldata/*.py
 RUN chmod +rx /usr/local/pulldata/*.sh
 
