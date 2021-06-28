@@ -393,7 +393,7 @@ class CoverageAddTask(object):
         api_response = api_instance.get_feature_types_0(self.workspace_name)
 
         existing_featuretypes = []
-        if 'featureTypes' in api_response:
+        if 'featureType' in api_response['featureTypes']:
             existing_featuretypes = list(map(lambda x: x["name"], api_response["featureTypes"]["featureType"]))
 
         logging.info("Found existing featuretypes: {}".format(existing_featuretypes))
