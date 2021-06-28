@@ -30,9 +30,10 @@ from product_catalogue_py_rest_client.models import ProductL3Dist
 from product_database import ProductDatabase
 from s3util import S3Util
 
+CWD = Path(__file__).parent
+
 
 class CoverageAddTask(object):
-
     def __init__(self, configuration, workspace_name, product_database: ProductDatabase, meta_cache):
         self.configuration = configuration
         self.workspace_name = workspace_name
@@ -46,7 +47,7 @@ class CoverageAddTask(object):
         return json.loads(response['SecretString'])
 
     def read_csv(self, filename, skip_header_row=True):
-        with open(filename, 'r') as f:
+        with open(CWD / filename, 'r') as f:
             reader = csv.reader(f)
 
             for row in reader:
@@ -399,7 +400,7 @@ class CoverageAddTask(object):
 
             if layer_name not in existing_featuretypes:
                 logging.info("Adding vector feature layer: {}".format(layer_name))
-                abstract = Path("vector_config", "abstracts", abstract_file).read_text()
+                abstract = (CWD / "vector_config/abstracts/{}".format(abstract_file)).read_text()
 
                 feature = FeatureTypeInfoWrapper(FeatureTypeInfo(
                     native_name=native_name,
