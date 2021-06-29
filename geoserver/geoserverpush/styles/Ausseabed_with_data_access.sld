@@ -6,9 +6,9 @@
       <se:Name>ASB_Coverage_2020</se:Name>
       <se:FeatureTypeStyle>
         <se:Rule>
-          <se:Name>rule1-bathy_url</se:Name>
+          <se:Name>Bathymetry with online access</se:Name>
           <se:Description>
-            <se:Title>rule1-bathy_url</se:Title>
+            <se:Title>Bathymetry with online access</se:Title>
           </se:Description>
           <ogc:Filter xmlns:ogc="http://www.opengis.net/ogc">
             <ogc:PropertyIsLike escape="\" matchCase="false" wildCard="%" singleChar="_">
@@ -28,9 +28,9 @@
           </se:PolygonSymbolizer>
         </se:Rule>
         <se:Rule>
-          <se:Name>BathyURL=N/A</se:Name>
+          <se:Name>Bathymetry without online access</se:Name>
           <se:Description>
-            <se:Title>BathyURL=N/A</se:Title>
+            <se:Title>Bathymetry without online access</se:Title>
           </se:Description>
           <ogc:Filter xmlns:ogc="http://www.opengis.net/ogc">
             <ogc:PropertyIsLike escape="\" matchCase="false" wildCard="%" singleChar="_">
