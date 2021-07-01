@@ -399,7 +399,7 @@ class CoverageAddTask(object):
         logging.info("Found existing featuretypes: {}".format(existing_featuretypes))
 
         for row in self.read_csv("vector_config/layers.csv"):
-            datastore_name, native_name, layer_name, abstract_file, default_style, available_styles = row
+            datastore_name, native_name, layer_name, layer_title, abstract_file, default_style, available_styles = row
 
             if layer_name not in existing_featuretypes:
                 logging.info("Adding vector feature layer: {}".format(layer_name))
@@ -408,7 +408,7 @@ class CoverageAddTask(object):
                 feature = FeatureTypeInfoWrapper(FeatureTypeInfo(
                     native_name=native_name,
                     name=layer_name,
-                    title=layer_name,
+                    title=layer_title,
                     abstract=abstract
                 ))
 
