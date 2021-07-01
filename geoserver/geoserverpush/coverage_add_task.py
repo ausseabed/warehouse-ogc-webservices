@@ -399,17 +399,24 @@ class CoverageAddTask(object):
         logging.info("Found existing featuretypes: {}".format(existing_featuretypes))
 
         for row in self.read_csv("vector_config/layers.csv"):
-            datastore_name, native_name, layer_name, layer_title, abstract_file, default_style, available_styles = row
+            datastore_name, native_name, layer_name, layer_title, default_style, available_styles, metadata_url = row
 
             if layer_name not in existing_featuretypes:
                 logging.info("Adding vector feature layer: {}".format(layer_name))
-                abstract = (CWD / "vector_config/abstracts/{}".format(abstract_file)).read_text()
+                abstract = self.meta_cache.get_abstract(metadata_url)
+
+                metadata_link_entry = None
+                if metadata_url != '':
+                    logging.info("Metadata link: {}".format(metadata_url))
+                    metadata_link_entry = {"metadataLink": [
+                        {"type": "text/html", "metadataType": "ISO19115:2003", "content": metadata_url}]}
 
                 feature = FeatureTypeInfoWrapper(FeatureTypeInfo(
                     native_name=native_name,
                     name=layer_name,
                     title=layer_title,
-                    abstract=abstract
+                    abstract=abstract,
+                    metadata_links=metadata_link_entry
                 ))
 
                 api_instance.post_feature_types(feature, self.workspace_name, datastore_name)
