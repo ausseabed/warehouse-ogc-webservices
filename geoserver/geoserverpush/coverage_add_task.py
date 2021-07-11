@@ -451,6 +451,7 @@ class CoverageAddTask(object):
             else:
                 try:
                     if (S3Util.s3_exists(product_record.l3_coverage_location)):
+                        logging.info('Creating coverage: {}'.format(coverage_name))
                         self.create_coverage(
                             product_record.l3_coverage_location, coverage_name, product_record)
                         self.update_layer_name(coverage_name, coverage_label)
@@ -463,6 +464,7 @@ class CoverageAddTask(object):
                 except DbfError:
                     logging.exception(
                         "Could not understand dbf associated with shapefile: {}".format(coverage_name))
-                except:
+                except Exception as e:
                     logging.exception(
                         "Unknown error associated with shapefile: {}".format(coverage_name))
+                    logging.exception(e)

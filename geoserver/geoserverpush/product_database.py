@@ -96,12 +96,15 @@ class ProductDatabase():
                      for y in self.survey_l3_relations
                      for z in self.surveys
                      if x.id == y.product_id and y.survey_id == z.id]
+
+        src_product_ids = list(map(lambda x: x.id, src_prods))
+
         unmatched = [
-            x.source_product.name for x in self.l3_dist_products if x.source_product not in src_prods]
+            x.source_product.name for x in self.l3_dist_products if x.source_product.id not in src_product_ids]
         if (len(unmatched) > 0):
             logging.error("Orphaned surveys: {}".format(", ".join(unmatched)))
         matched = [
-            x for x in self.l3_dist_products if x.source_product in src_prods]
+            x for x in self.l3_dist_products if x.source_product.id in src_product_ids]
         self.l3_dist_products = matched
 
     def retrieve_l3_src_products_using_rest(self) -> List[ProductL3Src]:
