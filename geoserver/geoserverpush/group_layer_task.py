@@ -268,6 +268,9 @@ class GroupLayerTask(object):
                 if product_record.hillshade_location == "":
                     logging.warn("No hillshade raster defined for: {}".format(
                         hs_display_name))
+                else:
+                    error_free_product_records.append(hs_display_name)
+                    error_free_product_styles.append(StyleAddTask.BATH_HILLSHADE_STYLE_NAME)
 
                 try:
                     bbox = self.get_bounding_box(bath_display_name)
@@ -277,11 +280,7 @@ class GroupLayerTask(object):
                 except ApiException as e:
                     logging.error("Can't create layer %s\n" % e)
 
-                error_free_product_records.append(hs_display_name)
                 error_free_product_records.append(bath_display_name)
-
-                error_free_product_styles.append(
-                    StyleAddTask.BATH_HILLSHADE_STYLE_NAME)
                 error_free_product_styles.append(StyleAddTask.BATH_STYLE_NAME)
 
             if (len(error_free_product_records) == 0):
