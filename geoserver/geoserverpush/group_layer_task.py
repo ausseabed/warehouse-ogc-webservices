@@ -238,6 +238,8 @@ class GroupLayerTask(object):
             product_records = self.product_database.get_products_for_survey_name(
                 group_layer_label)
 
+            product_records.sort(key=lambda x: x.source_product.sort_order)
+
             bboxes = []
             metadata_urls = []
             error_free_product_records = []
