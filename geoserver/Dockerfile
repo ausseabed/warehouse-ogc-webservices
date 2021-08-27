@@ -87,6 +87,8 @@ ENV \
     INITIAL_MEMORY="500M" \
     ## Maximum Memory that Java can allocate
     MAXIMUM_MEMORY="1000M" \
+    # Disable Geoserver X-Frame-Options header
+    XFRAME_OPTIONS="false" \
     S3_SERVER_URL='' \
     S3_USERNAME='' \
     S3_PASSWORD='' \
@@ -94,7 +96,6 @@ ENV \
     LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/apr/lib:/opt/libjpeg-turbo/lib64:/usr/lib:/usr/lib/x86_64-linux-gnu:/usr/lib/jni;/usr/local/openjdk-14/bin/java" \
     JAVA_OPTS="-Dpost.init.script=/usr/local/pulldata/push_geoserver_settings.py \
     -Ds3.caching.chunkSizeBytes=524288 \
-    -Dgeoserver.xframe.shouldSetPolicy=false \
     -DGT2_LOGGING_REDIRECTION=JavaLogging \
     -DRELINQUISH_LOG4J_CONTROL=true \
     -Djava.util.logging.config.file=${CATALINA_HOME}/webapps/geoserver/WEB-INF/classes/logging.properties"
