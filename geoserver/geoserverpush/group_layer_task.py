@@ -268,7 +268,7 @@ class GroupLayerTask(object):
                 if product_record.hillshade_location == "":
                     logging.warn("No hillshade raster defined for: {}".format(
                         hs_display_name))
-                    continue
+
                 try:
                     bbox = self.get_bounding_box(bath_display_name)
                     metadata_url = product_record.source_product.metadata_persistent_id
