@@ -3,8 +3,22 @@ version: 2.1
 orbs:
   aws-ecr: circleci/aws-ecr@7.0.0
   aws-cli: circleci/aws-cli@2.0.2
+  aws-s3: circleci/aws-s3@3.0.0
 
 commands:
+  setup-environment-vars:
+    description: "Set up any required environment variables."
+    steps:
+      - run:
+          name: Setup Environment Variables
+          command: |
+            if [ -z "$CIRCLE_TAG" ]; then
+              WORKSPACE_NAME=prod
+            else
+              WORKSPACE_NAME=default
+            fi
+            echo 'export TERRAFORM_WORKSPACE=$WORKSPACE_NAME' >> $BASH_ENV
+
   ecr-tag-and-push:
     description: "Tag and Push Docker Image because CircleCI is incapable of sanity"
     parameters:
@@ -167,6 +181,7 @@ jobs:
       image: ubuntu-1604:201903-01
     steps:
       - checkout
+      - setup-environment-vars
       - attach_workspace:
           at: ./geoserver/ausseabed.pipeline/target/
       - run:
@@ -179,6 +194,12 @@ jobs:
       - aws-cli/setup:
           override-installed: true
           aws-region: AWS_REGION_ENV_VAR_NAME
+      - aws-s3/copy:
+          from: 's3://ausseabed-staging-${TERRAFORM_WORKSPACE}/gt-jdbc-oracle-23.1.jar'
+          to: './geoserver/'
+      - aws-s3/copy:
+          from: 's3://ausseabed-staging-${TERRAFORM_WORKSPACE}/ojdbc8.jar'
+          to: './geoserver/'
       - aws-ecr/ecr-login:
           account-url: AWS_ECR_ACCOUNT_URL_ENV_VAR_NAME
           region: AWS_REGION_ENV_VAR_NAME
