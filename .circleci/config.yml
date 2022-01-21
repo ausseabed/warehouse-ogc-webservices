@@ -13,11 +13,11 @@ commands:
           name: Setup Environment Variables
           command: |
             if [ -z "$CIRCLE_TAG" ]; then
-              WORKSPACE_NAME=prod
-            else
               WORKSPACE_NAME=default
+            else
+              WORKSPACE_NAME=prod
             fi
-            echo 'export TERRAFORM_WORKSPACE=$WORKSPACE_NAME' >> $BASH_ENV
+            echo "export TERRAFORM_WORKSPACE=$WORKSPACE_NAME" >> $BASH_ENV
 
   ecr-tag-and-push:
     description: "Tag and Push Docker Image because CircleCI is incapable of sanity"
