@@ -18,7 +18,7 @@
           </se:Description>
           <ogc:Filter xmlns:ogc="http://www.opengis.net/ogc">
             <ogc:PropertyIsEqualTo>
-              <ogc:PropertyName>folk_class</ogc:PropertyName>
+              <ogc:PropertyName>FOLK_CLASS</ogc:PropertyName>
               <ogc:Literal>(g)M</ogc:Literal>
             </ogc:PropertyIsEqualTo>
           </ogc:Filter>
@@ -41,7 +41,7 @@
           </se:Description>
           <ogc:Filter xmlns:ogc="http://www.opengis.net/ogc">
             <ogc:PropertyIsEqualTo>
-              <ogc:PropertyName>folk_class</ogc:PropertyName>
+              <ogc:PropertyName>FOLK_CLASS</ogc:PropertyName>
               <ogc:Literal>(g)sM</ogc:Literal>
             </ogc:PropertyIsEqualTo>
           </ogc:Filter>
@@ -64,7 +64,7 @@
           </se:Description>
           <ogc:Filter xmlns:ogc="http://www.opengis.net/ogc">
             <ogc:PropertyIsEqualTo>
-              <ogc:PropertyName>folk_class</ogc:PropertyName>
+              <ogc:PropertyName>FOLK_CLASS</ogc:PropertyName>
               <ogc:Literal>sM</ogc:Literal>
             </ogc:PropertyIsEqualTo>
           </ogc:Filter>
@@ -87,7 +87,7 @@
           </se:Description>
           <ogc:Filter xmlns:ogc="http://www.opengis.net/ogc">
             <ogc:PropertyIsEqualTo>
-              <ogc:PropertyName>folk_class</ogc:PropertyName>
+              <ogc:PropertyName>FOLK_CLASS</ogc:PropertyName>
               <ogc:Literal>M</ogc:Literal>
             </ogc:PropertyIsEqualTo>
           </ogc:Filter>
@@ -110,7 +110,7 @@
           </se:Description>
           <ogc:Filter xmlns:ogc="http://www.opengis.net/ogc">
             <ogc:PropertyIsEqualTo>
-              <ogc:PropertyName>folk_class</ogc:PropertyName>
+              <ogc:PropertyName>FOLK_CLASS</ogc:PropertyName>
               <ogc:Literal>gM</ogc:Literal>
             </ogc:PropertyIsEqualTo>
           </ogc:Filter>
@@ -133,7 +133,7 @@
           </se:Description>
           <ogc:Filter xmlns:ogc="http://www.opengis.net/ogc">
             <ogc:PropertyIsEqualTo>
-              <ogc:PropertyName>folk_class</ogc:PropertyName>
+              <ogc:PropertyName>FOLK_CLASS</ogc:PropertyName>
               <ogc:Literal>(g)S</ogc:Literal>
             </ogc:PropertyIsEqualTo>
           </ogc:Filter>
@@ -156,7 +156,7 @@
           </se:Description>
           <ogc:Filter xmlns:ogc="http://www.opengis.net/ogc">
             <ogc:PropertyIsEqualTo>
-              <ogc:PropertyName>folk_class</ogc:PropertyName>
+              <ogc:PropertyName>FOLK_CLASS</ogc:PropertyName>
               <ogc:Literal>mS</ogc:Literal>
             </ogc:PropertyIsEqualTo>
           </ogc:Filter>
@@ -179,7 +179,7 @@
           </se:Description>
           <ogc:Filter xmlns:ogc="http://www.opengis.net/ogc">
             <ogc:PropertyIsEqualTo>
-              <ogc:PropertyName>folk_class</ogc:PropertyName>
+              <ogc:PropertyName>FOLK_CLASS</ogc:PropertyName>
               <ogc:Literal>(g)mS</ogc:Literal>
             </ogc:PropertyIsEqualTo>
           </ogc:Filter>
@@ -202,7 +202,7 @@
           </se:Description>
           <ogc:Filter xmlns:ogc="http://www.opengis.net/ogc">
             <ogc:PropertyIsEqualTo>
-              <ogc:PropertyName>folk_class</ogc:PropertyName>
+              <ogc:PropertyName>FOLK_CLASS</ogc:PropertyName>
               <ogc:Literal>S</ogc:Literal>
             </ogc:PropertyIsEqualTo>
           </ogc:Filter>
@@ -225,7 +225,7 @@
           </se:Description>
           <ogc:Filter xmlns:ogc="http://www.opengis.net/ogc">
             <ogc:PropertyIsEqualTo>
-              <ogc:PropertyName>folk_class</ogc:PropertyName>
+              <ogc:PropertyName>FOLK_CLASS</ogc:PropertyName>
               <ogc:Literal>gS</ogc:Literal>
             </ogc:PropertyIsEqualTo>
           </ogc:Filter>
@@ -248,7 +248,7 @@
           </se:Description>
           <ogc:Filter xmlns:ogc="http://www.opengis.net/ogc">
             <ogc:PropertyIsEqualTo>
-              <ogc:PropertyName>folk_class</ogc:PropertyName>
+              <ogc:PropertyName>FOLK_CLASS</ogc:PropertyName>
               <ogc:Literal>gmS</ogc:Literal>
             </ogc:PropertyIsEqualTo>
           </ogc:Filter>
@@ -271,7 +271,7 @@
           </se:Description>
           <ogc:Filter xmlns:ogc="http://www.opengis.net/ogc">
             <ogc:PropertyIsEqualTo>
-              <ogc:PropertyName>folk_class</ogc:PropertyName>
+              <ogc:PropertyName>FOLK_CLASS</ogc:PropertyName>
               <ogc:Literal>G</ogc:Literal>
             </ogc:PropertyIsEqualTo>
           </ogc:Filter>
@@ -294,7 +294,7 @@
           </se:Description>
           <ogc:Filter xmlns:ogc="http://www.opengis.net/ogc">
             <ogc:PropertyIsEqualTo>
-              <ogc:PropertyName>folk_class</ogc:PropertyName>
+              <ogc:PropertyName>FOLK_CLASS</ogc:PropertyName>
               <ogc:Literal>mG</ogc:Literal>
             </ogc:PropertyIsEqualTo>
           </ogc:Filter>
@@ -317,7 +317,7 @@
           </se:Description>
           <ogc:Filter xmlns:ogc="http://www.opengis.net/ogc">
             <ogc:PropertyIsEqualTo>
-              <ogc:PropertyName>folk_class</ogc:PropertyName>
+              <ogc:PropertyName>FOLK_CLASS</ogc:PropertyName>
               <ogc:Literal>msG</ogc:Literal>
             </ogc:PropertyIsEqualTo>
           </ogc:Filter>
@@ -340,7 +340,7 @@
           </se:Description>
           <ogc:Filter xmlns:ogc="http://www.opengis.net/ogc">
             <ogc:PropertyIsEqualTo>
-              <ogc:PropertyName>folk_class</ogc:PropertyName>
+              <ogc:PropertyName>FOLK_CLASS</ogc:PropertyName>
               <ogc:Literal>sG</ogc:Literal>
             </ogc:PropertyIsEqualTo>
           </ogc:Filter>
@@ -363,7 +363,7 @@
           </se:Description>
           <ogc:Filter xmlns:ogc="http://www.opengis.net/ogc">
             <ogc:PropertyIsNull>
-              <ogc:PropertyName>folk_class</ogc:PropertyName>
+              <ogc:PropertyName>FOLK_CLASS</ogc:PropertyName>
             </ogc:PropertyIsNull>
           </ogc:Filter>
           <se:PointSymbolizer>

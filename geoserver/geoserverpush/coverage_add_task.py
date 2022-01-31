@@ -340,7 +340,7 @@ class CoverageAddTask(object):
             logging.error(
                 "Exception when calling DefaultApi->layers_name_workspace_put: %s\n" % e)
 
-    def add_postgis_datastores(self, existing_datastores):
+    def add_database_datastores(self, existing_datastores):
         auth_token = self.configuration.get_basic_auth_token()
         # create an instance of the API class
         no_byte_debug_configuration = copy(self.configuration)
@@ -357,22 +357,27 @@ class CoverageAddTask(object):
 
             if name not in existing_datastores:
                 config = self.get_secret(secret_id)
-                logging.info("Adding PostGIS datastore: {}".format(name))
+                logging.info("Adding database datastore: {}".format(name))
+
+                if "engine" in config and config["engine"] == "oracle":
+                    dbtype = "Oracle"
+                else:
+                    dbtype = "postgis"
 
                 datastore = DatastoreWrapper(Datastore(
                     name=name,
                     workspace=self.workspace_name,
                     enabled=True,
                     connection_parameters={
-                    "host": config["hostname"],
-                    "port": config["port"],
-                    "database": config["database"],
-                    "user": config["username"],
-                    "passwd": config["password"],
-                    "dbtype": "postgis",
-                    "schema": config["schema"],
-                    "Expose primary keys": "true"
-                }))
+                        "host": config["hostname"],
+                        "port": config["port"],
+                        "database": config["database"],
+                        "user": config["username"],
+                        "passwd": config["password"],
+                        "dbtype": dbtype,
+                        "schema": config["schema"],
+                        "Expose primary keys": "true"
+                    }))
 
                 api_instance.post_datastores(datastore, self.workspace_name)
             else:
@@ -430,7 +435,7 @@ class CoverageAddTask(object):
         logging.info("Found existing datastores {}".format(
             existing_datastores))
 
-        self.add_postgis_datastores(existing_datastores)
+        self.add_database_datastores(existing_datastores)
         self.add_vector_feature_layers()
 
         published_records = []
