@@ -360,24 +360,37 @@ class CoverageAddTask(object):
                 logging.info("Adding database datastore: {}".format(name))
 
                 if "engine" in config and config["engine"] == "oracle":
-                    dbtype = "Oracle"
+                    datastore = DatastoreWrapper(Datastore(
+                        name=name,
+                        workspace=self.workspace_name,
+                        enabled=True,
+                        connection_parameters={
+                            "host": config["host"],
+                            "port": config["port"],
+                            "database": config["dbname"],
+                            "user": config["username"],
+                            "passwd": config["password"],
+                            "dbtype": "Oracle",
+                            "schema": config["schema"],
+                            "Expose primary keys": "true"
+                        }))
                 else:
-                    dbtype = "postgis"
+                    datastore = DatastoreWrapper(Datastore(
+                        name=name,
+                        workspace=self.workspace_name,
+                        enabled=True,
+                        connection_parameters={
+                            "host": config["hostname"],
+                            "port": config["port"],
+                            "database": config["database"],
+                            "user": config["username"],
+                            "passwd": config["password"],
+                            "dbtype": "postgis",
+                            "schema": config["schema"],
+                            "Expose primary keys": "true"
+                        }))
 
-                datastore = DatastoreWrapper(Datastore(
-                    name=name,
-                    workspace=self.workspace_name,
-                    enabled=True,
-                    connection_parameters={
-                        "host": config["hostname"],
-                        "port": config["port"],
-                        "database": config["database"],
-                        "user": config["username"],
-                        "passwd": config["password"],
-                        "dbtype": dbtype,
-                        "schema": config["schema"],
-                        "Expose primary keys": "true"
-                    }))
+
 
                 api_instance.post_datastores(datastore, self.workspace_name)
             else:
