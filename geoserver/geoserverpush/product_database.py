@@ -1,14 +1,16 @@
-import sys
-import os
-import requests
 import logging
-import product_catalogue_py_rest_client
-from product_catalogue_py_rest_client.rest import ApiException
-from product_catalogue_py_rest_client.models import ProductL3Dist, ProductL3Src, RelationSummaryDto, Survey
+import math
+import os
+import re
+import sys
+from collections import defaultdict
+from datetime import datetime
 from typing import List
 from xml.sax.saxutils import escape
-import re
-from datetime import datetime
+
+import product_catalogue_py_rest_client
+from product_catalogue_py_rest_client.models import ProductL3Dist, ProductL3Src, RelationSummaryDto, Survey
+from product_catalogue_py_rest_client.rest import ApiException
 
 
 class ProductDatabase():
@@ -28,6 +30,7 @@ class ProductDatabase():
     # surveys   : List[Survey]
 
     def __init__(self, bearer_id, database_url=""):
+        self.resolution_regex = re.compile(r"^(?P<min>\d*\.?\d+)m?(?:.*?)?(?P<max>\d*\.?\d+)?m?$")
         self.bearer_id = bearer_id
         self.source_tif_path = database_url
         self.snapshot_iso_datetime = str(
@@ -63,6 +66,7 @@ class ProductDatabase():
         self.create_raster_base_name()
         self.create_survey_label_base_name()
         self.create_survey_raster_base_name()
+        self.create_survey_zip_name()
         self.remove_orphans()
 
     """ If there is a record with ellipsoid in a survey, only
@@ -211,6 +215,55 @@ class ProductDatabase():
                                         for y in self.survey_l3_relations
                                         for z in self.surveys
                                         if x.id == y.product_id and y.survey_id == z.id}
+
+    def create_survey_zip_name(self):
+        self.survey_zip_names = {}
+
+        products = dict(map(lambda product: (product.id, product), self.l3_src_products))
+        survey_to_products = defaultdict(list)
+
+        for relation in self.survey_l3_relations:
+            survey_to_products[relation.survey_id].append(relation.product_id)
+
+        for survey in self.surveys:
+            if survey.id not in survey_to_products:
+                logging.warning('No products for survey: %s', survey.id)
+                continue
+
+            resolutions = set()
+
+            for product_id in survey_to_products[survey.id]:
+                if product_id not in products:
+                    logging.warning('Product %s does not exist for survey: %s', product_id, survey.id)
+                    continue
+
+                resolutions.add(products[product_id].resolution)
+
+            resolution_text = self.extract_resolution_text(resolutions)
+            zip_filename = f'{survey.name.strip()} {survey.year.strip()} {resolution_text}.zip'
+            zip_filename = re.sub(r'[\\/:*?\"<>|]', '_', zip_filename)
+
+            for product_id in survey_to_products[survey.id]:
+                self.survey_zip_names[product_id] = zip_filename
+
+    def extract_resolution_text(self, resolutions):
+        min_resolution = math.inf
+        max_resolution = -math.inf
+
+        for resolution in resolutions:
+            match = self.resolution_regex.match(resolution)
+            if match:
+                min_resolution = min(min_resolution, float(match['min']))
+                if match['max']:
+                    max_resolution = max(max_resolution, float(match['max']))
+
+        if max_resolution > -math.inf and not math.isclose(min_resolution, max_resolution):
+            return f'{self.format_resolution(min_resolution)}m - {self.format_resolution(max_resolution)}m'
+
+        return f'{self.format_resolution(min_resolution)}m'
+
+    def format_resolution(self, resolution):
+        return '{:.1f}'.format(resolution).rstrip('0').rstrip('.')
 
     def get_survey_names(self):
         return set(zip(self.survey_base_names.values(), self.survey_base_label_names.values()))

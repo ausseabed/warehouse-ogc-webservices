@@ -17,6 +17,7 @@ import dbf
 import gs_rest_api_datastores
 import gs_rest_api_featuretypes
 import gs_rest_api_layers
+from botocore.exceptions import ClientError
 from dbf import DbfError
 from gs_rest_api_datastores import Datastore, DatastoreWrapper
 from gs_rest_api_datastores.rest import ApiException
@@ -41,6 +42,7 @@ class CoverageAddTask(object):
         self.server_url = configuration.host
         self.meta_cache = meta_cache
         self.secret_manager = boto3.client('secretsmanager', region_name='ap-southeast-2')
+        self.s3 = boto3.client('s3')
 
     def get_secret(self, secret_id):
         response = self.secret_manager.get_secret_value(SecretId=secret_id)
@@ -106,8 +108,10 @@ class CoverageAddTask(object):
             display_title = shapefile_display_name
         with dbf.Table(dbf_location) as db:
             db.add_fields(
-                'BATHY_TYPE C(20); NAME C(255); START_DATE C(30); END_DATE C(30); VESSEL C(255); INSTRUMENT C(255); BATHY_URL C(255); META_URL C(255)')
+                'BATHY_TYPE C(20); NAME C(255); START_DATE C(30); END_DATE C(30); VESSEL C(255); INSTRUMENT C(255); FILE_URL C(255); META_URL C(255)')
             for record in db:
+                file_url = self.get_zip_file_url(product_record)
+
                 dbf.write(record,
                           NAME=display_title,
                           BATHY_TYPE='Multibeam',
@@ -119,9 +123,23 @@ class CoverageAddTask(object):
                               product_record.source_product.metadata_persistent_id),
                           INSTRUMENT=self.meta_cache.extract_instrument(
                               product_record.source_product.metadata_persistent_id),
-                          BATHY_URL=S3Util.https_url(
-                              product_record.bathymetry_location),
+                          FILE_URL=file_url,
                           META_URL=product_record.source_product.metadata_persistent_id)
+
+    def get_zip_file_url(self, product_record):
+        key = os.environ['FILES_PREFIX'] + self.product_database.survey_zip_names[product_record.source_product.id]
+
+        try:
+            if product_record.source_product.id in self.product_database.survey_zip_names:
+                self.s3.head_object(Bucket=os.environ['FILES_BUCKET'], Key=key)
+                return f'https://{os.environ["FILES_BUCKET"]}/{key}'
+        except ClientError as e:
+            if e.response['ResponseMetadata']['HTTPStatusCode'] == 404:
+                logging.warning('Survey zip file does not exist [bucket=%s, key=%s]', os.environ['FILES_BUCKET'], key)
+            else:
+                logging.exception('Failed to determine whether survey zip file exists')
+
+        return ''
 
     def create_shapefile_zip(self, shapefile_url, shapefile_display_name, product_record=None):
         # 1. create a temp directory
