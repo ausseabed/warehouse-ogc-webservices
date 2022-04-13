@@ -254,7 +254,10 @@ class ProductDatabase():
             match = self.resolution_regex.match(resolution)
             if match:
                 min_resolution = min(min_resolution, float(match['min']))
+                max_resolution = max(max_resolution, float(match['min']))
+
                 if match['max']:
+                    min_resolution = min(min_resolution, float(match['max']))
                     max_resolution = max(max_resolution, float(match['max']))
 
         if max_resolution > -math.inf and not math.isclose(min_resolution, max_resolution):
