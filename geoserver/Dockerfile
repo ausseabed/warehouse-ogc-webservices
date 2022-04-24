@@ -1,10 +1,4 @@
-#--------- Generic stuff all our Dockerfiles should start with so we get caching ------------
-# ARG IMAGE_VERSION=9.0.7-jre8
-
-## The Geoserver version
-ARG GS_VERSION=2.17.1
-
-FROM 288871573946.dkr.ecr.ap-southeast-2.amazonaws.com/ausseabed-kartoza-geoserver:9-jdk11-openjdk-slim-buster-2.18.0
+FROM 288871573946.dkr.ecr.ap-southeast-2.amazonaws.com/ausseabed-kartoza-geoserver:9-jdk11-openjdk-slim-buster-2.20.4
 USER root
 
 WORKDIR /usr/src/app
@@ -15,14 +9,11 @@ RUN apt-get update \
   && ln -s /usr/bin/python3 python \
   && pip3 install --upgrade pip
 
-RUN apt-get update -y && \ 
+RUN apt-get update -y && \
 apt-get install -y unzip curl && \
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && \
 unzip awscliv2.zip && \
 ./aws/install 
-
-## Why all the chmod - why don't we change the USER that is executing the script?
-RUN rm ${CATALINA_HOME}/log4j.properties
 
 ## Logging for Tomcat
 COPY logs/catalina_logging.properties ${CATALINA_HOME}/conf/logging.properties
