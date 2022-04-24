@@ -1,3 +1,4 @@
+# Mirror of kartoza/geoserver:2.20.4
 FROM 288871573946.dkr.ecr.ap-southeast-2.amazonaws.com/ausseabed-kartoza-geoserver:9-jdk11-openjdk-slim-buster-2.20.4
 USER root
 
@@ -20,8 +21,8 @@ COPY logs/catalina_logging.properties ${CATALINA_HOME}/conf/logging.properties
 RUN chmod +r ${CATALINA_HOME}/conf/logging.properties
 
 ## Logging for Geoserver
-COPY logs/logging.properties ${CATALINA_HOME}/webapps/geoserver/WEB-INF/classes/ 
-RUN chmod +r ${CATALINA_HOME}/webapps/geoserver/WEB-INF/classes/logging.properties 
+COPY logs/logging.properties ${CATALINA_HOME}/webapps/geoserver/WEB-INF/classes/
+RUN chmod +r ${CATALINA_HOME}/webapps/geoserver/WEB-INF/classes/logging.properties
 
 # This adds to the class path
 COPY tomcat/bin/setenv.sh ${CATALINA_HOME}/bin/ 
@@ -54,6 +55,7 @@ RUN chmod +rx /usr/local/pulldata/*.sh
 
 COPY ausseabed.pipeline/target/*.jar ${CATALINA_HOME}/lib/
 COPY ausseabed.pipeline/target/lib/*.jar ${CATALINA_HOME}/webapps/geoserver/WEB-INF/lib/
+
 # Oracle support
 COPY ./gt-jdbc-oracle-23.1.jar ${CATALINA_HOME}/webapps/geoserver/WEB-INF/lib/
 COPY ./ojdbc8.jar ${CATALINA_HOME}/webapps/geoserver/WEB-INF/lib/
@@ -69,30 +71,18 @@ RUN chmod +r /usr/local/tomcat/webapps/ROOT/index.html
 
 RUN ln -s /usr/lib/jni/libgdalalljni /usr/lib/jni/libgdaljni
 
-# 3 environmental variables are required for running
-# GEOSERVER_URL = "http://ec2-54-153-228-148.ap-southeast-2.compute.amazonaws.com/geoserver"
-# GEOSERVER_ADMIN_PASSWORD = 
-# LIST_PATH = "https://bathymetry-survey-288871573946.s3-ap-southeast-2.amazonaws.com/registered_files.json"
-#  the file at the end of the path is a json encoded list of dictionary entries indexed by filename - e.g.,
-#  [{"filename": "s3://bathymetry-survey-288871573946-beagle-grid0/GA-0364_BlueFin_MB/BlueFin_2018-172_1m_coloured.tif"}]
-
 ENV \
-    ## Initial Memory that Java can allocate
-    INITIAL_MEMORY="500M" \
-    ## Maximum Memory that Java can allocate
-    MAXIMUM_MEMORY="1000M" \
+    GEOSERVER_ADMIN_USER="admin" \
     # Disable Geoserver X-Frame-Options header
     XFRAME_OPTIONS="false" \
     S3_SERVER_URL='' \
     S3_USERNAME='' \
     S3_PASSWORD='' \
     GEOSERVER_URL='http://localhost:8080/geoserver' \
-    LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/apr/lib:/opt/libjpeg-turbo/lib64:/usr/lib:/usr/lib/x86_64-linux-gnu:/usr/lib/jni;/usr/local/openjdk-14/bin/java" \
+    LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/apr/lib:/opt/libjpeg-turbo/lib64:/usr/lib:/usr/lib/x86_64-linux-gnu:/usr/lib/jni" \
     JAVA_OPTS="-Dpost.init.script=/usr/local/pulldata/push_geoserver_settings.py \
     -Ds3.caching.chunkSizeBytes=524288 \
-    -DGT2_LOGGING_REDIRECTION=JavaLogging \
-    -DRELINQUISH_LOG4J_CONTROL=true \
-    -Djava.util.logging.config.file=${CATALINA_HOME}/webapps/geoserver/WEB-INF/classes/logging.properties"
+    -Djavax.xml.stream.XMLOutputFactory=com.bea.xml.stream.XMLOutputFactoryBase"
 
 # \"-Djava.util.logging.config.file=${CATALINA_HOME}/conf/logging.properties" \
     
