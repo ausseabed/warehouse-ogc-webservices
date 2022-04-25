@@ -73,6 +73,7 @@ RUN ln -s /usr/lib/jni/libgdalalljni /usr/lib/jni/libgdaljni
 
 ENV \
     GEOSERVER_ADMIN_USER="admin" \
+    GEOSERVER_CSRF_WHITELIST="ausseabed.gov.au" \
     # Disable Geoserver X-Frame-Options header
     XFRAME_OPTIONS="false" \
     S3_SERVER_URL='' \
