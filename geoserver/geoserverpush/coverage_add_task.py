@@ -473,8 +473,8 @@ class CoverageAddTask(object):
         logging.info("Found existing datastores {}".format(
             existing_datastores))
 
-         self.add_database_datastores(existing_datastores)
-         self.add_vector_feature_layers()
+        self.add_database_datastores(existing_datastores)
+        self.add_vector_feature_layers()
 
         published_records = []
         for product_record in self.product_database.l3_dist_products:
