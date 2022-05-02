@@ -73,14 +73,21 @@ class CoverageAddTask(object):
             exit(exc.returncode)
 
     def copy_s3_file_local(self, remote_file_name, local_file_name):
-        cmd = ["aws", "s3", "cp", remote_file_name, local_file_name]
-        logging.info(" ".join(cmd))
+        logging.info("Downloading %s to %s", remote_file_name, local_file_name)
+
         try:
-            subprocess.check_output(cmd, stderr=subprocess.STDOUT)
-        except subprocess.CalledProcessError as exc:
-            logging.error("Status : FAIL {}, {}".format(exc.returncode,
-                                                        exc.output))
-            raise
+            (bucket, key) = self.split_s3_path(remote_file_name)
+            self.s3.download_file(bucket, key, local_file_name)
+        except Exception as e:
+            logging.error("Error copying file from S3", exc_info=e)
+            raise e
+
+    def split_s3_path(self, s3_path):
+        path_parts = s3_path.replace("s3://", "").split("/")
+        bucket = path_parts.pop(0)
+        key = "/".join(path_parts)
+
+        return bucket, key
 
     def create_temp_dir(self):
         cwd = tempfile.gettempdir()
@@ -466,8 +473,8 @@ class CoverageAddTask(object):
         logging.info("Found existing datastores {}".format(
             existing_datastores))
 
-        self.add_database_datastores(existing_datastores)
-        self.add_vector_feature_layers()
+         self.add_database_datastores(existing_datastores)
+         self.add_vector_feature_layers()
 
         published_records = []
         for product_record in self.product_database.l3_dist_products:
