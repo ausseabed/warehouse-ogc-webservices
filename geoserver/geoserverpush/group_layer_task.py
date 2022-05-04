@@ -104,7 +104,7 @@ class GroupLayerTask(object):
         abstract = self.meta_cache.get_abstract(metadata_url)
 
         if file and zip_file_url:
-            abstract += f'\n\n<a href="{zip_file_url}" target="_blank">Download {file}</a>'
+            abstract += f'\n\n<br><a href="{zip_file_url}" target="_blank">Download {file}</a>'
 
         # Layergroup | The layer group body information to upload.
         layergroup = gs_rest_api_layergroups.Layergroup(

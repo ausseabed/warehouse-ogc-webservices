@@ -56,7 +56,7 @@ class MetaDataCache():
         abstract = ""
         if (meta != None):
             abstract = meta.abstract
-        return abstract + '\n\n' + metadata_url
+        return abstract + '<br>\n\n' + metadata_url
 
     def extract_title(self, metadata_url):
         meta = self.get_metadata(metadata_url)
