@@ -134,19 +134,9 @@ class CoverageAddTask(object):
                           META_URL=product_record.source_product.metadata_persistent_id)
 
     def get_zip_file_url(self, product_record):
-        key = os.environ['FILES_PREFIX'] + self.product_database.survey_zip_names[product_record.source_product.id]
+        file = self.product_database.product_to_zip_name[product_record.source_product.id]
 
-        try:
-            if product_record.source_product.id in self.product_database.survey_zip_names:
-                self.s3.head_object(Bucket=os.environ['FILES_BUCKET'], Key=key)
-                return f'https://{os.environ["FILES_BUCKET"]}/{key}'
-        except ClientError as e:
-            if e.response['ResponseMetadata']['HTTPStatusCode'] == 404:
-                logging.warning('Survey zip file does not exist [bucket=%s, key=%s]', os.environ['FILES_BUCKET'], key)
-            else:
-                logging.exception('Failed to determine whether survey zip file exists')
-
-        return ''
+        return self.meta_cache.get_zip_file_url(file)
 
     def create_shapefile_zip(self, shapefile_url, shapefile_display_name, product_record=None):
         # 1. create a temp directory

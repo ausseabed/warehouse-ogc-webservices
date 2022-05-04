@@ -216,8 +216,13 @@ class ProductDatabase():
                                         for z in self.surveys
                                         if x.id == y.product_id and y.survey_id == z.id}
 
+        self.survey_label_to_survey_id = {survey_base_label: relation.survey_id
+                                  for (product_id, survey_base_label) in self.survey_base_label_names.items()
+                                  for relation in self.survey_l3_relations if relation.product_id == product_id}
+
     def create_survey_zip_name(self):
-        self.survey_zip_names = {}
+        self.product_to_zip_name = {}
+        self.survey_to_zip_name = {}
 
         products = dict(map(lambda product: (product.id, product), self.l3_src_products))
         survey_to_products = defaultdict(list)
@@ -244,7 +249,8 @@ class ProductDatabase():
             zip_filename = re.sub(r'[\\/:*?\"<>|]', '_', zip_filename)
 
             for product_id in survey_to_products[survey.id]:
-                self.survey_zip_names[product_id] = zip_filename
+                self.product_to_zip_name[product_id] = zip_filename
+                self.survey_to_zip_name[survey.id] = zip_filename
 
     def extract_resolution_text(self, resolutions):
         min_resolution = math.inf

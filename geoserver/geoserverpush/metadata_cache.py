@@ -1,8 +1,11 @@
 import logging
+import os
 import unittest
 from unittest.mock import patch, Mock
 
+import boto3
 import requests
+from botocore.exceptions import ClientError
 from gis_metadata.iso_metadata_parser import IsoParser
 from gis_metadata.metadata_parser import get_metadata_parser
 
@@ -11,7 +14,10 @@ from custom_iso_parser import CustomIsoParser
 
 class MetaDataCache():
     def __init__(self):
+        self.s3 = boto3.client('s3')
+
         self.metadata = {}
+        self.zip_file_urls = {}
 
     def get_metadata(self, metadata_url):
         if metadata_url in self.metadata:
@@ -90,6 +96,27 @@ class MetaDataCache():
     def combine_if_list(self, value, separator=', '):
         return separator.join(value) if isinstance(value, list) else value
 
+    def get_zip_file_url(self, file):
+        if file in self.zip_file_urls:
+            return self.zip_file_urls[file]
+
+        zip_file_url = self.create_and_validate_zip_file_url(file)
+        self.zip_file_urls[file] = zip_file_url
+        return zip_file_url
+
+    def create_and_validate_zip_file_url(self, file):
+        key = os.environ["FILES_PREFIX"] + file
+
+        try:
+            self.s3.head_object(Bucket=os.environ['FILES_BUCKET'], Key=key)
+            return f'https://{os.environ["FILES_BUCKET"]}/{key}'
+        except ClientError as e:
+            if e.response['ResponseMetadata']['HTTPStatusCode'] == 404:
+                logging.warning('Survey zip file does not exist [bucket=%s, key=%s]', os.environ['FILES_BUCKET'], key)
+            else:
+                logging.exception('Failed to determine whether survey zip file exists')
+
+        return ''
 
 class TestMetadataCache(unittest.TestCase):
     def test_single_instrument(self):
@@ -109,7 +136,6 @@ class TestMetadataCache(unittest.TestCase):
             meta_cache = MetaDataCache()
             result = meta_cache.extract_instrument('url')
             self.assertEqual('Kongsberg EM2040C, Kongsberg EM3002D', result)
-
 
 if __name__ == "__main__":
     meta_cache = MetaDataCache()

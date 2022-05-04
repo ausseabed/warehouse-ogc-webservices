@@ -89,7 +89,7 @@ class GroupLayerTask(object):
         logging.info("Created layer link: {}".format(style_name))
         return l
 
-    def create_group_layers(self, group_layer_name, group_layer_label, list_of_layers, list_of_styles, bbox, metadata_url):
+    def create_group_layers(self, group_layer_name, group_layer_label, list_of_layers, list_of_styles, bbox, metadata_url, file=None, zip_file_url=None):
         logging.info(
             "Creating group layer {}".format(group_layer_name))
 
@@ -103,20 +103,19 @@ class GroupLayerTask(object):
 
         abstract = self.meta_cache.get_abstract(metadata_url)
 
+        if file and zip_file_url:
+            abstract += f'\n\n<a href="{zip_file_url}" target="_blank">Download {file}</a>'
+
         # Layergroup | The layer group body information to upload.
         layergroup = gs_rest_api_layergroups.Layergroup(
             name=group_layer_name, workspace=self.workspace_name, title=group_layer_label, bounds=bbox, abstract_txt=abstract, mode='NAMED')
         layergroup.publishables = {'published': [self.create_layer_link(
             layer) for layer in list_of_layers]}
 
-        # layergroup.styles = {'style': [
-        #    self.create_style_link(style_name) for style_name in list_of_styles]}
-
         layer_group_wrapper = LayergroupWrapper(layergroup)
         try:
             # Add a new layer group
-            api_response = api_instance.post_workspace_layergroups(
-                layer_group_wrapper, self.workspace_name)
+            api_instance.post_workspace_layergroups(layer_group_wrapper, self.workspace_name)
         except Exception as e:
             logging.error(
                 "Exception when calling DefaultApi->post_workspace_layergroups: %s\n" % e)
@@ -229,15 +228,11 @@ class GroupLayerTask(object):
         set_of_survey_names = self.product_database.get_survey_names()
 
         for (group_layer_name, group_layer_label) in set_of_survey_names:
-            # logging.info("Group " + group_layer_name)
             if group_layer_name in existing_layer_groups:
-                logging.warn("Already have group layer for {}".format(
-                    group_layer_name))
+                logging.warning("Already have group layer for %s", group_layer_name)
                 continue
 
-            product_records = self.product_database.get_products_for_survey_name(
-                group_layer_label)
-
+            product_records = self.product_database.get_products_for_survey_name(group_layer_label)
             product_records.sort(key=lambda x: x.source_product.sort_order)
 
             bboxes = []
@@ -266,8 +261,7 @@ class GroupLayerTask(object):
                     continue
 
                 if product_record.hillshade_location == "":
-                    logging.warn("No hillshade raster defined for: {}".format(
-                        hs_display_name))
+                    logging.warning("No hillshade raster defined for: %s", hs_display_name)
                 else:
                     error_free_product_records.append(hs_display_name)
                     error_free_product_styles.append(StyleAddTask.BATH_HILLSHADE_STYLE_NAME)
@@ -283,17 +277,18 @@ class GroupLayerTask(object):
                 error_free_product_records.append(bath_display_name)
                 error_free_product_styles.append(StyleAddTask.BATH_STYLE_NAME)
 
-            if (len(error_free_product_records) == 0):
-                logging.error("No records for group layer " +
-                              group_layer_label)
+            if len(error_free_product_records) == 0:
+                logging.error("No records for group layer %s", group_layer_label)
                 continue
+
             try:
                 bbox = self.merge_bbox(bboxes, group_layer_label)
                 metadata_url = self.merge_metadata_urls(metadata_urls)
+                (file, zip_file_url) = self.get_zip_file_url(group_layer_label)
                 self.create_group_layers(group_layer_name, group_layer_label,
                                          error_free_product_records,
                                          error_free_product_styles,
-                                         bbox, metadata_url)
+                                         bbox, metadata_url, file, zip_file_url)
             except ApiException as e:
                 logging.error("Can't create layer %s\n" % e)
 
@@ -346,3 +341,9 @@ class GroupLayerTask(object):
                                              layers, styles, bbox, metadata_url)
                 except ApiException as e:
                     logging.error("Can't create layer %s\n" % e)
+
+    def get_zip_file_url(self, group_layer_label):
+        survey_id = self.product_database.survey_label_to_survey_id[group_layer_label]
+        file = self.product_database.survey_to_zip_name[survey_id]
+
+        return file, self.meta_cache.get_zip_file_url(file)
