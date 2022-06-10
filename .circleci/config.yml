@@ -177,10 +177,12 @@ jobs:
             - docker_tag_vars
 
   build_geoserver_image:
-    machine:
-      image: ubuntu-1604:201903-01
+    docker:
+      - image: cimg/base:2022.03
     steps:
       - checkout
+      - setup_remote_docker:
+          version: 20.10.11
       - setup-environment-vars
       - attach_workspace:
           at: ./geoserver/ausseabed.pipeline/target/
