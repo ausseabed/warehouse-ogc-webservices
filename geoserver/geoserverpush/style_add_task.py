@@ -6,7 +6,6 @@ from gs_rest_api_styles.rest import ApiException
 
 
 class StyleAddTask(object):
-
     LOCAL_STYLE_FILENAME = os.path.dirname(os.path.realpath(__file__)) + \
         "/styles/bathymetry_transparent.sld"
     BATH_ALT_LOCAL_STYLE_FILENAME = os.path.dirname(os.path.realpath(__file__)) + \
@@ -30,6 +29,9 @@ class StyleAddTask(object):
     BACKSCATTER = os.path.dirname(os.path.realpath(__file__)) + \
         "/styles/backscatter.sld"
 
+    SWC_SHELF_MORPHOLOGICAL_FEATURES = os.path.dirname(os.path.realpath(__file__)) + \
+        "/styles/swc_shelf_morphological_features.sld"
+
     BATH_STYLE_NAME = "Bathymetry"
     BATH_ALT_STYLE_NAME = "BathymetryShallow"
     BATH_HILLSHADE_STYLE_NAME = "BathymetryHillshade"
@@ -40,6 +42,7 @@ class StyleAddTask(object):
     MH370_PHASE2_INVERSE_STYLE_NAME = "MH370Phase2Inverse"
     BACKSCATTER_STYLE_NAME = "Backscatter"
     SEABED_SEDIMENTS_COLLECTION_STYLE_NAME = "SeabedSedimentsCollection"
+    SWC_SHELF_MORPHOLOGICAL_FEATURES_STYLE_NAME = "SWCShelfMorphologicalFeatures"
 
     POLY_STYLE_NAME = "polygon"
 
@@ -57,7 +60,8 @@ class StyleAddTask(object):
             self.MH370_PHASE2_STYLE_NAME: self.MH370_PHASE2,
             self.MH370_PHASE2_INVERSE_STYLE_NAME: self.MH370_PHASE2_INVERSE,
             self.BACKSCATTER_STYLE_NAME: self.BACKSCATTER,
-            self.SEABED_SEDIMENTS_COLLECTION_STYLE_NAME: self.SEABED_SEDIMENTS_COLLECTION
+            self.SEABED_SEDIMENTS_COLLECTION_STYLE_NAME: self.SEABED_SEDIMENTS_COLLECTION,
+            self.SWC_SHELF_MORPHOLOGICAL_FEATURES_STYLE_NAME: self.SWC_SHELF_MORPHOLOGICAL_FEATURES
         }
 
     def create_style(self, style_name, local_file_name):

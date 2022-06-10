@@ -2,3 +2,4 @@ datastore_name,native_name,layer_name,layer_title,default_style,available_styles
 egis_oracle,MARSED_GA_SURVEY_SAMPLES,Seabed_Sediments_Collection,Seabed Sediments Collection,SeabedSedimentsCollection,SeabedSedimentsCollection,http://pid.geoscience.gov.au/dataset/ga/69869
 ausseabed_postgis,bathymetry_compilations,AusSeabed_Bathymetry_Compilations,AusSeabed Bathymetry Compilations,HoldingsPurple,HoldingsPurple,http://pid.geoscience.gov.au/dataset/ga/127150
 ausseabed_postgis,bathymetry_holdings,AusSeabed_Bathymetry_Holdings,AusSeabed Bathymetry Holdings,HoldingsDataAccess,"HoldingsPurple,HoldingsBySource,HoldingsDataAccess",http://pid.geoscience.gov.au/dataset/ga/140124
+ausseabed_postgis,swc_shelf_morphological_features,SWC_Shelf_Morphological_Features,Southwest Corner Marine Park - Shelf Morphological Features,SWCShelfMorphologicalFeatures,SWCShelfMorphologicalFeatures,http://pid.geoscience.gov.au/dataset/ga/146848
