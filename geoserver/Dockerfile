@@ -57,7 +57,7 @@ COPY ausseabed.pipeline/target/*.jar ${CATALINA_HOME}/lib/
 COPY ausseabed.pipeline/target/lib/*.jar ${CATALINA_HOME}/webapps/geoserver/WEB-INF/lib/
 
 # Oracle support
-COPY ./gt-jdbc-oracle-23.1.jar ${CATALINA_HOME}/webapps/geoserver/WEB-INF/lib/
+COPY ./gt-jdbc-oracle-26.4.jar ${CATALINA_HOME}/webapps/geoserver/WEB-INF/lib/
 COPY ./ojdbc8.jar ${CATALINA_HOME}/webapps/geoserver/WEB-INF/lib/
 
 RUN chmod +r ${CATALINA_HOME}/lib/*
