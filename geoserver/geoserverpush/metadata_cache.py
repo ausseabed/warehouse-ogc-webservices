@@ -2,12 +2,11 @@ import logging
 import os
 import unittest
 from unittest.mock import patch, Mock
+from xml.etree import ElementTree
 
 import boto3
 import requests
 from botocore.exceptions import ClientError
-from gis_metadata.iso_metadata_parser import IsoParser
-from gis_metadata.metadata_parser import get_metadata_parser
 
 from custom_iso_parser import CustomIsoParser
 
@@ -33,10 +32,13 @@ class MetaDataCache():
             return None
 
         try:
-            metadata_response = requests.get(
-                metadata_url + "?_format=text%2Fxml", timeout=5)
-            if (metadata_response.ok):
-                iso_from_file = CustomIsoParser(metadata_response.text)
+            metadata_response = requests.get(metadata_url + "?_format=text/xml&_view=ISO19115", timeout=5)
+
+            tree = ElementTree.fromstring(metadata_response.text)
+            metadata = tree.find(".//mdb:MD_Metadata", namespaces={"mdb": "http://standards.iso.org/iso/19115/-3/mdb/1.0"})
+
+            if (metadata_response.ok and metadata):
+                iso_from_file = CustomIsoParser(ElementTree.tostring(metadata))
                 return iso_from_file
             else:
                 logging.warn(
