@@ -45,6 +45,10 @@ class AuthBroker():
 
         if not("access_token" in result):
             logging.error("Could not find access token")
+
+            if "error_description" in result:
+                logging.error(result["error_description"])
+
             sys.exit(1)
         else:
             return result["access_token"]
