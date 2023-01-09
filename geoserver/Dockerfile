@@ -10,6 +10,8 @@ RUN apt-get update \
   && ln -s /usr/bin/python3 python \
   && pip3 install --upgrade pip
 
+RUN pip3 install pyOpenSSL==23.0.0 --upgrade
+
 RUN apt-get update -y && \
 apt-get install -y unzip curl && \
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && \
