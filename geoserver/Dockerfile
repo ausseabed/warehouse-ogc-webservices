@@ -86,7 +86,6 @@ ENV \
     -Djavax.xml.stream.XMLOutputFactory=com.bea.xml.stream.XMLOutputFactoryBase \
     -DGT2_LOGGING_REDIRECTION=JavaLogging \
     -DRELINQUISH_LOG4J_CONTROL=true \
-    -verbose:gc \
     -Djava.util.logging.config.file=${CATALINA_HOME}/webapps/geoserver/WEB-INF/classes/logging.properties"
 
 # \"-Djava.util.logging.config.file=${CATALINA_HOME}/conf/logging.properties" \
