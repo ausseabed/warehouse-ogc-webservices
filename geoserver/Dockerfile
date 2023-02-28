@@ -1,5 +1,5 @@
-# Mirror of kartoza/geoserver:2.20.4
-FROM 288871573946.dkr.ecr.ap-southeast-2.amazonaws.com/ausseabed-kartoza-geoserver:9-jdk11-openjdk-slim-buster-2.20.4
+# Mirror of kartoza/geoserver:2.20.7
+FROM 288871573946.dkr.ecr.ap-southeast-2.amazonaws.com/ausseabed-kartoza-geoserver:9-jdk11-openjdk-slim-buster-2.20.7
 USER root
 
 WORKDIR /usr/src/app
