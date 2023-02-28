@@ -134,10 +134,10 @@ jobs:
           create-repo: false
           dockerfile: Dockerfile
           path: ./docker-geoserver/
-          extra-build-args: "--build-arg GS_VERSION=2.18.0 --build-arg IMAGE_VERSION=9-jdk11-openjdk-slim-buster --build-arg JAVA_HOME=/usr/local/openjdk-11/bin/java"
+          extra-build-args: "--build-arg GS_VERSION=2.20.7 --build-arg IMAGE_VERSION=9-jdk11-openjdk-slim-buster --build-arg JAVA_HOME=/usr/local/openjdk-11/bin/java"
           region: AWS_REGION_ENV_VAR_NAME
           repo: "ausseabed-kartoza-geoserver"
-          tag: "9-jdk11-openjdk-slim-buster-2.18.0"
+          tag: "9-jdk11-openjdk-slim-buster-2.20.7"
 
   dev_docker_tag:
     docker:
