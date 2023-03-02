@@ -195,11 +195,11 @@ jobs:
           override-installed: true
           aws-region: AWS_REGION_ENV_VAR_NAME
       - aws-s3/copy:
-          from: s3://ausseabed-staging-$TERRAFORM_WORKSPACE/gt-jdbc-oracle-26.7.jar
+          from: s3://ausseabed-staging-$TERRAFORM_WORKSPACE/gt-jdbc-oracle-26.4.jar
           to: ./geoserver/
           aws-region: AWS_REGION_ENV_VAR_NAME
       - aws-s3/copy:
-          from: s3://ausseabed-staging-$TERRAFORM_WORKSPACE/ojdbc8-19.10.0.0.jar
+          from: s3://ausseabed-staging-$TERRAFORM_WORKSPACE/ojdbc8.jar
           to: ./geoserver/
           aws-region: AWS_REGION_ENV_VAR_NAME
       - aws-ecr/ecr-login:
