@@ -306,6 +306,9 @@ workflows:
             branches:
               only:
                 - /.*build_and_push_kartoza.*/
+          environment:
+            GEOSERVER_ADMIN_USER: ${GEOSERVER_ADMIN_USER}
+            GEOSERVER_ADMIN_PASSWORD: ${GEOSERVER_ADMIN_PASSWORD}
 
   build_and_deploy_dev_images:
     jobs:
