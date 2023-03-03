@@ -128,9 +128,6 @@ jobs:
       - run:
           name: Download kartoza/geoserver
           command: git clone https://github.com/kartoza/docker-geoserver.git
-      - run:
-          name: test var
-          command: echo ${GEOSERVER_ADMIN_USER}
       - aws-ecr/build-and-push-image:
           account-url: AWS_ECR_ACCOUNT_URL_ENV_VAR_NAME
           checkout: false
