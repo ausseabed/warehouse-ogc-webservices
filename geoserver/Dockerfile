@@ -1,5 +1,5 @@
-# Mirror of kartoza/geoserver:2.20.7
-FROM 288871573946.dkr.ecr.ap-southeast-2.amazonaws.com/ausseabed-kartoza-geoserver:9-jdk11-openjdk-slim-buster-2.20.7
+# Mirror of kartoza/geoserver:2.22.2
+FROM 288871573946.dkr.ecr.ap-southeast-2.amazonaws.com/ausseabed-kartoza-geoserver:9-jdk11-openjdk-slim-buster-2.22.2
 USER root
 
 WORKDIR /usr/src/app
@@ -59,7 +59,7 @@ COPY ausseabed.pipeline/target/*.jar ${CATALINA_HOME}/lib/
 COPY ausseabed.pipeline/target/lib/*.jar ${CATALINA_HOME}/webapps/geoserver/WEB-INF/lib/
 
 # Oracle support
-COPY ./gt-jdbc-oracle-26.7.jar ${CATALINA_HOME}/webapps/geoserver/WEB-INF/lib/
+COPY ./gt-jdbc-oracle-28.2.jar ${CATALINA_HOME}/webapps/geoserver/WEB-INF/lib/
 COPY ./ojdbc8-19.10.0.0.jar ${CATALINA_HOME}/webapps/geoserver/WEB-INF/lib/
 
 RUN chmod +r ${CATALINA_HOME}/lib/*
