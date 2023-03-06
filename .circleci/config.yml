@@ -200,7 +200,7 @@ jobs:
           override-installed: true
           aws-region: AWS_REGION_ENV_VAR_NAME
       - aws-s3/copy:
-          from: s3://ausseabed-staging-$TERRAFORM_WORKSPACE/gt-jdbc-oracle-22.2.jar
+          from: s3://ausseabed-staging-$TERRAFORM_WORKSPACE/gt-jdbc-oracle-28.2.jar
           to: ./geoserver/
           aws-region: AWS_REGION_ENV_VAR_NAME
       - aws-s3/copy:
