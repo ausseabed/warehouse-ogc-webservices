@@ -85,12 +85,12 @@ ENV \
     LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/apr/lib:/opt/libjpeg-turbo/lib64:/usr/lib:/usr/lib/x86_64-linux-gnu:/usr/lib/jni" \
     JAVA_OPTS="-Dpost.init.script=/usr/local/pulldata/push_geoserver_settings.py \
     -Ds3.caching.chunkSizeBytes=524288 \
-    -Djavax.xml.stream.XMLOutputFactory=com.bea.xml.stream.XMLOutputFactoryBase \
     -DGT2_LOGGING_REDIRECTION=JavaLogging \
-    -DRELINQUISH_LOG4J_CONTROL=true"
-#     -Djava.util.logging.config.file=${CATALINA_HOME}/webapps/geoserver/WEB-INF/classes/logging.properties"
+    -DRELINQUISH_LOG4J_CONTROL=true \
+    -Djava.util.logging.config.file=${CATALINA_HOME}/webapps/geoserver/WEB-INF/classes/logging.properties"
 
 # \"-Djava.util.logging.config.file=${CATALINA_HOME}/conf/logging.properties" \
+#    -Djavax.xml.stream.XMLOutputFactory=com.bea.xml.stream.XMLOutputFactoryBase \
     
 # defaults for Cache config that could also be tailored:
 # -Ds3.caching.diskCacheSize= 524288000 # 500 MB
