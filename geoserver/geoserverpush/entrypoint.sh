@@ -3,6 +3,7 @@ set -e
 
 
 figlet -t "Kartoza Docker GeoServer"
+figlet -t "Kartoza Docker GeoServer"
 
 # Gosu preparations
 USER_ID=${GEOSERVER_UID:-1000}
