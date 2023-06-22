@@ -62,6 +62,9 @@ COPY ausseabed.pipeline/target/lib/*.jar ${CATALINA_HOME}/webapps/geoserver/WEB-
 COPY ./gt-jdbc-oracle-28.2.jar ${CATALINA_HOME}/webapps/geoserver/WEB-INF/lib/
 COPY ./ojdbc8-19.10.0.0.jar ${CATALINA_HOME}/webapps/geoserver/WEB-INF/lib/
 
+# fix for s3-geotiff plugin
+COPY ./gt-s3-geotiff-30-SNAPSHOT.jar ${CATALINA_HOME}/webapps/geoserver/WEB-INF/lib/
+
 # ehcache issue; see https://github.com/kartoza/docker-geoserver/issues/340
 # manually copying as the above fix was later removed
 # package builders for s3-geotiff might've also removed causing the issue to come back
@@ -101,4 +104,4 @@ ENV \
 # -Ds3.caching.diskCacheSize= 524288000 # 500 MB
 # -Ds3.caching.diskPath= Files.createTempDirectory("s3Cachine")
 
-CMD ["/usr/local/pulldata/decode_aws_json.sh","/scripts/entrypoint.sh"]
+CMD ["/usr/local/pulldata/decode_aws_json.sh","geoserverpush/entrypoint.sh"]
