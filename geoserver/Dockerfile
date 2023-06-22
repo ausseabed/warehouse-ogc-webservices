@@ -71,7 +71,7 @@ COPY ./gt-s3-geotiff-30-SNAPSHOT.jar ${CATALINA_HOME}/webapps/geoserver/WEB-INF/
 # ehcache issue; see https://github.com/kartoza/docker-geoserver/issues/340
 # manually copying as the above fix was later removed
 # package builders for s3-geotiff might've also removed causing the issue to come back
-# COPY ./ehcache-2.10.9.2.jar ${CATALINA_HOME}/webapps/geoserver/WEB-INF/lib/
+COPY ./ehcache-2.10.9.2.jar ${CATALINA_HOME}/webapps/geoserver/WEB-INF/lib/
 
 RUN chmod +r ${CATALINA_HOME}/lib/*
 RUN chmod +r ${CATALINA_HOME}/webapps/geoserver/WEB-INF/lib/*
