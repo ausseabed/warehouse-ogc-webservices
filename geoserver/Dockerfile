@@ -54,7 +54,8 @@ RUN chmod +r /usr/local/pulldata/styles/*.sld
 RUN chmod -R +r /usr/local/pulldata/vector_config/
 RUN chmod +rx /usr/local/pulldata/*.py
 RUN chmod +rx /usr/local/pulldata/*.sh
-COPY /usr/local/pulldata/entrypoint.sh .
+# COPY /usr/local/pulldata/entrypoint.sh .
+COPY geoserverpush/entrypoint.sh ./
 
 COPY ausseabed.pipeline/target/*.jar ${CATALINA_HOME}/lib/
 COPY ausseabed.pipeline/target/lib/*.jar ${CATALINA_HOME}/webapps/geoserver/WEB-INF/lib/
@@ -106,4 +107,5 @@ ENV \
 # -Ds3.caching.diskPath= Files.createTempDirectory("s3Cachine")
 
 # CMD ["/usr/local/pulldata/decode_aws_json.sh","geoserverpush/entrypoint.sh"]
-CMD ["/usr/local/pulldata/decode_aws_json.sh","/usr/local/pulldata/entrypoint.sh"]
+ENTRYPOINT ["/usr/local/pulldata/decode_aws_json.sh"]
+CMD ["entrypoint.sh"]
