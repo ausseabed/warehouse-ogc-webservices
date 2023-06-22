@@ -54,7 +54,8 @@ RUN chmod +r /usr/local/pulldata/styles/*.sld
 RUN chmod -R +r /usr/local/pulldata/vector_config/
 RUN chmod +rx /usr/local/pulldata/*.py
 RUN chmod +rx /usr/local/pulldata/*.sh
-# COPY /usr/local/pulldata/entrypoint.sh .
+
+# workaround for the s3-geotiff plugin fix
 COPY geoserverpush/entrypoint.sh ./
 RUN chmod +rx entrypoint.sh
 
@@ -107,7 +108,4 @@ ENV \
 # -Ds3.caching.diskCacheSize= 524288000 # 500 MB
 # -Ds3.caching.diskPath= Files.createTempDirectory("s3Cachine")
 
-# CMD ["/usr/local/pulldata/decode_aws_json.sh","geoserverpush/entrypoint.sh"]
-# ENTRYPOINT ["/usr/local/pulldata/decode_aws_json.sh"]
-# CMD ["entrypoint.sh"]
 ENTRYPOINT ["/usr/local/pulldata/decode_aws_json.sh","./entrypoint.sh"]
