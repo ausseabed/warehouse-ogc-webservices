@@ -110,4 +110,4 @@ ENV \
 # CMD ["/usr/local/pulldata/decode_aws_json.sh","geoserverpush/entrypoint.sh"]
 # ENTRYPOINT ["/usr/local/pulldata/decode_aws_json.sh"]
 # CMD ["entrypoint.sh"]
-ENTRYPOINT ["/usr/local/pulldata/decode_aws_json.sh","entrypoint.sh"]
+ENTRYPOINT ["/usr/local/pulldata/decode_aws_json.sh","./entrypoint.sh"]
