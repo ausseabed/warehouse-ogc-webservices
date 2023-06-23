@@ -37,7 +37,11 @@ export CLUSTER_CONFIG_DIR MONITOR_AUDIT_PATH CLUSTER_LOCKFILE INSTANCE_STRING
 /bin/bash /scripts/start.sh
 
 # cleanup broken s3-geotiff plugin
-rm "${CATALINA_HOME}""/webapps/geoserver/WEB-INF/lib/gt-s3-geotiff-28-SNAPSHOT.jar"
+FNAME="${CATALINA_HOME}""/webapps/geoserver/WEB-INF/lib/gt-s3-geotiff-28-SNAPSHOT.jar"
+if [ -e ${FNAME} ]; then
+    rm ${FNAME}
+fi
+# rm "${CATALINA_HOME}""/webapps/geoserver/WEB-INF/lib/gt-s3-geotiff-28-SNAPSHOT.jar"
 
 log CLUSTER_CONFIG_DIR="${CLUSTER_CONFIG_DIR}"
 log MONITOR_AUDIT_PATH="${MONITOR_AUDIT_PATH}"
