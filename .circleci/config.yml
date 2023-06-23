@@ -142,7 +142,7 @@ jobs:
           extra-build-args: "--build-arg GS_VERSION=2.22.2 --build-arg IMAGE_VERSION=9-jdk11-openjdk-slim-buster --build-arg JAVA_HOME=/usr/local/openjdk-11/bin/java"
           region: AWS_REGION_ENV_VAR_NAME
           repo: "ausseabed-kartoza-geoserver"
-          tag: "9-jdk11-openjdk-slim-buster-2.22.2"
+          tag: "9-jdk11-openjdk-slim-buster-2.22.2-s3-geotiff"
 
   dev_docker_tag:
     docker:
