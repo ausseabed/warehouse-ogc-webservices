@@ -17,8 +17,12 @@ class StyleAddTask(object):
         "/styles/ausseabed_bathy_holdings_purple.sld"
     AUSSEABED_BATHY_HOLDINGS_BY_SOURCE = os.path.dirname(os.path.realpath(__file__)) + \
         "/styles/Ausseabed_bathy_by_source.sld"
+    AUSSEABED_BATHY_HOLDINGS_BY_SOURCE_V2 = os.path.dirname(os.path.realpath(__file__)) + \
+        "/styles/Ausseabed_bathy_by_source_v2.sld"
     AUSSEABED_BATHY_WITH_DATA_ACCESS = os.path.dirname(os.path.realpath(__file__)) + \
         "/styles/Ausseabed_with_data_access.sld"
+    AUSSEABED_BATHY_WITH_DATA_ACCESS_V2 = os.path.dirname(os.path.realpath(__file__)) + \
+        "/styles/Ausseabed_with_data_access_v2.sld"
     SEABED_SEDIMENTS_COLLECTION = os.path.dirname(os.path.realpath(__file__)) + \
         "/styles/seabed_sediments_collection.sld"
 
@@ -37,7 +41,9 @@ class StyleAddTask(object):
     BATH_HILLSHADE_STYLE_NAME = "BathymetryHillshade"
     AUSSEABED_BATHY_HOLDINGS_PURPLE_NAME = "HoldingsPurple"
     AUSSEABED_BATHY_HOLDINGS_BY_SOURCE_NAME = "HoldingsBySource"
+    AUSSEABED_BATHY_HOLDINGS_BY_SOURCE_NAME_V2 = "HoldingsBySourceV2"
     AUSSEABED_BATHY_WITH_DATA_ACCESS_NAME = "HoldingsDataAccess"
+    AUSSEABED_BATHY_WITH_DATA_ACCESS_NAME_V2 = "HoldingsDataAccessV2"
     MH370_PHASE2_STYLE_NAME = "MH370Phase2"
     MH370_PHASE2_INVERSE_STYLE_NAME = "MH370Phase2Inverse"
     BACKSCATTER_STYLE_NAME = "Backscatter"
@@ -56,7 +62,9 @@ class StyleAddTask(object):
             self.BATH_HILLSHADE_STYLE_NAME: self.BATH_HILLSHADE_STYLE_FILENAME,
             self.AUSSEABED_BATHY_HOLDINGS_PURPLE_NAME: self.AUSSEABED_BATHY_HOLDINGS_PURPLE,
             self.AUSSEABED_BATHY_HOLDINGS_BY_SOURCE_NAME: self.AUSSEABED_BATHY_HOLDINGS_BY_SOURCE,
+            self.AUSSEABED_BATHY_HOLDINGS_BY_SOURCE_NAME_V2: self.AUSSEABED_BATHY_HOLDINGS_BY_SOURCE_V2,
             self.AUSSEABED_BATHY_WITH_DATA_ACCESS_NAME: self.AUSSEABED_BATHY_WITH_DATA_ACCESS,
+            self.AUSSEABED_BATHY_WITH_DATA_ACCESS_NAME_V2: self.AUSSEABED_BATHY_WITH_DATA_ACCESS_V2,
             self.MH370_PHASE2_STYLE_NAME: self.MH370_PHASE2,
             self.MH370_PHASE2_INVERSE_STYLE_NAME: self.MH370_PHASE2_INVERSE,
             self.BACKSCATTER_STYLE_NAME: self.BACKSCATTER,
