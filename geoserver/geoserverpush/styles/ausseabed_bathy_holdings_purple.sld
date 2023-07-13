@@ -8,17 +8,22 @@
   <NamedLayer>
     <Name>ausseabed_bathymetry</Name>
     <UserStyle>
-      <Title>Bathymetry Holdings (by survey)</Title>
+      <Title>Bathymetry Coverages (boundaries)</Title>
       <Abstract>A sample style that draws a polygon</Abstract>
       <FeatureTypeStyle>
         <Rule>
           <Name>rule1</Name>
-          <Title>Bathymetry Holdings (by survey)</Title>
+          <Title>Bathymetry Coverages (boundaries)</Title>
           <Abstract>A polygon with a purple fill</Abstract>
           <PolygonSymbolizer>
             <Fill>
               <CssParameter name="fill">#8856a7</CssParameter>
+              <CssParameter name="fill-opacity">0.5</CssParameter>
             </Fill>
+            <Stroke>
+              <CssParameter name="fill">#FFFFFF</CssParameter>
+              <CssParameter name="stroke-width">0.5</CssParameter>
+            </Stroke> 
           </PolygonSymbolizer>
         </Rule>
       </FeatureTypeStyle>
