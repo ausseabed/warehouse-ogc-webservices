@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?><sld:StyledLayerDescriptor xmlns="http://www.opengis.net/sld" xmlns:sld="http://www.opengis.net/sld" xmlns:gml="http://www.opengis.net/gml" xmlns:ogc="http://www.opengis.net/ogc" version="1.0.0">
   <sld:NamedLayer>
-    <sld:Name>ASB_Coverage_V2</sld:Name>
+    <sld:Name>Bathymetry_byDataAccess</sld:Name>
     <sld:UserStyle>
-      <sld:Name>ASB_Coverage_V2</sld:Name>
+      <sld:Name>Bathymetry_byDataAccess</sld:Name>
       <sld:FeatureTypeStyle>
         <sld:Name>name</sld:Name>
         <sld:Rule>
@@ -10,7 +10,7 @@
           <ogc:Filter>
             <ogc:PropertyIsLike wildCard="%" singleChar="_" escape="\">
               <ogc:PropertyName>BATHY_URL</ogc:PropertyName>
-              <ogc:Literal>http%</ogc:Literal>
+              <ogc:Literal>____</ogc:Literal>
             </ogc:PropertyIsLike>
           </ogc:Filter>
           <sld:PolygonSymbolizer>
@@ -24,7 +24,7 @@
           <ogc:Filter>
             <ogc:PropertyIsLike wildCard="%" singleChar="_" escape="\">
               <ogc:PropertyName>BATHY_URL</ogc:PropertyName>
-              <ogc:Literal>%N/A</ogc:Literal>
+              <ogc:Literal>N/A</ogc:Literal>
             </ogc:PropertyIsLike>
           </ogc:Filter>
           <sld:PolygonSymbolizer>
