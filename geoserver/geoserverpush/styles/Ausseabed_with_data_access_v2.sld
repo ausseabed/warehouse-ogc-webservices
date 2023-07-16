@@ -10,7 +10,21 @@
           <ogc:Filter>
             <ogc:PropertyIsLike wildCard="%" singleChar="_" escape="\">
               <ogc:PropertyName>BATHY_URL</ogc:PropertyName>
-              <ogc:Literal>____</ogc:Literal>
+              <ogc:Literal>htt%</ogc:Literal>
+            </ogc:PropertyIsLike>
+          </ogc:Filter>
+          <sld:PolygonSymbolizer>
+            <sld:Fill>
+              <sld:CssParameter name="fill">#9152e0</sld:CssParameter>
+            </sld:Fill>
+          </sld:PolygonSymbolizer>
+        </sld:Rule>
+        <sld:Rule>
+          <sld:Name>Bathymetry with online access</sld:Name>
+          <ogc:Filter>
+            <ogc:PropertyIsLike wildCard="%" singleChar="_" escape="\">
+              <ogc:PropertyName>BATHY_URL</ogc:PropertyName>
+              <ogc:Literal>File%</ogc:Literal>
             </ogc:PropertyIsLike>
           </ogc:Filter>
           <sld:PolygonSymbolizer>
