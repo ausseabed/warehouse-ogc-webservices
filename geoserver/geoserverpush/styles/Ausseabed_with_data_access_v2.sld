@@ -10,7 +10,7 @@
           <ogc:Filter>
             <ogc:PropertyIsLike wildCard="%" singleChar="_" escape="\">
               <ogc:PropertyName>BATHY_URL</ogc:PropertyName>
-              <ogc:Literal>htt%</ogc:Literal>
+              <ogc:Literal>http%</ogc:Literal>
             </ogc:PropertyIsLike>
           </ogc:Filter>
           <sld:PolygonSymbolizer>
